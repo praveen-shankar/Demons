@@ -1,0 +1,80 @@
+<aura:component controller="crm_customOpportunityServicesView">
+    <!-- Author: Rajeev Shekhar -->
+    <aura:attribute name="data" type="Object"/>
+    <aura:attribute name="idsTodelete" type="List"/>
+    <aura:attribute name="columns" type="List"/>
+    <aura:handler name="init" value="{! this }" action="{! c.init }"/>
+    <aura:registerEvent name="CustomViewOpportunityAddEvent" type="c:CustomViewOpportunityAddEvent"/>
+    <aura:dependency resource="markup://force:navigateToComponent" type="EVENT"/>
+    <aura:dependency resource="markup://force:refreshView" type="EVENT"/>
+    <aura:dependency resource="markup://c:lightningPopOver" type="COMPONENT"/>
+    <aura:dependency resource="markup://c:lightningPopOverAdditionalServices" type="COMPONENT"/>
+    <aura:attribute name="exceptionMessage" type="String"/>
+    <aura:attribute name="showspinner" type="Boolean" default="false"/>
+    <aura:attribute name="showDeletebutton" type="Boolean" default="false"/>
+    <aura:attribute name="openModal" type="boolean" default="false"/>
+    <lightning:notificationsLibrary aura:id="notifLib"/>
+    <lightning:overlayLibrary aura:id="overlayLib"/>
+    <lightning:navigation aura:id="navigationService" />
+    <aura:attribute name="pageReference" type="Object"/>
+    
+    <aura:if isTrue="{!v.showspinner}">
+        <div style="height: 6rem;">
+            <lightning:spinner variant="brand" size="large"/>
+        </div>
+    </aura:if>
+    <aura:if isTrue="{!v.exceptionMessage.length > 0 }">
+        <ui:message title="Error" severity="error" closable="false">
+            {!v.exceptionMessage}
+        </ui:message>
+    </aura:if>
+
+    <div class="slds-text-title_caps slds-border_bottom">
+        &nbsp;&nbsp;
+        <lightning:icon iconName="standard:product_item_transaction" size="small"/>
+        &nbsp;<strong>{!v.data.actualservice.Product2.Name + ' (Service ID: ' + v.data.actualservice.Product2.crm_ERP_Product_ID__c + ')'}</strong>
+           <lightning:overlayLibrary aura:id="overlayLib1"/>
+        <lightning:buttonMenu iconSize="medium" iconName="utility:settings" title="Button Actions" menuAlignment="left" alternativeText="Actions" onselect="{! c.buttonActions }" variant="border-filled" class="slds-float_left">
+            <lightning:menuItem iconName="action:preview" label="QuickView" title="Use this button to see quick preview of Actual Service" value="qviewaction"/>
+            <!--<lightning:menuItem iconName="action:preview" label="View" title="Use this button to navigate on Actual Service detail page" value="viewaction"/>-->
+            <lightning:menuItem label="Add" iconName="utility:record_create" title="Use this button to add a new additional service" value="addaction" disabled="{!v.data.opportunityDetail.StageName eq 'Closed Won'}"/>
+            <lightning:menuItem label="Edit" iconName="action:edit" title="Use this button to edit the service combination" value="editaction" disabled="{!v.data.opportunityDetail.StageName == 'Closed Won'}"/>
+            <lightning:menuItem label="Delete" iconName="action:delete" title="Use this button to delete an additional service" value="deleteaction" disabled="{!equals(v.data.opportunityDetail.StageName,'Closed Won')}"/>
+            <lightning:menuItem label="Delete Combination" iconName="action:delete" title="Use this button to delete the entire combination of services" value="deleteallaction" disabled="{!v.data.opportunityDetail.StageName == 'Closed Won'}"/>
+            <lightning:menuItem label="Clone" value="clone" iconName="action:clone" title="Use this button to clone the entire combination" disabled="{!v.data.opportunityDetail.StageName == 'Closed Won'}"/>
+            <lightning:menuItem label="Clone And Edit" value="cloneedit" iconName="action:clone" title="Use this button to clone and edit the entire combination" disabled="{!v.data.opportunityDetail.StageName == 'Closed Won'}"/>
+        </lightning:buttonMenu>
+    </div>   
+  
+    <div class="slds-p-top_medium"></div>
+    <aura:if isTrue="{!!empty(v.data.additionalServices)}">
+        <lightning:datatable data="{!v.data.additionalServices}" columns="{!v.columns}" 
+            onrowselection="{!c.rowAction}"
+            onrowaction="{!c.handleRowAction}"                 
+            keyField="Id"                 
+            aura:id="dtable"/>
+        <aura:set attribute="else">
+            <div class="slds-text-align_center slds-text-color_error slds-text-title_caps">No Additional Services associated with this Actual Service</div>
+        </aura:set>
+    </aura:if>
+    <aura:if isTrue="{!equals(v.openModal,true)}">
+        <div role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <header class="slds-modal__header">
+                    <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close">
+                    <span class="slds-assistive-text">Close</span>
+                    </button>
+                    <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Are you sure?</h2>
+                </header>
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                    Please confirm to delete the entire combination of Actual and Additional Services.    
+                </div>
+                <footer class="slds-modal__footer slds-modal__footer_directional">
+                    <lightning:button name="cancelDeleteAll" iconName="action:close" onclick="{!c.decideDeleteAllAction}"/>
+                    <lightning:button name="approveDeleteAll" iconName="action:approval" onclick="{!c.decideDeleteAllAction}"/>
+                </footer>
+            </div>
+        </div>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </aura:if>
+</aura:component>

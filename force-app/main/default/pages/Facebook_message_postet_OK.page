@@ -1,0 +1,25 @@
+<apex:page showHeader="false" sidebar="false" standardStyleSheets="true">
+<head>
+  
+<title>Melding Postet</title>
+</head>
+<body>
+    
+<div style="top:40px;left:20px;position:relative;">
+<!--<apex:image id="theImage" value="{!$Setup.sf4twitter__Twitter_Public_Configuration__c.sf4twitter__Facebook_Icon_Url__c}" width="40" height="40" />-->
+</div> 
+<div style="position:relative;left:80px;">
+       <!--<h1>Melding postet!</h1>
+       <p>Du kan nå lukke dette vinduet</p>  
+       
+       CSPhase2 14122016, Supriya-Added the labels-->
+ 
+  <h1>{!$Label.cs_Message_Posted}</h1>
+        
+ <p>{!$Label.cs_Close_Window}</p>
+ 
+
+ <p id="info"></p>
+ </div>
+</body>  
+</apex:page>

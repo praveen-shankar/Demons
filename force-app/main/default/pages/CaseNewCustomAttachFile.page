@@ -1,0 +1,114 @@
+<!-- Sakshi: C-09492 - CR for give an alert message if the manager is inactive -->
+<apex:page standardController="Case" tabStyle="Case" extensions="AttachmentUploadController" showHeader="true">
+    <style>
+    .activeTab {background-color: #236FBD; color:white; background-image:none}
+    .inactiveTab { background-color: lightgrey; color:black; background-image:none}
+    </style>
+    <script>  
+    function func() {
+    alert('abc')
+  }
+  </script>
+    <apex:sectionHeader title="{!Case.CaseNumber}" subtitle="Attach File"/>
+    
+     <apex:pageMessages id="showmsg"></apex:pageMessages>
+        <apex:form id="MainForm">
+            <div align="center" draggable="false" >
+                 <apex:commandButton action="{!back}" value="Back to {!Case.CaseNumber}" />
+                    <apex:commandButton action="{!back}" value="Cancel"/>
+            </div>
+        </apex:form>
+        
+                
+                
+                <apex:tabPanel id="AttachmentTabPanel"
+                               tabClass="activeTab" inactiveTabClass="inactiveTab" value="{!nextvalue}">
+                    <apex:tab label="File Upload" name="fileupload" id="fileupload">
+                        <apex:form id="file_Upload">
+                        <apex:pageBlock >
+                        <apex:pageBlockSection >
+                            
+                            <apex:pageBlockSectionItem >
+                                <apex:outputLabel value="File" for="file_File"/>
+                                <apex:inputFile id="file_File" value="{!fileBody}" filename="{!fileName}"/>
+                            </apex:pageBlockSectionItem>
+                           <!-- <apex:pageBlockSectionItem >
+                                <apex:outputLabel value="" for="uploadBtn"/> 
+                               <apex:commandButton id="uploadBtn" value="Attach File" action="{!processUpload}"  onclick="func();return false;"/>
+                                 
+                            </apex:pageBlockSectionItem>-->
+                        </apex:pageBlockSection>
+                       </apex:pageBlock>
+                            <div align="right" draggable="false" >
+                                <apex:commandButton id="selectusers" value="Save and Next" action="{!processUpload}" /> <!--action="{!NEXT}" /-->
+                            </div>
+                             
+                        </apex:form>
+                    </apex:tab>
+                    <apex:tab label="Select Users" name="selectusers" id="selectusers">
+                        <apex:form id="USERSSELECTION">
+                        <apex:actionRegion >
+                    <apex:pageBlock >
+                        <apex:pageBlockSection >    
+                            <apex:pageBlockSectionItem >
+                                <apex:outputLabel value="Choose with whom you want to share" for="type" />
+                                
+                                <apex:selectList value="{!groupType}" size="1" id="type"> 
+                                    <apex:selectOption itemValue="Public Groups" itemLabel="Public Groups"/>
+                                    <apex:selectOption itemValue="Roles" itemLabel="Roles"/>
+                                    <!--  <apex:selectOption itemValue="Roles and Internal Subordinate" itemLabel="Roles and Internal Subordinate"/>
+<apex:selectOption itemValue="Roles, Internal and Portal Subordinate" itemLabel="Roles, Internal and Portal Subordinate"/>-->
+                                    <apex:selectOption itemValue="Users" itemLabel="Users"/>
+                                    <apex:actionSupport event="onchange"  reRender="members,selectedmembers" action="{!change}"/>
+                                </apex:selectList> 
+                            </apex:pageBlockSectionItem>
+                            <apex:pageBlockSectionItem >
+                                <apex:outputLabel value="keyword" />
+                                <apex:inputText value="{!keyword}" >
+                                    <apex:commandButton value="Search" action="{!change}" reRender="members" style="align:'right'"/>
+                                </apex:inputText>
+                            </apex:pageBlockSectionItem>
+                            
+                            <apex:outputPanel id="members" > 
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Available Members" for="members" /> 
+                                    <apex:selectList value="{!selectedValue}" size="10" multiselect="true" id="members" style="width:250px">
+                                        <apex:selectOptions value="{!allOptions}"/>
+                                    </apex:selectList>
+                                </apex:pageBlockSectionItem>
+                            </apex:outputPanel>
+                            <apex:commandbutton value=">" action="{!add}" rerender="selectedmembers,members"/><br/>
+                            <apex:commandbutton value="<" action="{!remove}" rerender="selectedmembers,members"/>
+                            
+                                                            <apex:outputPanel id="selectedmembers" > 
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Selected Members" for="selectedmembers" /> 
+                                    <apex:selectList value="{!valuepresent}" size="10" multiselect="true" id="selectedmembers" style="width:250px">
+                                        <apex:selectOptions value="{!Selected}"/>
+                                    </apex:selectList>
+                                </apex:pageBlockSectionItem>
+                            </apex:outputPanel>
+                            <br/>
+                            
+                            
+                            <apex:pageBlockSectionItem >
+                                <apex:outputLabel value="Description" for="description"/> 
+                                <apex:inputTextarea id="description" value="{!description}" rows="4" cols="50"/>
+                            </apex:pageBlockSectionItem>
+                            
+                             <div align="right" draggable="false" >
+                 <apex:commandButton action="{!save}" value="Save" />
+                    <apex:commandButton action="{!back}" value="Cancel"/>
+                            </div>
+                            
+                        </apex:pageBlockSection>
+                        </apex:pageBlock>
+                            
+                            </apex:actionRegion>
+                        </apex:form>
+                    </apex:tab>
+                </apex:tabPanel>
+    
+           
+         
+    </apex:page>

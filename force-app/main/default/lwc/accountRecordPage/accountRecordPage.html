@@ -1,0 +1,38 @@
+<template>
+    <lightning-combobox
+      name="progress"
+      label="Select a region"
+      value={value}
+      placeholder="Select Progress"
+      options={options}
+      onchange={handleChange} >
+    </lightning-combobox>
+
+<p>Selected value is: {value}</p>
+    
+    <fieldset class="slds-form-element">
+        <legend class="slds-form-element__legend slds-form-element__label">
+          <abbr class="slds-required" title="required">*</abbr> Select A Region </legend>
+        <div class="slds-form-element__control">
+          <span class="slds-radio">
+            <input type="radio" id="radio-47" value="radio-47" name="required" checked="" />
+            <label class="slds-radio__label" for="radio-47">
+              <span class="slds-radio_faux"></span>
+              <span class="slds-form-element__label">Norway</span>
+            </label>
+          </span>
+          <span class="slds-radio">
+            <input type="radio" id="radio-48" value="radio-48" name="required" />
+            <label class="slds-radio__label" for="radio-48">
+              <span class="slds-radio_faux"></span>
+              <span class="slds-form-element__label">Sweden</span>
+            </label>
+          </span>
+        </div>
+      </fieldset>
+    <lightning-record-form
+        object-api-name={opportunityLineItemObject}
+        fields={fields}
+        onsuccess={handleOpportunityCreated}>
+    </lightning-record-form>
+</template>

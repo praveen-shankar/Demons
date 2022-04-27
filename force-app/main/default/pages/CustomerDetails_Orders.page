@@ -1,0 +1,35 @@
+<apex:page standardController="Account" extensions="CustomerDetailExtension">
+<!--// CS-Phase2- 03/01/2017- Akshata Asukar-Replaced all occurances of Account.party_number__c with Account.crm_customer_number__c-->
+<apex:form >
+    <apex:inputHidden value="{!account.crm_Customer_Number__c}" />
+    <apex:inputHidden value="{!account.RecordType.Name}" />
+</apex:form>
+    <div style="overflow:auto; height:350px;">
+    <table>
+        <tr>
+        <!----CS Phase 2 15122016, Akshata -Added the labels-->
+            <th width="150">{!$Label.cs_order_number}</th>
+            <th width="150">{!$Label.cs_Type}</th>
+            <th width="150">{!$Label.cs_Ordering_Customer_Name}</th>
+            <th width="150">{!$Label.cs_Ordering_Customer_number}</th>
+            <th width="150">{!$Label.cs_order_status}</th>
+            <th width="150">{!$Label.cs_Sum}</th>
+            <th width="150">Source</th>
+         <!----CS Phase 2 15122016, Akshata -Added the labels-->
+        </tr>
+        <apex:repeat value="{!orderElements.orderTypes}" var="order">
+            <tr>
+                <td>
+                    <apex:outputLink value="{!OEBS}" target="_blank" >{!order.OrderNumber}</apex:outputLink>
+                </td>
+                <td><apex:outputLabel value="{!order.OrderType}"/></td>
+                <td><apex:outputLabel value="{!order.OrderedByName}"/></td>
+                <td><apex:outputLabel value="{!order.OrderedByNumber}"/></td>
+                <td><apex:outputLabel value="{!order.OrderStatus}"/></td>
+                <td><apex:outputLabel value="{!order.Sum}"/></td>
+                <td><apex:outputLabel value="{!order.sourceSys}"/></td>
+            </tr>
+        </apex:repeat>
+    </table>
+    </div>
+</apex:page>

@@ -1,0 +1,125 @@
+<apex:page standardController="Account" extensions="CustomerDetailExtension"> 
+<!-- <script src="/soap/ajax/15.0/apex.js" type="text/javascript"></script> -->
+<script>
+    var previousOnload = window.onload;
+    window.onload = function() {
+        if (previousOnload) {
+            previousOnload();
+        }
+        //loadAccount();
+    }
+</script>
+<!-- // CS-Phase2- 03/01/2017- Akshata Asukar-Replaced all occurances of Account.party_number__c with Account.crm_customer_number__c -->
+<apex:form >
+    <apex:inputHidden value="{!account.crm_Customer_Number__c}" />
+    <apex:inputHidden value="{!account.RecordType.Name}" />
+    <apex:actionFunction name="loadAccount" action="{!requestData}" rerender="account,messages" />
+</apex:form>
+
+<apex:outputpanel id="account">
+<apex:tabPanel switchType="client" selectedTab="contactInfo" rendered="{!hasEConnectData}">
+    
+    <!--<apex:tab label="Kontakt Informasjon" name="contactInfo" id="tabOne">
+    CSPhase2, 16122016, Supriya ->Added the labels 
+    -->
+    <apex:tab label="{!$Label.cs_Contact_Information}" name="contactInfo" id="tabOne">
+    
+    <div style="overflow:auto; height:350px;">
+        <apex:pageBlock mode="maindetail">
+        <!-- Commented for CS Phase 2 Changes
+            <apex:pageBlockSection columns="2">
+                <apex:pageBlockSectionItem ><apex:outputLabel value="Aktørnummer"/><apex:outputText value="{!organizationCustomer.PartyNumber}"/></apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem ><apex:outputLabel value="Kundenummer"/><apex:outputText value="{!organizationCustomer.CustomerNumber}"/></apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem ><apex:outputLabel value="Organisasjonsnummer"/><apex:outputText value="{!organizationCustomer.FiscalCode}"/></apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem ><apex:outputLabel value="Status"/><apex:outputText value="{!organizationCustomer.Status}"/></apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem ><apex:outputLabel value="Markedsnavn"/><apex:outputText value="{!organizationCustomer.MarketName}"/></apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem ><apex:outputLabel value="Juridisk navn"/><apex:outputText value="{!organizationCustomer.LegalName}"/></apex:pageBlockSectionItem>
+                
+                 <apex:pageBlockSectionItem ><apex:outputLabel value="Aktørnummer"/><apex:outputText value="{!organizationCustomer.PartyNumber}"/></apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem ><apex:outputLabel value="Kundenummer"/><apex:outputText value="{!organizationCustomer.CustomerNumber}"/></apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem ><apex:outputLabel value="Organisasjonsnummer"/><apex:outputText value="{!organizationCustomer.FiscalCode}"/></apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem ><apex:outputLabel value="Status"/><apex:outputText value="{!organizationCustomer.Status}"/></apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem ><apex:outputLabel value="Markedsnavn"/><apex:outputText value="{!organizationCustomer.MarketName}"/></apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem ><apex:outputLabel value="Juridisk navn"/><apex:outputText value="{!organizationCustomer.LegalName}"/></apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+          -->
+          <!---
+            <table border="black" width="700px">
+                <tr>
+                    <th>Epost</th>
+                    <th>Telefon</th>
+                </tr>
+                <apex:repeat value="{!organizationCustomer.communicationElements.communicationTypes}" var="type" >
+                    <tr>
+                        <td><apex:outputText value="{!type.EMailAddress}" /></td>
+                        <td><apex:outputText value="{!type.PhoneNumber}" /></td>
+                    </tr>
+                </apex:repeat>
+            </table>
+            --->
+            <!--<h2>Adresser</h2>
+             CSPhase2, 16122016, Supriya ->Added the labels -->
+            <h2>{!$Label.cs_address}</h2>
+          
+            <table>
+                <tr>
+                    <th></th>
+                   <!-- <th width="300px">Adresse</th>
+                    <th width="400px">Poststed</th>
+                    <th >Postnummer</th>
+                     CSPhase2, 16122016, Supriya ->Added the labels --> 
+                    <th width="300px">{!$Label.cs_address}</th>
+                    <th width="400px">{!$Label.cs_City}</th>
+                    <th >{!$Label.cs_Zipcode}</th> 
+                </tr>
+                <apex:repeat value="{!organizationCustomer.addressElements.addressTypes}" var="type">
+                    <tr>
+                        <td><b><apex:outputText value="{!type.addressType}" /></b></td>
+                        <td><apex:outputText value="{!type.StreetName}{!type.PostOfficeBox} {!type.BuildingNumber} {!type.BuildingName}" /></td>
+                        <td><apex:outputText value="{!type.CityName}" /></td>
+                        <td><apex:outputText value="{!type.PostalCode}" /></td>
+                    </tr>
+                </apex:repeat>
+            </table>
+        </apex:pageBlock>
+    </div>
+    </apex:tab>
+   
+    <!--<apex:tab label="Ordre">
+     CSPhase2, 16122016, Supriya ->Added the labels --> 
+    <!-- 02032021, Venkat, US:12304 - Remove the Visual Force Page "Ordre"
+     <apex:tab label="{!$Label.cs_Order}">
+       <apex:include pageName="CustomerDetails_Orders" />
+    </apex:tab> -->
+    
+    <!--<apex:tab label="Faktura">
+     CSPhase2, 16122016, Supriya ->Added the labels --> 
+      <apex:tab label="{!$Label.cs_Invoice}">
+        <apex:include pageName="CustomerDetails_invoice" />
+    </apex:tab>
+    
+    <!--<apex:tab label="Foretningsområde">
+     CSPhase2, 16122016, Supriya ->Added the labels --> 
+    <!-- Divisions not received in new wsdl therefore commenting division tab<apex:tab label="{!$Label.cs_Business_Area}">
+        <apex:include pageName="CustomerDetails_BusinessArea" />
+    </apex:tab>-->
+    <!---
+    <apex:tab label="Kontakter">
+        <apex:include pageName="CustomerDetails_Contact" />
+    </apex:tab>
+    -->
+    <!-- <apex:tab label="Adresseendring">  ">
+     CSPhase2, 16122016, Supriya ->Added the labels --> 
+   <apex:tab label="{!$Label.cs_address_changes}">
+        <apex:include pageName="CustomerDetails_ChangeAddress" />
+    </apex:tab>
+</apex:tabPanel>
+</apex:outputpanel>
+
+<apex:outputpanel id="messages">
+    <div id="messageblock" style="overflow:auto; height:60px;">
+        <apex:messages layout="list" />
+    </div>
+</apex:outputpanel>
+
+</apex:page>

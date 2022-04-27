@@ -1,0 +1,24 @@
+<apex:page controller="Lightuser_Controller" > 
+
+    <apex:stylesheet value="{!URLFOR($Resource.kats_css)}" />
+    <apex:image value="{!$Resource.posten_bring_logo}" width="111" height="68" style="padding:10px"/>
+    <apex:form style="padding:10px"  rendered="{!Isactivelightuser}">
+    <!--CSphase2, Akash, 20122016-->
+        <!--
+        <apex:commandLink action="{!searchCase}" value="[ Søk sak ]" style="padding:10px; background-color:9f9f9f" /> &nbsp; | &nbsp;
+        <apex:commandLink action="{!createCase}" value="[ Registrer Sak ]" style="padding:10px" /> &nbsp; | &nbsp;
+        <apex:commandLink action="{!latestCases}" value="[ Siste registrerte saker ]" style="padding:10px" /> &nbsp; | &nbsp;
+        <apex:commandLink action="{!createReport}" value="[ Lag Rapport ]" style="padding:10px" /> &nbsp; | &nbsp;     
+        <!-- New outputLink, 03.01.12 aolsen 
+        <apex:outputLink value="{!userManual }" target="_blank" style="padding:10px">[ Brukermanual ]</apex:outputLink>
+        -->
+        <apex:commandLink action="{!searchCase}" value="{!$Label.cs_searchcase}" style="padding:10px; background-color:9f9f9f" /> &nbsp; | &nbsp;
+        <apex:commandLink action="{!createCase}" value="{!$Label.cs_registerCase}" style="padding:10px" /> &nbsp; | &nbsp;
+        <apex:commandLink action="{!latestCases}" value="{!$Label.cs_lastRegisteredCase}" style="padding:10px" /> &nbsp; | &nbsp;
+        <apex:commandLink action="{!createReport}" value="{!$Label.cs_GenerateReport}" style="padding:10px" /> &nbsp; | &nbsp;     
+       
+        <apex:outputLink value="{!userManual }" target="_blank" style="padding:10px">{!$Label.cs_userManual}</apex:outputLink>
+    </apex:form>
+    <apex:outputText style="font-size:14px;font-color:red" rendered="{!!Isactivelightuser}">Light user is deactivated in the system</apex:outputText>
+    
+</apex:page>

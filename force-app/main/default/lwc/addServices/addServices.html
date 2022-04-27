@@ -1,0 +1,126 @@
+<template>
+    <!-- <div class="slds slds-p-around medium slds-size_1-of-3">   -->
+    <!-- <lightning-card> -->
+
+
+        
+            
+            <!-- <li key={contact.Id}>
+                {contact.Name}, {contact.Title}
+            </li> -->
+            <lightning-tabset >
+            <template for:each={picklistDatamodified} for:item="picklistValue"  >
+    
+            <lightning-tab key={picklistValue.Id} label={picklistValue.Tab}  onactive={handleTabData} value={picklistValue.Tab} title={picklistValue.Tab}>
+                <!-- <div> <span class="slds-badge slds-badge_inverse badge"> Total Records in Table - {totalRecords} </span> </div> -->
+                <div style="height: 300px">
+                <lightning-datatable max-row-selection=1 data={AllProducts} key-field="Id"  enable-infinite-loading="true"
+                onloadmore={loadMoreData} load-more-offset="20"  columns={columns}  onrowaction={handlerowaction} onrowselection={handleRowSelection}  > </lightning-datatable>
+                <!-- <lightning-datatable enable-infinite-loading onloadmore={loadMoreData}  data={wireProduct2.data}  columns={columns} key-field="Id"  onrowselection={handleRowSelection}  > </lightning-datatable> -->
+            </div>
+                </lightning-tab>
+                 </template>
+            </lightning-tabset>
+           
+          
+      
+        </template>
+        <!--Old Code-->
+          <!-- <lightning-tabset>
+                <lightning-tab label="All"  onactive={handleTabData} value="All" title="All Services">
+                    <! <div> <span class="slds-badge slds-badge_inverse badge"> Total Records in Table - {totalRecords} </span> </div> -->
+                    <!-- <div style="height: 300px">
+                    <lightning-datatable max-row-selection=1 data={wireProduct2.data} key-field="Id"  enable-infinite-loading="true"
+                    onloadmore={loadMoreData} load-more-offset="20"  columns={columns}  onrowaction={handlerowaction} onrowselection={handleRowSelection}  > </lightning-datatable> -->
+                    <!-- <lightning-datatable enable-infinite-loading onloadmore={loadMoreData}  data={wireProduct2.data}  columns={columns} key-field="Id"  onrowselection={handleRowSelection}  > </lightning-datatable> -->
+                <!-- </div>
+                    </lightning-tab>
+                <lightning-tab label="B2B"  onactive={handleTabData} value="B2B" title="B2B Services"> -->
+                   
+                    <!-- <lightning-datatable max-row-selection=1 data={wireProduct2.data}  columns={columns} key-field="Id" enable-infinite-loading="true"
+                    onloadmore={loadMoreData} load-more-offset="20"   onrowaction={handlerowaction} onrowselection={handleRowSelection}  > </lightning-datatable>
+                </lightning-tab>
+                <lightning-tab  label="B2C" onactive={handleTabData} value="B2C" title="B2C Services"> -->
+                   
+                    <!-- <lightning-datatable max-row-selection=1 data={wireProduct2.data}  columns={columns} key-field="Id" enable-infinite-loading="true"
+                    onloadmore={loadMoreData} load-more-offset="20"   onrowaction={handlerowaction} onrowselection={handleRowSelection}  > </lightning-datatable>
+                </lightning-tab>
+                <lightning-tab label="Post" onactive={handleTabData} value="Product" title="Product Services"> -->
+                
+                    <!-- <lightning-datatable max-row-selection=1 data={wireProduct2.data}  columns={columns} key-field="Id" enable-infinite-loading="true"
+                    onloadmore={loadMoreData} load-more-offset="20"   onrowaction={handlerowaction} onrowselection={handleRowSelection}  > </lightning-datatable>
+                </lightning-tab>
+            </lightning-tabset> --> 
+        
+            <!--Old code ends-->
+            <!-- <c-additional-services service-name={serviceName} actual-service-id={actualServiceId} active-section-name={activeSectionName}></c-additional-services> -->
+        
+        <!-- <div class="slds slds-p-around medium slds-size_1-of-3">   -->
+        <!-- <table class="slds-table slds-table_header-fixed slds-table_bordered slds-table_edit slds-table_resizable-cols" cellspacing="0" cellpadding="0" style="border-collapse:collapse; border:1px #ddd solid;">
+            <tbody> 
+             <tr>
+                 <td style="width:30%; border-right:1px #ddd solid;"><lightning-button variant="destructive " label="B2B" onclick={displayToastError}></lightning-button> <lightning-button variant="brand" label="B2C" onclick={displayToastWarning}></lightning-button> <lightning-button variant="success" label="Product" onclick={displayToastSuccess}></lightning-button></td>
+                 </tr>
+            </tbody>
+            </table> -->
+        <!-- Data Table starts -->                
+                <!-- <lightning-datatable  data={wireProduct2.data}  columns={columns} key-field="Id"  onrowselection={getSelectedIdAction}  > </lightning-datatable> -->
+            <!-- </div> -->
+
+        <!-- </lightning-card> -->
+<!-- </div> -->
+   
+                <!-- <div slot="footer"> 
+                    <lightning-button title="Delete" label="Delete Selected Row" size="small" variant="brand" icon-name="utility:delete" icon-position="right" onclick={deleteProduct2RowAction}></lightning-button>
+                </div>
+              -->
+          <!-- <br/><br/>
+            <p><img src="https://www.w3web.net/wp-content/uploads/2021/05/thumbsUpLike.png" width="25" height="25" style="vertical-align:top; margin-right:10px;"/> <strong> <span style="font-size:15px; font-style:italic; display:inline-block; margin-right:5px;">Don't forget to check out:-</span> <a href="https://www.w3web.net/" target="_blank" style="text-decoration:none;" rel="noopener noreferrer">An easy way to learn step-by-step online free tutorial, To know more Click  <span style="color:#ff8000; font-size:18px;">Here..</span></a></strong></p>
+         -->
+            
+        
+       
+
+        <!-- Data Table ends -->
+        
+        <!-- <br/><br/> -->
+      
+          <!-- <table class="slds-table slds-table_header-fixed slds-table_bordered slds-table_edit slds-table_resizable-cols" cellspacing="0" cellpadding="0" style="border-collapse:collapse; border:1px #ddd solid;">
+             <tbody> 
+              <tr>
+                  <td style="width:30%; border-right:1px #ddd solid;"><lightning-button variant="destructive " label="B2B" onclick={displayToastError}></lightning-button>   <lightning-button variant="brand" label="B2C" onclick={displayToastWarning}></lightning-button>  <div></div>  <lightning-button variant="success" label="Product" onclick={displayToastSuccess}></lightning-button></td>
+                   <td style="width:30%; border-right:1px #ddd solid;"><lightning-button variant="brand" label="B2C" onclick={displayToastWarning}></lightning-button></td>
+                  <td style="width:30%; border-right:1px #ddd solid;"><lightning-button variant="success" label="Product" onclick={displayToastSuccess}></lightning-button></td> -->
+                  <!-- <td style="width:70%; color:rgba(214, 5, 1, 1); font-weight:bold;">Display Error Toast Message Notifications</td> -->
+              <!-- </tr>
+              <tr><td> <lightning-input type="checkbox" label="B2B 1" checked> </lightning-input></td> </tr>
+
+            <tr><td> <lightning-input type="checkbox" label="B2B 2" checked> </lightning-input></td></tr>
+
+            <tr><td> <lightning-input type="checkbox" label="B2C" checked> </lightning-input></td></tr>
+        </tbody> 
+    </table>   --> 
+
+            <!-- <tr>
+                <td style="width:30%; border-right:1px #ddd solid;"><lightning-button variant="success" label="Show Success" onclick={displayToastSuccess}></lightning-button></td>
+                <td style="width:70%; color:rgb(21 136 0); font-weight:bold;">Display Success Toast Message Notifications</td>
+            </tr> -->
+
+              <!-- <tr>
+                <td style="width:30%; border-right:1px #ddd solid;"><lightning-button variant="brand" label="Show Warning" onclick={displayToastWarning}></lightning-button></td>
+                <td style="width:70%; color:rgb(243 114 4); font-weight:bold;">Display Warning Toast Message Notifications</td>
+            </tr>
+            <tr>
+                <td style="width:30%; border-right:1px #ddd solid;"><lightning-button variant="success" label="Show Success" onclick={displayToastSuccess}></lightning-button></td>
+                <td style="width:70%; color:rgb(21 136 0); font-weight:bold;">Display Success Toast Message Notifications</td>
+            </tr>
+            <tr>
+                <td style="width:30%; border-right:1px #ddd solid;"><lightning-button variant="brand" label="Show Info" onclick={displayToastInfo}></lightning-button></td>
+                <td style="width:70%; color:rgb(212 205 0); font-weight:bold;">Display Info Toast Message Notifications</td>
+            </tr> -->
+          
+        <!-- <br/><br/> -->
+        <!-- <p>To know more <strong>live demo</strong> in LWC, Use this <strong><a href="https://www.w3web.net/tutorial/salesforce-lwc/" target="_blank" rel="noopener noreferrer">link..</a></strong></p> -->
+    
+<!-- <br/><br/> -->
+    <!-- <p><img src="https://www.w3web.net/wp-content/uploads/2021/05/thumbsUpLike.png" width="25" height="25" style="vertical-align:top; margin-right:10px;"/> <strong> <span style="font-size:15px; font-style:italic; display:inline-block; margin-right:5px;">Don't forget to check out:-</span> <a href="https://www.w3web.net/" target="_blank" style="text-decoration:none;" rel="noopener noreferrer">An easy way to learn step-by-step online free tutorial, To know more Click  <span style="color:#ff8000; font-size:18px;">Here..</span></a></strong></p> -->

@@ -1,0 +1,233 @@
+<apex:component controller="ShipmentDetailsComponent">
+
+    <apex:attribute name="EConnectWrapper_GetShipmentData" description="" type="EConnectWrapper_GetShipmentData" required="false" assignTo="{!wrapper}" />
+    <apex:attribute name="ShipmentUnitID" description="" type="String" required="false" assignTo="{!ShipmentUnitIDnew}" />
+    
+    <style>
+    .activeTab {background-color: #d62d22; color:white; background-image:none; height:20px; border-top: 2px solid #d62d22; border-right: 2px solid #d62d22; border-left: 2px solid #d62d22;}
+    .inactiveTab { background-color: #EAEAEA; color:black; background-image:none; height:20px; border-top: 2px solid #EAEAEA; border-right: 2px solid #EAEAEA; border-left: 2px solid #EAEAEA;}
+    </style>
+    
+    <apex:componentBody > 
+            
+            <br/>
+            <br/>
+            
+            <apex:tabPanel switchType="client" selectedTab="Events" rendered="{!hasEconnectData}" tabClass="activeTab" inactiveTabClass="inactiveTab"> 
+                
+                <apex:tab label="{!$Label.cs_transmission} {!$Label.cs_Information}" name="ShipmentInfo">
+                <div style="overflow:auto; height:260px;">
+                    <apex:pageBlock mode="detail">
+                        <apex:pageblockSection columns="2">
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_Kollinumber}"/><apex:outputText value="{!shipment.ShipmentUnitID}"/></apex:pageBlockSectionItem>
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_OriginallyLicencePlate}"/><apex:outputText value="{!shipment.RelabledShipmentUnitID}"/></apex:pageBlockSectionItem>
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_Kollinummer}"/><apex:outputText value="{!shipment.ShipmentID}"/></apex:pageBlockSectionItem>
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_IgnitionSequence}"/><apex:outputText value="{!shipment.ShipmentSequence}"/></apex:pageBlockSectionItem>
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_Product}"/><apex:outputText value="{!shipment.ProductCode} - {!shipment.ProductName}"/></apex:pageBlockSectionItem>
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_New} {!$Label.cs_Product}"/><apex:outputText value="{!shipment.NewProductCode} - {!shipment.NewProductName}"/></apex:pageBlockSectionItem>
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_Sender} {!$Label.cs_Reference}"/><apex:outputText value="{!shipment.SenderReference}"/></apex:pageBlockSectionItem>
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_Recipient} {!$Label.cs_Reference}"/><apex:outputText value="{!shipment.RecipientReference}"/></apex:pageBlockSectionItem>
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_deliverySignature}"/><apex:outputText value="{!shipment.DelieverySignature}"/></apex:pageBlockSectionItem>
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_Transmissiontime}"/><apex:outputText value="{0,date,dd.MM.yyyy' ' HH:mm:ss}"><apex:param value="{!shipment.ShipmentDateTime}"/></apex:outputText></apex:pageBlockSectionItem>
+                        </apex:pageblockSection>
+                    </apex:pageBlock>
+                </div>
+                </apex:tab>
+                
+                <apex:tab label="{!$Label.cs_submittedby}" name="PostingTerminal">
+                <div style="overflow:auto; height:260px;">
+                    <apex:pageBlock mode="detail">
+                        <apex:pageblockSection columns="1">
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_deviceName}"/><apex:outputText value="{!shipment.PostingTerminal.UnitName}"/></apex:pageBlockSectionItem>
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_unitnumber}"/><apex:outputText value="{!shipment.PostingTerminal.UnitNumber}"/></apex:pageBlockSectionItem>
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_Type}"/><apex:outputText value="{!shipment.PostingTerminal.type_x}"/></apex:pageBlockSectionItem>
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_Address}"/><apex:outputText value="{!shipment.PostingTerminal.Street}"/></apex:pageBlockSectionItem>
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_zip_code}"/><apex:outputText value="{!shipment.PostingTerminal.PostalCode}"/></apex:pageBlockSectionItem>
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_City}"/><apex:outputText value="{!shipment.PostingTerminal.City}"/></apex:pageBlockSectionItem>
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_Municipal}"/><apex:outputText value="{!shipment.PostingTerminal.MunicipalityName}"/></apex:pageBlockSectionItem>
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_municipalitynumber}"/><apex:outputText value="{!shipment.PostingTerminal.MunicipalityCode}"/></apex:pageBlockSectionItem>
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_Country}"/><apex:outputText value="{!shipment.PostingTerminal.Country}"/></apex:pageBlockSectionItem>
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_countrycode}"/><apex:outputText value="{!shipment.PostingTerminal.CountryCode}"/></apex:pageBlockSectionItem>
+                        </apex:pageblockSection>
+                    </apex:pageBlock>
+                </div>
+                </apex:tab>
+                
+                <apex:tab label="{!$Label.cs_Currentpostal}" name="CurrentCity">
+                <div style="overflow:auto; height:260px;">
+                    <apex:pageBlock mode="detail">
+                        <apex:pageblockSection columns="1">
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_Type}"/><apex:outputText value="{!shipment.CurrentCity.type_x}"/></apex:pageBlockSectionItem>
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_Address}"/><apex:outputText value="{!shipment.CurrentCity.Street}"/></apex:pageBlockSectionItem>
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_City}"/><apex:outputText value="{!shipment.CurrentCity.City}"/></apex:pageBlockSectionItem>
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_Zipcode}"/><apex:outputText value="{!shipment.CurrentCity.PostalCode}"/></apex:pageBlockSectionItem>
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_Municipal} {!$Label.cs_Name}"/><apex:outputText value="{!shipment.CurrentCity.MunicipalityName}"/></apex:pageBlockSectionItem>
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_municipalitynumber}"/><apex:outputText value="{!shipment.CurrentCity.MunicipalityCode}"/></apex:pageBlockSectionItem>
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_Country}"/><apex:outputText value="{!shipment.CurrentCity.Country}"/></apex:pageBlockSectionItem>
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_countrycode}"/><apex:outputText value="{!shipment.CurrentCity.CountryCode}"/></apex:pageBlockSectionItem>
+                        </apex:pageblockSection>
+                    </apex:pageBlock>
+                </div>
+                </apex:tab>
+                
+                <apex:tab label="{!$Label.cs_DeliverAddress}" name="ShipToAddress">
+                <div style="overflow:auto; height:260px;">
+                    <apex:pageBlock mode="detail">
+                        <apex:pageblockSection columns="1">
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_Type}"/><apex:outputText value="{!shipment.ShipToAddress.type_x}"/></apex:pageBlockSectionItem>
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_Address}"/><apex:outputText value="{!shipment.ShipToAddress.Street}"/></apex:pageBlockSectionItem>
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_City}"/><apex:outputText value="{!shipment.ShipToAddress.City}"/></apex:pageBlockSectionItem>
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_Zipcode}"/><apex:outputText value="{!shipment.ShipToAddress.PostalCode}"/></apex:pageBlockSectionItem>
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_Municipal}"/><apex:outputText value="{!shipment.ShipToAddress.MunicipalityName}"/></apex:pageBlockSectionItem>
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_municipalitynumber}Kommunenummer"/><apex:outputText value="{!shipment.ShipToAddress.MunicipalityCode}"/></apex:pageBlockSectionItem>
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_Country}"/><apex:outputText value="{!shipment.ShipToAddress.Country}"/></apex:pageBlockSectionItem>
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_countrycode}"/><apex:outputText value="{!shipment.ShipToAddress.CountryCode}"/></apex:pageBlockSectionItem>
+                        </apex:pageblockSection>
+                    </apex:pageBlock>
+                </div>
+                </apex:tab>
+                
+                <apex:tab label="{!$Label.cs_Insurance}" name="Insurance">
+                <div style="overflow:auto; height:260px;">
+                    <apex:pageBlock mode="detail">
+                        <apex:pageblockSection columns="2">
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_sum}"/><apex:outputText value="{!shipment.Insurance.DeclaredValueAmount}"/></apex:pageBlockSectionItem>
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_VAS}"/><apex:outputText value="{!shipment.Insurance.Description}"/></apex:pageBlockSectionItem>
+                        </apex:pageblockSection>
+                    </apex:pageBlock>
+                </div>
+                </apex:tab>
+                
+                <apex:tab label="{!$Label.cs_Productdesignation}" name="ShipmentDescription">
+                <div style="overflow:auto; height:260px;">
+                    <apex:pageBlock mode="detail">
+                        <apex:pageblockSection columns="1">
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_Height}"/><apex:outputText value="{!shipment.ShipmentDescription.HeightMeasure}"/></apex:pageBlockSectionItem>
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_Length}"/><apex:outputText value="{!shipment.ShipmentDescription.LengthMeasure}"/></apex:pageBlockSectionItem>
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_Width}"/><apex:outputText value="{!shipment.ShipmentDescription.WidthMeasure}"/></apex:pageBlockSectionItem>
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_Weight}"/><apex:outputText value="{!shipment.ShipmentDescription.WeightMeasure} gram"/></apex:pageBlockSectionItem>
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_describe}"/><apex:outputText value="{!shipment.ShipmentDescription.Description}"/></apex:pageBlockSectionItem>
+                        </apex:pageblockSection>
+                    </apex:pageBlock>
+                </div>
+                </apex:tab>
+                
+                <apex:tab label="{!$Label.cs_VAS}" name="valueAddedService">
+                <div style="overflow:auto; height:260px;">
+                    <table>
+                        <tr>
+                            <th width="400">{!$Label.cs_VAS}</th>
+                            <th width="300">{!$Label.cs_POAmount}</th>
+                            <th width="300">{!$Label.cs_AccountNo}</th>
+                        </tr>
+                        <apex:repeat value="{!shipment.ValueAddedServices.valueAddedService}" var="valueAddedService">
+                            <tr>
+                                <td>{!valueAddedService.ServiceName}</td>
+                                <td>{!valueAddedService.CoDAmount}</td>
+                                <td>{!valueAddedService.BankAccountNumber}</td>
+                            </tr>
+                        </apex:repeat>
+                    </table>
+                </div>
+                </apex:tab>
+                
+                <apex:tab label="{!$Label.cs_SortingInfo}" name="SortingMachineInfo">
+                <div style="overflow:auto; height:260px;">
+                <table>
+                        <tr>
+                            <th width="300">{!$Label.cs_SortDate}</th>
+                            <th width="300">{!$Label.cs_SortingTime}</th>
+                            <th width="300">{!$Label.cs_Brettnumber}</th>
+                            <th width="300">{!$Label.cs_exhaust}</th>
+                        </tr>
+                        <apex:repeat value="{!shipment.SortingMachineInfo.SortingInfo}" var="SortingInfo">
+                            <tr>
+                                <td>{!SortingInfo.SortingDate}</td>
+                                <td>{!SortingInfo.SortingTime}</td>
+                                <td>{!SortingInfo.BoardNumber}</td>
+                                <td>{!SortingInfo.Ramp}</td>
+                            </tr>
+                        </apex:repeat>
+                    </table>
+                </div>
+                </apex:tab>
+                
+                <apex:tab label="{!$Label.cs_Events}" name="Events">
+                <div style="overflow:auto; height:260px;">
+                    <apex:pageBlock mode="detail" id="block1">
+                    <apex:repeat value="{!shipment.Events.ShipmentEventType}" var="event" id="event1">
+                        <apex:pageblockSection id="section1" collapsible="true" title="{!event.EventName} - {!event.UnitNumber} - {!event.ShowDate_x}" columns="3">
+                        
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_Event}"/><apex:outputText value="{!event.EventCode} - {!event.EventName}"/></apex:pageBlockSectionItem>
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_Date}"/><apex:outputText value="{0,date,dd.MM.yyyy' - 'HH:mm:ss}"><apex:param value="{!event.Date_x}"/></apex:outputText></apex:pageBlockSectionItem>
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_unitnumber}"/><apex:outputText value="{!event.UnitNumber}"/></apex:pageBlockSectionItem>
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_Description}"/><apex:outputText value="{!event.CaseDescription}"/></apex:pageBlockSectionItem>
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_Zipcode}"/><apex:outputText value="{!event.PostalCode}"/></apex:pageBlockSectionItem>
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_username}"/><apex:outputText value="{!event.UserName}"/></apex:pageBlockSectionItem>
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_AfterReg}"/><apex:outputText value="{0,date,dd.MM.yyyy' - 'HH:mm:ss}"><apex:param value="{!event.EtterregDate}"/></apex:outputText></apex:pageBlockSectionItem>
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_countrycode}"/><apex:outputText value="{!event.CountryCode}"/></apex:pageBlockSectionItem>
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_Country}"/><apex:outputText value="{!event.Country}"/></apex:pageBlockSectionItem>
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_Cause}"/><apex:outputText value="{!event.Cause}"/></apex:pageBlockSectionItem>
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_measures}"/><apex:outputText value="{!event.Action}"/></apex:pageBlockSectionItem>
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_Freetext}"/><apex:outputText value="{!event.FreeText}"/></apex:pageBlockSectionItem>
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_Kollinumber}"/><apex:outputText value="{!event.ShipmentUnitID}"/></apex:pageBlockSectionItem>                           
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_Receivedby}"/><apex:outputText value="{!event.ReceivedBy}"/></apex:pageBlockSectionItem>
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_Signature}"/><apex:outputText value="{!event.Signature}"/></apex:pageBlockSectionItem>
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_sentby}"/><apex:outputText value="{!event.SendtBy}"/></apex:pageBlockSectionItem>
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_sentby}"/><apex:outputText value="{!event.SendtBy}"/></apex:pageBlockSectionItem>
+178.                        <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.Shelf_Id}"/><apex:outputText value="{!event.ShelfID}"/></apex:pageBlockSectionItem>
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_receiverplace}"/><apex:outputText value="{!event.ReceiverCity}"/></apex:pageBlockSectionItem>
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_StationId}"/><apex:outputText value="{!event.StationID}"/></apex:pageBlockSectionItem>
+                        
+                            <script>
+                              twistSection(document.getElementById('{!$Component.section1}').childNodes[0].childNodes[0]);
+                            </script>
+                                                  
+                        </apex:pageblockSection>
+                        
+                    </apex:repeat>
+                    </apex:pageBlock>
+                </div>
+                </apex:tab>
+                
+                <apex:tab label="{!$Label.cs_SenderNReceiver}" name="SenderRecipient">
+                <div style="overflow:auto; height:260px;">
+                    <apex:pageBlock mode="detail">
+                        <apex:pageblockSection columns="2">
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_Sender_Name}"/><apex:outputText value="{!shipment.Sender.FullName}"/></apex:pageBlockSectionItem>
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_recipientName}"/><apex:outputText value="{!shipment.Recipient.FullName}"/></apex:pageBlockSectionItem>
+                            
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_Sender} {!$Label.cs_Actor_number}"/><apex:outputText value="{!shipment.Sender.PartyNumber}"/></apex:pageBlockSectionItem>
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_Recipient} {!$Label.cs_Actor_number}"/><apex:outputText value="{!shipment.Recipient.PartyNumber}"/></apex:pageBlockSectionItem>
+                            
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_Sender} {!$Label.cs_Address}"/><apex:outputText value="{!shipment.Sender.Street}"/></apex:pageBlockSectionItem>
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_Recipient} {!$Label.cs_Address}"/><apex:outputText value="{!shipment.Recipient.Street}"/></apex:pageBlockSectionItem>
+                            
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_Sender} {!$Label.cs_addresstype}"/><apex:outputText value="{!shipment.Sender.type_x}"/></apex:pageBlockSectionItem>
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_Recipient} {!$Label.cs_addresstype}"/><apex:outputText value="{!shipment.Recipient.type_x}"/></apex:pageBlockSectionItem>
+                            
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_Sender} {!$Label.cs_City}"/><apex:outputText value="{!shipment.Sender.City}"/></apex:pageBlockSectionItem>
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_Recipient} {!$Label.cs_City}"/><apex:outputText value="{!shipment.Recipient.City}"/></apex:pageBlockSectionItem>
+                            
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_Sender} {!$Label.cs_zip_code}"/><apex:outputText value="{!shipment.Sender.PostalCode}"/></apex:pageBlockSectionItem>
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_Recipient} {!$Label.cs_zip_code}"/><apex:outputText value="{!shipment.Recipient.PostalCode}"/></apex:pageBlockSectionItem>
+                            
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_Sender} {!$Label.cs_Municipal}"/><apex:outputText value="{!shipment.Sender.MunicipalityName}"/></apex:pageBlockSectionItem>
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_Recipient} {!$Label.cs_Municipal}"/><apex:outputText value="{!shipment.Recipient.MunicipalityName}"/></apex:pageBlockSectionItem>
+                            
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_Sender} {!$Label.cs_municipalitynumber}"/><apex:outputText value="{!shipment.Sender.MunicipalityCode}"/></apex:pageBlockSectionItem>
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_Recipient} {!$Label.cs_municipalitynumber}"/><apex:outputText value="{!shipment.Recipient.MunicipalityCode}"/></apex:pageBlockSectionItem>
+                            
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_Sender} {!$Label.cs_Country}"/><apex:outputText value="{!shipment.Sender.Country}"/></apex:pageBlockSectionItem>
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_Recipient} {!$Label.cs_Country}"/><apex:outputText value="{!shipment.Recipient.Country}"/></apex:pageBlockSectionItem>
+                            
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_Sender} {!$Label.cs_countrycode}"/><apex:outputText value="{!shipment.Sender.CountryCode}"/></apex:pageBlockSectionItem>
+                            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_Recipient} {!$Label.cs_countrycode}"/><apex:outputText value="{!shipment.Recipient.CountryCode}"/></apex:pageBlockSectionItem>
+                        </apex:pageblockSection>
+                    </apex:pageBlock>
+                </div>
+                </apex:tab>
+                
+            </apex:tabPanel>
+    </apex:componentBody>
+</apex:component>

@@ -1,0 +1,70 @@
+<aura:component controller="CS_NewPibController" implements="force:hasRecordId,force:lightningQuickActionwithoutHeader" access="global">
+      <aura:attribute name="selectedTemplate" type="String"/>
+     <aura:attribute name="allowedTemplates" type="Map" default=""/>
+        <aura:attribute name="allowedStatus" type="Map" default=""/>
+     <aura:attribute name="caseId" type="Id" />
+    <aura:attribute name="caseobj" type="Case" />
+     <aura:attribute name="pibobj" type="cs_case_pib_messages__c" />
+    <lightning:notificationsLibrary aura:id="notifLib" />
+	 <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <div class="slds-card ">
+          <table class="slds-table slds-table_bordered slds-table_striped slds-table_cell-buffer slds-table_fixed-layout">
+ 
+              <tr>
+                  <td> <ui:outputText title="{!$Label.c.cs_Please_select_the_template}"  value="{!$Label.c.cs_Please_select_the_template}"/></td>
+                 
+                  <td>  <lightning:select  aura:id="templateid" required ="true" value="{!v.selectedTemplate}" onchange="{!c.onChangetemplate}" >
+                        <option value="None" text="None"></option> 
+                      <aura:iteration items="{!v.allowedTemplates}"  var="cus" indexVar="key">
+                       <option value="{!cus.key}" text="{!cus.value}"></option>
+                        </aura:iteration>
+                    </lightning:select></td>
+                  <td></td>
+                  <td></td>
+              </tr>
+              
+             <tr>
+                 <td> <ui:outputText title="{!$Label.c.cs_Subject}" value="{!$Label.c.cs_Subject}"></ui:outputText> </td>
+                  <td><ui:inputText value="{!v.pibobj.cs_subject__c }" aura:id="subject"/> </td>
+                 
+               <td> <ui:outputText title="{!$Label.c.cs_Case}" value="{!$Label.c.cs_Case}"></ui:outputText> </td>
+                  <td><ui:inputText value="{!v.caseobj.CaseNumber}" aura:id="caseId" disabled="true"/> </td>
+              </tr>
+              
+               <tr>
+                 <td> <ui:outputText title="{!$Label.c.cs_Description}" value="{!$Label.c.cs_Description}"></ui:outputText> </td>
+                  <td> <lightning:textarea aura:id="desc" required="true"  value="{!v.pibobj.cs_description__c }" ></lightning:textarea> </td>
+                
+ 				 <td> <ui:outputText title="Status"  value="Status"/></td>
+                  <td>  <lightning:select  aura:id="statusid" >
+                      <!-- <option value="None" text="None"></option> -->
+                        <aura:iteration items="{!v.allowedStatus}"  var="cus" indexVar="key">
+                       <option value="{!cus.key}" text="{!cus.value}"></option>
+                        </aura:iteration>
+                    </lightning:select></td>
+                   
+              </tr>
+              
+               <tr>
+                 <td> <ui:outputText title="{!$Label.c.Notify_District_Manager_c}" value="{!$Label.c.Notify_District_Manager_c}"></ui:outputText> </td>
+                  <td> <lightning:input type="checkbox" name="options" label="" aura:id="notifymanagerchk" value="{!v.pibobj.Notify_District_Manager__c}" checked="" /></td>
+                 
+              </tr>
+             
+              
+              
+        </table>
+        
+        
+                   <footer class="slds-modal__footer slds-modal__footer_directional slds-align_absolute-center"> 
+               <lightning:buttonGroup  aura:id="btngroup">
+                  
+                <lightning:button variant="neutral" disabled="false" label="{!$Label.c.cs_Save}" iconName="utility:save"  aura:id="addPIB" onclick="{!c.addPIB}"/>     
+                <lightning:button variant="neutral" label="Cancel" iconName="utility:close" onclick="{!c.closeQuickAction}"/>   <!--     iconName="utility:close" iconPosition="left"-->
+                    
+                  
+                </lightning:buttonGroup> 
+            </footer>  
+    </div>
+    
+</aura:component>

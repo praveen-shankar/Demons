@@ -1,0 +1,10 @@
+<apex:page standardcontroller="Case" recordSetVar="Cases"  extensions="CS_MarkRead" showHeader="false" sidebar="true" action="{!getselectedCases}">
+  <apex:pagemessages />
+  <table width='100%'>
+  <tr>
+  <td>
+  <div style='align:center'><a href='javascript:history.go(-1)'>Go Back </a></div>
+  </td>
+  </tr>
+  </table>
+  </apex:page>

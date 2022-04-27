@@ -1,0 +1,9 @@
+<apex:component controller="Case_shipmentEventEmailTemplate" access="global">
+
+<apex:attribute name="caseNumber" description="Case number of the Case" type="String" required="false" assignTo="{!caseNumber}" />
+<apex:attribute name="caseId" description="Case id of the Case" type="String" required="false" assignTo="{!caseId}" />
+<apex:attribute name="eventType" description="Type of event" type="String" required="false" assignTo="{!eventType}" />
+<apex:attribute name="eventCode" description="Code of the event" type="String" required="false" assignTo="{!eventCode}" />
+
+{!Event}
+</apex:component>

@@ -1,0 +1,34 @@
+<apex:page standardController="case" extensions="Account_LatestCasesController">
+    <div style="position:relative;left:-10px">
+        <apex:form id="latestCasesList">
+            <!-- <apex:PageBlock id="listBlock" title="Siste saker på kunde"> -->
+            <apex:PageBlock id="listBlock">
+                <apex:PageBlockTable id="latestCasesTable" value="{!latestCases}" var="c" rendered="{!isCasesOnAccount}">
+                <!--
+                    <apex:column headerValue="Saksnummer" value="{!c.CaseNumber}" onClick="window.open('{!$Site.Domain}/{!c.id}');" onmouseover="this.style.cursor='pointer'"/>
+                    <apex:column headerValue="Tittel" value="{!c.subject}" onClick="window.open('{!$Site.Domain}/{!c.id}');" onmouseover="this.style.cursor='pointer'"/>
+                    <apex:column headerValue="Sakstype" value="{!c.RecordType.Name}" onClick="window.open('{!$Site.Domain}/{!c.id}');" onmouseover="this.style.cursor='pointer'"/>
+                    <apex:column headerValue="Status" value="{!c.status}" onClick="window.open('{!$Site.Domain}/{!c.id}');" onmouseover="this.style.cursor='pointer'"/>
+                    <apex:column headerValue="Dato åpnet" value="{!c.CreatedDate}" onClick="window.open('{!$Site.Domain}/{!c.id}');" onmouseover="this.style.cursor='pointer'"/>
+                    <apex:column headerValue="Sakseier" value="{!c.Owner.Name}" onClick="window.open('{!$Site.Domain}/{!c.id}');" onmouseover="this.style.cursor='pointer'"/>
+                    CSPhase2, 16122016, Supriya ->Added the labels 
+                    -->
+                    
+                     <apex:column headerValue="{!$Label.cs_Case_number}" value="{!c.CaseNumber}" onClick="window.open('{!$Site.Domain}/{!c.id}');" onmouseover="this.style.cursor='pointer'"/>
+                    <apex:column headerValue="{!$Label.cs_Title}" value="{!c.subject}" onClick="window.open('{!$Site.Domain}/{!c.id}');" onmouseover="this.style.cursor='pointer'"/>
+                    <apex:column headerValue="{!$Label.cs_Type}" value="{!c.RecordType.Name}" onClick="window.open('{!$Site.Domain}/{!c.id}');" onmouseover="this.style.cursor='pointer'"/>
+                    <apex:column headerValue="{!$Label.cs_Status}" value="{!c.status}" onClick="window.open('{!$Site.Domain}/{!c.id}');" onmouseover="this.style.cursor='pointer'"/>
+                    <apex:column headerValue="{!$Label.cs_Date_Opened}" value="{!c.CreatedDate}" onClick="window.open('{!$Site.Domain}/{!c.id}');" onmouseover="this.style.cursor='pointer'"/>
+                    <apex:column headerValue="{!$Label.cs_Case_Owner}" value="{!c.Owner.Name}" onClick="window.open('{!$Site.Domain}/{!c.id}');" onmouseover="this.style.cursor='pointer'"/>
+                </apex:PageBlockTable>
+            </apex:PageBlock>
+        </apex:form>
+        <!--   
+         <apex:outputText value="Det er ikke knyttet noen kunde til denne saken" rendered="{!isNoAccountOnCase}"/> 
+        <apex:outputText value="Kunden har ingen andre saker tilknyttet seg." rendered="{!isNoCasesOnAccount}"/>
+        CSPhase2, 16122016, Supriya ->Added the labels 
+                    -->
+        <apex:outputText value="{!$Label.cs_No_latest_Cases}" rendered="{!isNoAccountOnCase}"/> 
+        <apex:outputText value="{!$Label.cs_No_issues_on_Customer}" rendered="{!isNoCasesOnAccount}"/>
+    </div>
+</apex:page>

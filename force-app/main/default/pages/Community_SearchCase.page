@@ -1,0 +1,211 @@
+<apex:page standardController="Case" extensions="Community_SearchCaseController"  tabStyle="Search_Case__tab" sidebar="false" >
+ <apex:includeScript value="{!$Resource.auto_completeKATS_js}" />
+    <apex:stylesheet value="{!$Resource.auto_comlete_css}"/>
+
+<script>
+        
+        //This is a small workaround for getting the component to work with the enter key
+        function noenter(e){
+ 
+             var key;    
+             if(window.event)
+                  key = window.event.keyCode; //IE
+             else
+                  key = e.which; //firefox    
+        
+             return (key != 13);    
+
+        }
+        
+        function disableautocomplete() {
+          var forms = document.getElementsByTagName('form');
+          
+          for (var i = 0; i < forms.length; ++i) {
+            if (forms[i].setAttribute) {
+              forms[i].setAttribute('autocomplete', 'off')
+            } else {
+              forms[i].autocomplete = 'off'
+            }
+          }
+        }
+        
+        if (window.addEventListener) {
+          window.addEventListener('load', disableautocomplete, true)
+        } else if (window.attachEvent) {
+          window.attachEvent('onload', disableautocomplete)
+        } else {
+          window.onload = disableautocomplete
+        }
+        
+        var customerSearchWin=null;
+        function openCustomerSearch(actorNumber)
+        {
+            var url="/apex/Lightuser_SearchCustomer?actorNumber=" + actorNumber;
+            customerSearchWin=window.open(url, 'Popup','height=500,width=1200,left=100,top=100,resizable=no,scrollbars=yes,toolbar=no,status=no');
+            customerSearchWin.focus();
+            return false;
+        }
+        
+        function initiateSearch(){
+           var goBtn = document.getElementById('{!$Component.searchCustomer}');
+           if(window.event.keyCode == 13){
+               searchForCases();
+           }
+        }              
+                      
+        function setActorNumber(actorNumber)
+        {
+            document.getElementById('{!$Component.TEMPFORM.actorNumber}').value=actorNumber;
+            document.getElementById('{!$Component.TEMPFORM.actorNumber}').focus();
+            if (null!=customerSearchWin)
+            {
+                customerSearchWin.close();
+            }  
+        }
+        
+        function clearform(){
+            document.getElementById('{!$Component.TEMPFORM.caseNo}').value=null;
+            document.getElementById('{!$Component.TEMPFORM.unit}').value=null;
+            document.getElementById('{!$Component.TEMPFORM.unit1}').value=null;
+            document.getElementById('{!$Component.TEMPFORM.product}').value=null;
+            document.getElementById('{!$Component.TEMPFORM.oracleorderno}').value=null;
+            document.getElementById('{!$Component.TEMPFORM.actorNumber}').value=null;
+            document.getElementById('{!$Component.TEMPFORM.postalCodeRange}').value=null;
+            document.getElementById('{!$Component.TEMPFORM.datatype}').value=null;
+            document.getElementById('{!$Component.TEMPFORM.fromdate}').value=null;
+            document.getElementById('{!$Component.TEMPFORM.todate}').value=null;
+            document.getElementById('{!$Component.caseSearchResults}').style.display = "none";
+                       
+           
+        
+        }
+        
+    </script>   
+   
+    <div id="KATS_leftcolumn"> 
+        <div class="KATS_innertube" >
+       <apex:form style="padding:10px" id="TEMPFORM">
+            
+                <apex:actionFunction name="searchForCases" action="{!searchForCases}" rerender="caseSearchResults, singleCase, messages" status="search_status" /> 
+                
+                                                                
+                <apex:outputPanel rendered="{!isValidPass}">   
+                <table>
+                    <tr>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                    <tr>
+                        <!--<td><apex:outputLabel value="Saksnummer"/></td>--><!--CSphase2, Akash, 21122016-->
+                        <td><apex:outputLabel value="{!$Label.cs_Case_number}"/></td>
+                        <td><apex:inputText value="{!caseCaseNumber}" maxlength="8" onkeyup="initiateSearch()" id="caseNo" /></td>
+                    </tr> 
+                    
+                     
+                     <tr>
+                        <td><apex:outputLabel value="{!$Label.cs_reg_Device}" /></td>
+                        <!--<td><apex:outputLabel value="Registrert av enhet" /></td>--><!--CSphase2, Akash, 21122016-->
+                        <td><apex:inputField id="unit" onkeypress="return noenter(event)" value="{!pu.Name}"    required="false">
+                           <c:PostalUnit_AutoCompleteComponent Width="300" ClassName="autocomplete" InputId="{!$Component.unit}" AutoCompleteId="unitACId"/>
+                        </apex:inputField></td> 
+                    </tr>
+                 
+                    <tr>
+                        <!--<td><apex:outputLabel value="Relatert til enhet"/></td>--><!--CSphase2, Akash, 21122016-->
+                        <td><apex:outputLabel value="{!$Label.cs_RelatedToUnity}"/></td>
+                        <td><apex:inputField id="unit1" onkeypress="return noenter(event)" value="{!pu1.name}" styleClass="cField" required="false">
+                            <c:PostalUnit_AutoCompleteComponent Width="300" ClassName="autocomplete" InputId="{!$Component.unit1}" AutoCompleteId="unitACId1" />
+                        </apex:inputField></td> 
+                    </tr>
+               
+                    <tr>
+                        <td><apex:outputLabel value="{!$Label.cs_Product}"/></td><!--CSphase2, Akash, 21122016-->
+                        <!--<td><apex:outputLabel value="Produkt"/></td>--->
+                        <td><apex:inputText value="{!produkt}" onkeyup="initiateSearch()" id="product" /></td>
+                    </tr>
+                    <tr>
+                        <td><apex:outputLabel value="{!$Label.cs_OracleNumber}"/></td>
+                        <!--<td><apex:outputLabel value="Oracle ordrenummer"/></td>--><!--CSphase2, Akash, 21122016-->
+                        <td><apex:inputText value="{!orderNumber}" onkeyup="initiateSearch()" id="oracleorderno"/></td>
+                    </tr>
+                    <tr>
+                        <td><apex:outputLabel value="{!$Label.cs_ActorSearch}"/></td>
+                        <!--<td><apex:outputLabel value="SÃÂ¸k AktÃÂ¸r-/Kundenr."/></td>--><!--CSphase2, Akash, 21122016-->
+                        <td><apex:inputText id="actorNumber" value="{!actorNumber}" size="16" onkeyup="initiateSearch()"/><img src="/s.gif" class="lookupIcon" onblur="this.className='lookupIcon';" onfocus="this.className='lookupIconOn';" onmouseout="this.className='lookupIcon';" onmouseover="this.className='lookupIconOn';" onclick="openCustomerSearch(document.getElementById('{!$Component.TEMPFORM.actorNumber}').value);"/></td>
+                    </tr>
+                    <tr>
+                        <td><apex:outputLabel value="{!$Label.cs_ZIPINterval}"/></td>
+                        <!--<td><apex:outputLabel value="Postnummer intervall"/></td>--><!--CSphase2, Akash, 21122016-->
+                        <td><apex:inputText id="postalCodeRange" value="{!postalCodeRange}" size="9" onkeyup="initiateSearch()"/></td>
+                    </tr>
+                    </table>
+                    
+                    <table>
+                    <tr><!--CSphase2, Akash, 21122016-->
+                            <!--<td><apex:selectRadio value="{!selectValue}"  layout="lineDirection" borderVisible="false" legendText="Velg dato type det er ÃÂ¸nskelig ÃÂ¥ sÃÂ¸ke etter"  title="Velg om du ÃÂ¸nsker ÃÂ¥ sÃÂ¸ke pÃÂ¥ opprettet dato eller tid for hendelse dato" >
+                                <apex:selectOption itemLabel="Hendelse" itemValue="eventOption"/>
+                                <apex:selectOption itemLabel="Opprettet" itemValue="createOption" />
+                            </apex:selectRadio> </td>-->
+                            <td><apex:selectRadio value="{!selectValue}"  layout="lineDirection" borderVisible="false" legendText="{!$Label.cs_selectDate}"  title="{!$Label.cs_titlelight}" id="datatype" >
+                                <apex:selectOption itemLabel="{!$Label.cs_Event}" itemValue="eventOption"/>
+                                <apex:selectOption itemLabel="{!$Label.cs_Created}" itemValue="createOption" />
+                            </apex:selectRadio> </td>                 
+                    </tr>
+                    </table>
+                    <table>
+                    <tr>
+                        <!--<td><apex:outputLabel value="Fra dato        "/></td>--><!--CSphase2, Akash, 21122016-->
+                        <td><apex:outputLabel value="{!$Label.cs_From_Date}        "/></td>
+                        <td><apex:inputField value="{!ProxyObject.Booking_date__c}" onkeyup="initiateSearch()" id="fromdate"/></td>
+                    </tr>
+                    <tr>
+                        <!--<td><apex:outputLabel value="Til dato"/></td>--><!--CSphase2, Akash, 21122016-->
+                        <td><apex:outputLabel value="{!$Label.cs_To_Date}"/></td>
+                        <td><apex:inputField value="{!ProxyObject.Distribution_date__c}" onkeyup="initiateSearch()" id="todate"/></td>
+                    </tr>
+                                       
+                    
+                    <tr>
+                        <td><!--CSphase2, Akash, 21122016-->
+                            <!--<apex:commandbutton value="SÃÂ¸k sak" status="search_status" action="{!searchForCases}" id="caseNumberButton"/>-->
+                            <apex:commandbutton value="{!$Label.cs_Search} {!$Label.cs_Case}" status="search_status" action="{!searchForCases}" id="caseNumberButton"/>
+                            <apex:actionStatus id="search_status">
+                                <apex:facet name="start"><apex:image value="{!$Resource.spinner_icon}" /></apex:facet>
+                                <apex:facet name="stop"></apex:facet>
+                            </apex:actionStatus>
+                        </td><!--CSphase2, Akash, 21122016-->
+                        <!--<td><apex:commandbutton value="TÃÂ¸m" reRender="caseSearchResults, singleCase" action="{!clearSearch}"/></td>-->
+                        <td><apex:commandbutton value="{!$Label.cs_Empty}" action="{!clearSearch}"  reRender="singleCase,TEMPFORM,searchresult,caseSearchResults"  onclick="clearform();"/></td> <!-- onclick="this.form.reset();return false;"-->
+                  
+     
+                    </tr>
+                </table>
+                
+               
+                </apex:outputPanel>
+                
+         </apex:form>        
+               
+       </div>
+    </div>
+   <div id="KATS_contentwrapper">
+        <div id="KATS_contentcolumn">
+            <div class="KATS_innertube">
+           
+             &nbsp;  <!--the column must always have content -->
+              
+                       
+                   <apex:include pageName="Community_SearchCaseResults" id="caseSearchResults"  />
+                   
+                    
+                   
+                   
+                        <apex:outputpanel id="messages">
+                        </apex:outputpanel>     
+                       
+            
+            </div>
+        </div>
+    </div>
+  
+</apex:page>

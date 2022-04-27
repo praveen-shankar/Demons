@@ -1,0 +1,213 @@
+<apex:page standardController="Case" extensions="MultilevelDependentPicklist" showHeader="false" sidebar="false" action="{!setDefaultsForHenvendelsestype}"> 
+
+    <apex:form id="picklist" >
+    
+    <apex:pageBlock mode="maindetail" id="viewKodeverk" rendered="{!viewCatSec}">
+    
+        <apex:pageBlockButtons location="top">
+            <apex:commandButton value="{!$Label.cs_Edit}" action="{!toggleCategorySec}" rerender="picklist" rendered="{!viewButton}" />
+            <apex:commandbutton value="Refresh" onclick="refreshActiveTab(false);"/>
+            <!--<apex:commandButton value="Rediger" action="{!toggleCategorySec}" rerender="picklist" rendered="{!viewButton}" />  --> <!--CSphase2, Akash, 21122016--> 
+        </apex:pageBlockButtons>
+     
+        <!--<apex:pageBlockSection columns="1"><!--CSphase2, Akash, 21122016
+            <apex:outputField value="{!viewCase.Category__c}" label="Henvendelsestype"/>
+            <apex:outputField value="{!viewCase.Produkt__c}" label="Produkt" />
+            <apex:outputField value="{!viewCase.reason__c}" label="Årsak 1" />
+            <apex:pageBlockSectionItem ><apex:outputLabel value="Årsak 2"/><apex:outputText value="{!arsak2}"/></apex:pageBlockSectionItem>
+        </apex:pageBlockSection>
+        
+        <apex:pageMessage title="Sakstype er endret" summary="Sakstype er endret i denne saken. Vennligst gjør nødvendige endringer i seksjonen Henvendelsestype." rendered="{!recTypeChanged}"  severity="warning" strength="2" />
+        <apex:pageMessage title="Saken er avsluttet" summary="Vennligst oppdater siden" rendered="{!caseClosed}"  severity="confirm" strength="2"/>
+        <apex:pageMessage title="Felt for å oppdatere" severity="warning" strength="2" summary="{!fieldCheck}" rendered="{!missingReferences}"/>
+        <apex:pageMessage title="Feil" summary="Aktørnummer og produkt kan ikke brukes sammen" rendered="{!productFamilyCheck}" severity="error" strength="2"/>
+-->
+            <apex:pageBlockSection columns="1">
+            <apex:outputField value="{!viewCase.Category__c}" label="{!$Label.cs_EnquiryType}"/>
+            <apex:outputField value="{!viewCase.Produkt__c}" label="{!$Label.cs_Product}" />
+            <apex:outputField value="{!viewCase.reason__c}" label="{!$Label.cs_Cause} 1" />
+            <apex:pageBlockSectionItem ><apex:outputLabel value="{!$Label.cs_Cause} 2"/><apex:outputText value="{!arsak2}"/></apex:pageBlockSectionItem>
+        </apex:pageBlockSection>
+        
+        <apex:pageMessage title="{!$Label.cs_TrackerChanged}" summary="{!$Label.cs_TrackerChangedText}" rendered="{!recTypeChanged}"  severity="warning" strength="2" />
+        <apex:pageMessage title="{!$Label.cs_CaseClosed}" summary="{!$Label.cs_RelaodPage}" rendered="{!caseClosed}"  severity="confirm" strength="2"/>
+        <apex:pageMessage title="{!$Label.cs_FieldToUpdate}" severity="warning" strength="2" summary="{!fieldCheck}" rendered="{!missingReferences}"/>
+        <apex:pageMessage title="{!$Label.cs_Error}" summary="{!$Label.cs_ActorError}" rendered="{!productFamilyCheck}" severity="error" strength="2"/>
+    </apex:pageBlock>
+    
+    <!--
+    <apex:pageBlock mode="maindetail" id="editKodeverk" rendered="{!NOT(viewCatSec)}"><!--CSphase2, Akash, 21122016
+        <apex:pageBlockSection columns="1" showHeader="false" >
+
+            <apex:pageblockSectionItem >
+                <apex:outputLabel value="Henvendelsestype"/>
+                <apex:outputPanel styleClass="requiredInput" layout="block">
+                    <apex:selectList size="1" value="{!eventId}">
+                        <apex:selectoptions value="{!EventOpts}" />
+                        <apex:actionSupport event="onchange" reRender="productFam,product,reason1,reason2"/>
+                    </apex:selectList>
+                    <apex:outputText value="{!noEventMsg}" rendered="{!NOT(ISNULL(noEventMsg))}" style="color:red"/>
+                </apex:outputPanel>
+            </apex:pageblockSectionItem>
+            
+
+
+            <apex:pageblockSectionItem > 
+                <apex:outputLabel value="Produktfamilie / Produkt"/>
+                <apex:outputPanel styleClass="requiredInput" layout="block">
+                <!-- Produkt Eier 
+                    <apex:selectList size="1" value="{!productOwner}" id="productOwner">
+                        <apex:selectoptions value="{!productOwnerOpts}" />
+                        <apex:actionSupport event="onchange" reRender="productFam,product,reason1,reason2"/>
+                    </apex:selectList>
+                    
+                
+                    <apex:selectList size="1" value="{!productFamily}" id="productFam">
+                        <apex:selectoptions value="{!productFamiliesOpts}" />
+                        <apex:actionSupport event="onchange" reRender="product,reason1,reason2"/>
+                    </apex:selectList>
+                    
+                    <apex:selectList size="1" value="{!productId}" id="product">
+                        <apex:selectoptions value="{!productOpts}" />
+                        <apex:actionSupport event="onchange" reRender="reason1,reason2"/>
+                    </apex:selectList>
+                    <apex:outputText value="{!noProductMsg}" rendered="{!NOT(ISNULL(noProductMsg))}" style="color:red"/>
+                </apex:outputPanel>
+            </apex:pageblockSectionItem>
+            
+
+            <apex:pageblockSectionItem >
+                <apex:outputLabel value="Årsak 1"/>
+                <apex:outputPanel styleClass="requiredInput" layout="block">
+                    <apex:selectList size="1" value="{!reason1Id}" id="reason1">
+                        <apex:selectoptions value="{!Reason1Opts}" />
+                        <apex:actionSupport event="onchange" reRender="reason2"/>
+                    </apex:selectList>
+                    <apex:outputText value="{!noReason1Msg}" rendered="{!NOT(ISNULL(noReason1Msg))}" style="color:red"/>
+                </apex:outputPanel>
+            </apex:pageblockSectionItem>
+            
+
+            <apex:pageblockSectionItem >
+                <apex:outputLabel value="Årsak 2"/>
+                <apex:outputPanel styleClass="requiredInput" layout="block">
+                    <apex:selectList size="1" value="{!reason2Id}" id="reason2">
+                        <apex:selectoptions value="{!Reason2Opts}" />
+                        <!-- <apex:actionSupport event="onchange" reRender="arsak"/> 
+                    </apex:selectList>
+                    <apex:outputText value="{!noReason2Msg}" rendered="{!NOT(ISNULL(noReason2Msg))}" style="color:red"/>
+                </apex:outputPanel> 
+            </apex:pageblockSectionItem>
+            
+            <apex:pageMessage title="Ett problem oppstår når saken lukkes" summary="{!stopMessage}" rendered="{!updBeforeClosing}"  severity="error" strength="2" />
+        </apex:pageBlockSection>
+        
+        <apex:pageBlockButtons location="Bottom">
+            <apex:commandbutton value="Lagre" action="{!Save}" rerender="picklist"/>
+            <apex:commandButton value="Lagre og lukk" action="{!SaveAndClose}" rerender="picklist" />
+            <apex:commandbutton value="Avbryt" action="{!toggleCategorySec}" rerender="picklist" />
+        </apex:pageBlockButtons>
+
+    
+    </apex:pageBlock>
+    -->
+    
+    <apex:pageBlock mode="maindetail" id="editKodeverk" rendered="{!NOT(viewCatSec)}">
+        <apex:pageBlockSection columns="1" showHeader="false" >
+
+            <apex:pageblockSectionItem >
+                <apex:outputLabel value="{!$Label.cs_EnquiryType}"/>
+                <apex:outputPanel styleClass="requiredInput" layout="block">
+                    <apex:selectList size="1" value="{!eventId}">
+                        <apex:selectoptions value="{!EventOpts}" />
+                        <apex:actionSupport event="onchange" reRender="productFam,product,reason1,reason2"/>
+                    </apex:selectList>
+                    <apex:outputText value="{!noEventMsg}" rendered="{!NOT(ISNULL(noEventMsg))}" style="color:red"/>
+                </apex:outputPanel>
+            </apex:pageblockSectionItem>
+            
+
+
+            <apex:pageblockSectionItem > 
+                <apex:outputLabel value="{!$Label.cs_ProductF}"/>
+                <apex:outputPanel styleClass="requiredInput" layout="block">
+                <!-- Produkt Eier 
+                    <apex:selectList size="1" value="{!productOwner}" id="productOwner">
+                        <apex:selectoptions value="{!productOwnerOpts}" />
+                        <apex:actionSupport event="onchange" reRender="productFam,product,reason1,reason2"/>
+                    </apex:selectList>
+                    -->
+                <!-- Produkt familie -->
+                    <apex:selectList size="1" value="{!productFamily}" id="productFam">
+                        <apex:selectoptions value="{!productFamiliesOpts}" />
+                        <apex:actionSupport event="onchange" reRender="product,reason1,reason2"/>
+                    </apex:selectList>
+                    <!-- Produkt Navn -->
+                    <apex:selectList size="1" value="{!productId}" id="product">
+                        <apex:selectoptions value="{!productOpts}" />
+                        <apex:actionSupport event="onchange" reRender="reason1,reason2"/>
+                    </apex:selectList>
+                    <apex:outputText value="{!noProductMsg}" rendered="{!NOT(ISNULL(noProductMsg))}" style="color:red"/>
+                </apex:outputPanel>
+            </apex:pageblockSectionItem>
+            
+
+            <apex:pageblockSectionItem >
+                <apex:outputLabel value="{!$Label.cs_Cause} 1"/>
+                <apex:outputPanel styleClass="requiredInput" layout="block">
+                    <apex:selectList size="1" value="{!reason1Id}" id="reason1">
+                        <apex:selectoptions value="{!Reason1Opts}" />
+                        <apex:actionSupport event="onchange" reRender="reason2"/>
+                    </apex:selectList>
+                    <apex:outputText value="{!noReason1Msg}" rendered="{!NOT(ISNULL(noReason1Msg))}" style="color:red"/>
+                </apex:outputPanel>
+            </apex:pageblockSectionItem>
+            
+
+            <apex:pageblockSectionItem >
+                <apex:outputLabel value="{!$Label.cs_Cause} 2"/>
+                <apex:outputPanel styleClass="requiredInput" layout="block">
+                    <apex:selectList size="1" value="{!reason2Id}" id="reason2">
+                        <apex:selectoptions value="{!Reason2Opts}" />
+                        <!-- <apex:actionSupport event="onchange" reRender="arsak"/> -->
+                    </apex:selectList>
+                    <apex:outputText value="{!noReason2Msg}" rendered="{!NOT(ISNULL(noReason2Msg))}" style="color:red"/>
+                </apex:outputPanel> 
+            </apex:pageblockSectionItem>
+            
+            <apex:pageMessage title="{!$Label.cs_Edit}" summary="{!stopMessage}" rendered="{!updBeforeClosing}"  severity="error" strength="2" />
+        </apex:pageBlockSection>
+        
+        <apex:pageBlockButtons location="Bottom">
+            <apex:commandbutton value="{!$Label.cs_Save}" action="{!Save}" rerender="picklist"/>
+            <apex:commandButton value="{!$Label.cs_Save_and_close}" action="{!SaveAndClose}" rerender="picklist" rendered="{!Notlightuser}"/>
+            <apex:commandbutton value="{!$Label.cs_Cancel}" action="{!toggleCategorySec}" rerender="picklist" />
+        </apex:pageBlockButtons>
+
+    
+    </apex:pageBlock>
+    </apex:form>
+    
+    
+    
+    <apex:includeScript value="/support/console/40.0/integration.js"/>
+    <script type="text/javascript">
+    
+    // Script to refresh tab after we save values
+    function refreshActiveTab(act) {
+        if (sforce.console.isInConsole()) {
+            sforce.console.getFocusedPrimaryTabId(function(result) {
+                var tabid = result.id;
+                if (!act) {
+                    sforce.console.refreshPrimaryTabById(tabid, true, function(res) {}, true);
+                } else {
+                    sforce.console.closeTab(tabid);
+                }
+            });
+        } else {
+            //top.location.href = "/{!Case.Id}";;
+        }
+    }
+    
+</script>
+</apex:page>

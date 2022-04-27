@@ -1,0 +1,250 @@
+<aura:component controller="AccountCustomViewCltr"  implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome">
+    <ltng:require styles="{!join(',',$Resource.UDT_SLDS + '/assets/styles/salesforce-lightning-design-system-ltng.css')}" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute type="Integer" name="pageNumber" default="1" />
+    <aura:attribute type="Integer" name="maxPage" default="1" />
+     <aura:attribute type="Integer" name="totalRecords" default="0" />
+    <aura:attribute type="String" name="sortField" />
+    <aura:attribute type="Boolean" name="sortAsc" />
+    <aura:handler name="change"  value="{!v.pageNumber}" action="{!c.renderPage}" />
+    <aura:attribute name="AccountsPagination" type="Account[]"/>
+    <aura:attribute name="AllAccounts" type="Account[]"/> 
+     <br></br>
+    <div class="slds">
+        <div class="slds-page-header noborderbottom" role="banner"> 
+            <div class="slds-grid">
+                <div class="slds-col slds-truncate" >
+                    <lightning:icon iconName="action:new_account" size="medium" alternativeText="Shows My Customers" /> <b> My Customers </b> 
+                </div>
+                 <div style="padding:15px;font-size:14px;font-weight:bold;float:right;">Total records: {!v.totalRecords}</div>
+                   
+            </div>
+        </div>   
+    </div>  
+    
+    <div class="slds">
+        <div style="padding:10px;">
+        <c:PaginationComponent currentPageNumber="{!v.pageNumber}" maxPageNumber="{!v.maxPage}" /> 
+        </div>
+        <table class="slds-table slds-table--cell-buffer slds-table_fixed-layout slds-max-medium-table--stacked">
+            <thead>
+                <tr class="slds-text-heading--label">
+                   
+                    <th scope="col" class="nobordertop slds-is-resizable" aria-label="Account Name" title="Name" style="width:350px;">
+                        <div onclick="{!c.sortByName}"
+                             class="slds-truncate"
+                             title="Name">Name      
+                            <aura:if isTrue="{!v.sortField=='Name'}">
+                                <span>
+                                    <aura:if isTrue="{!v.sortAsc}">
+                                        &#8593;
+                                        <aura:set attribute="else">
+                                            &#8595;
+                                        </aura:set>
+                                    </aura:if>
+                                </span>
+                            </aura:if>
+                        </div>
+                        <div class="slds-resizable">
+          <input type="range" min="20" max="1000" aria-label="Account Name" class="slds-resizable__input slds-assistive-text" id="cell-resize-handle-37" tabindex="-1" />
+          <span class="slds-resizable__handle">
+            <span class="slds-resizable__divider"></span>
+          </span>
+        </div>
+                        
+                    </th>
+                    <th scope="col" class="nobordertop slds-is-resizable" title="Organization No">
+                        <div onclick="{!c.sortByorga}"
+                             class="slds-truncate"
+                             title="Organization No">
+                            Organization No
+                            <aura:if isTrue="{!v.sortField=='Orga__c'}">
+                                <span>
+                                    <aura:if isTrue="{!v.sortAsc}">
+                                        &#8593;
+                                        <aura:set attribute="else">
+                                            &#8595;
+                                        </aura:set>
+                                    </aura:if>
+                                </span>
+                            </aura:if>
+                            
+                        </div>   
+                        <div class="slds-resizable">
+          <input type="range" min="20" max="1000" aria-label="OrgNO" class="slds-resizable__input slds-assistive-text" id="cell-resize-handle-37" tabindex="-1" />
+          <span class="slds-resizable__handle">
+            <span class="slds-resizable__divider"></span>
+          </span>
+        </div>
+                    </th>
+                    <aura:if isTrue="{!$Browser.isDesktop}"> 
+                    <th scope="col" class="nobordertop" title="Company Group name">
+                        <div  onclick="{!c.sortBycompanyName}"
+                             class="slds-truncate"
+                             title="Company Group name">
+                            Company Group name
+                            <aura:if isTrue="{!v.sortField=='crm_Company_Group_Name__c'}">
+                                <span>
+                                    <aura:if isTrue="{!v.sortAsc}">
+                                        &#8593;
+                                        <aura:set attribute="else">
+                                            &#8595;
+                                        </aura:set>
+                                    </aura:if>
+                                </span>
+                            </aura:if>
+                        </div>   
+                    </th>
+                                        
+                    <th scope="col" class="nobordertop" title="Postcode">
+                        <div onclick="{!c.sortByPostcode}"
+                             class="slds-truncate"
+                             title="Postcode">
+                            Postcode
+                            <aura:if isTrue="{!v.sortField=='crm_bus_addr_Zip_Code__c'}">
+                                <span>
+                                    <aura:if isTrue="{!v.sortAsc}">
+                                        &#8593;
+                                        <aura:set attribute="else">
+                                            &#8595;
+                                        </aura:set>
+                                    </aura:if>
+                                </span>
+                            </aura:if>
+                            
+                        </div>   
+                    </th>   
+                    
+                    <th scope="col" class="nobordertop" title="City">
+                        <div onclick="{!c.sortByCity}"
+                             class="slds-truncate"
+                             title="City">
+                            City
+                            <aura:if isTrue="{!v.sortField=='crm_bus_addr_City__c'}">
+                                <span>
+                                    <aura:if isTrue="{!v.sortAsc}">
+                                        &#8593;
+                                        <aura:set attribute="else">
+                                            &#8595;
+                                        </aura:set>
+                                    </aura:if>
+                                </span>
+                            </aura:if>
+                        </div>   
+                    </th>
+                    
+                    <th scope="col" class="nobordertop" title="No of Department">
+                        <div onclick="{!c.sortByNoofDept}"
+                             class="slds-truncate"
+                             title="No of Department">
+                            No of Department
+                            <aura:if isTrue="{!v.sortField=='crm_Count_of_Relation_level_Accounts__c'}">
+                                <span>
+                                    <aura:if isTrue="{!v.sortAsc}">
+                                        &#8593;
+                                        <aura:set attribute="else">
+                                            &#8595;
+                                        </aura:set>
+                                    </aura:if>
+                                </span>
+                            </aura:if>
+                        </div>   
+                    </th>
+                          </aura:if>
+                    <th scope="col" class="nobordertop" title="Revenue This Yr ( NOK )">
+                        <div onclick="{!c.sortByRevThisYr}"
+                             class="slds-truncate"
+                             title="Revenue This Yr ( NOK )">
+                            Revenue This Yr ( NOK )
+                            <aura:if isTrue="{!v.sortField=='crm_Revenue_This_Year__c'}">
+                                <span>
+                                    <aura:if isTrue="{!v.sortAsc}">
+                                        &#8593;
+                                        <aura:set attribute="else">
+                                            &#8595;
+                                        </aura:set>
+                                    </aura:if>
+                                </span>
+                            </aura:if>
+                        </div>   
+                    </th>
+                    <aura:if isTrue="{!$Browser.isDesktop}"> 
+                    <th scope="col" class="nobordertop" title="Revenue Last Yr ( NOK )">
+                        <div onclick="{!c.sortByRevLastYr}"
+                             class="slds-truncate"
+                             title="Revenue Last Yr ( NOK )">
+                            Revenue Last Yr ( NOK )
+                            <aura:if isTrue="{!v.sortField=='crm_Revenue_Last_Year__c'}">
+                                <span>
+                                    <aura:if isTrue="{!v.sortAsc}">
+                                        &#8593;
+                                        <aura:set attribute="else">
+                                            &#8595;
+                                        </aura:set>
+                                    </aura:if>
+                                </span>
+                            </aura:if>
+                        </div>   
+                    </th>
+                    </aura:if>  
+                </tr>
+            </thead>
+            <tbody>
+                <aura:iteration items="{!v.AllAccounts}" var="item">     
+                    <tr>
+                        <td  title="{!item.Name}" class="nobordertop">
+                            <div class="slds-truncate">
+                                <aura:if isTrue="{!$Browser.isDesktop}">
+                                        <a href="{!'/'+ item.Id}" target="_blank">{!item.Name}</a>
+                                        <aura:set attribute="else">
+                                         <a target="_blank" data-record="{!item.Id}" onclick="{!c.redirectToSobject}">{!item.Name}</a>   
+                                        </aura:set>
+                                </aura:if>
+                            </div>
+                        </td>
+                        
+                        <td  title="Organization No" class="nobordertop">
+                            <div class="slds-truncate">{!item.Orga__c}</div>
+                        </td>
+                        <aura:if isTrue="{!$Browser.isDesktop}"> 
+                        <td  title="Company Group name" class="nobordertop">
+                            <div class="slds-truncate">{!item.crm_Company_Group_Name__c}</div>
+                        </td> 
+                        
+                        <td title="Postcode" class="nobordertop">
+                            <div class="slds-truncate">{!item.crm_bus_addr_Zip_Code__c}</div>
+                        </td>  
+                        <td title="City" class="nobordertop">
+                            <div class="slds-truncate">{!item.crm_bus_addr_City__c}</div>
+                        </td>
+                        <td title="No of Dept" class="nobordertop"> 
+                            <div class="slds-truncate">{!item.crm_Count_of_Relation_level_Accounts__c}</div>
+                        </td>
+                        </aura:if>
+                        <td title="Rev This Yr" class="nobordertop">
+                            <div class="slds-truncate">
+                                <ui:outPutNumber aura:id="myNumberFormat" format="##,###,###" value="{!item.crm_Revenue_This_Year__c}"/>
+                                
+                            </div>
+                        </td>
+                        <aura:if isTrue="{!$Browser.isDesktop}"> 
+                        <td title="Rev Last Yr" class="nobordertop">
+                            <div class="slds-truncate">
+                                <ui:outPutNumber aura:id="myNumberFormat" format="##,###,###" value="{!item.crm_Revenue_Last_Year__c}"/>
+                               
+                            </div>
+                        </td>
+                        </aura:if>
+                        
+                        
+                    </tr>
+                </aura:iteration>
+            </tbody>
+        </table>
+        <div style="padding:10px;">
+        <c:PaginationComponent currentPageNumber="{!v.pageNumber}" maxPageNumber="{!v.maxPage}" />
+        </div>
+    </div>
+    
+    
+</aura:component>

@@ -1,0 +1,6 @@
+<apex:page >
+  <apex:form >
+  <h1>{!$Label.crm_No_Opp_for_Agr}</h1>
+  <apex:commandButton action="/{!$Currentpage.parameters.agr}" value="Back To Agreement"/>
+  </apex:form>
+</apex:page>

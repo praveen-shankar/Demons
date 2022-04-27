@@ -1,0 +1,30 @@
+<aura:component >
+    <aura:attribute Name="selItem" type="object"  access="public" /> 
+   
+    <div class="slds slds-table_fixed-layout">
+        <div class="slds-grid slds-wrap">
+            <c:userLookupTrial objectName="User"
+                          field_API_text="Name"
+                          field_API_val="Id"
+                          limit="4"
+                          field_API_search="Name"
+                          lookupIcon="standard:User" 
+                          selItem="{!v.selItem}" 
+                          placeholder="Enter user name"
+                          />  
+                
+               <!-- <aura:if isTrue="{! not(empty(v.selItem)) }"> 
+                    <br />
+                    This is Parent Lightning component <br />
+                    Item Selected : <br />
+                    ID - {#v.selItem.val} <br /> 
+                    Text - {#v.selItem.text}<br />
+                    Object - {#v.selItem.objName}<br />
+                     managerid - {#v.selItem.managerid}
+                </aura:if> -->
+           
+         
+        </div>
+    </div>
+    
+</aura:component>

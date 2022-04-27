@@ -1,0 +1,77 @@
+<aura:component controller="cs_TransactionsToBeApproved" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome">
+	 <aura:attribute name="getTransactionsToBeApproved" type="List"/>
+     <aura:attribute name="showerror" type="Boolean"/>
+      <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+        <aura:attribute name="isSelectAll" type="boolean" default="false"/>
+     <div class="slds" style="background-color:white">
+         <aura:if isTrue="{!v.showerror}"> 
+        <div style="width:100%;height:60px;padding:20px">
+          {!$Label.c.No_Records_To_Be_Approved}  </div>
+         
+        </aura:if>
+          
+           <aura:if isTrue="{!!v.showerror}">
+		 <div class="slds-card__header slds-grid" style="font-size:14px" >
+               <strong>{!$Label.c.Records_To_Be_Approved}</strong></div>
+       
+            <br/>
+          <ui:scrollerWrapper class="wrapui"> 
+ 
+		 <table class="slds-table slds-table_bordered slds-table_striped slds-table_cell-buffer slds-table_fixed-layout">
+           <thead>
+            <tr> <!-- class="slds-text-heading_label"-->
+                     
+               <aura:if isTrue="{!v.getTransactionsToBeApproved.length>1}"> 
+              <th width="5%"> <ui:inputCheckbox aura:id="selectAllvalues" change= "{!c.selectall}" value="{!v.isSelectAll}"/> </th>
+                </aura:if>
+                  <aura:if isTrue="{!v.getTransactionsToBeApproved.length==1}">  
+                      <th width="5%"></th>
+                </aura:if>
+             
+              <th scope="col"><div  title="{!$Label.c.mon_Total_sum}" class="slds-text-heading--label slds-truncate">{!$Label.c.mon_Total_sum}</div></th>
+              <th scope="col"><div  title="{!$Label.c.mon_Amount_claimed}" class="slds-text-heading--label slds-truncate">{!$Label.c.mon_Amount_claimed}</div></th>
+              <th scope="col"><div  title="{!$Label.c.mon_Product}" class="slds-text-heading--label slds-truncate">{!$Label.c.mon_Product}</div></th>
+              <th scope="col"><div  title="{!$Label.c.mon_Account_Name}" class="slds-text-heading--label slds-truncate">{!$Label.c.mon_Account_Name}</div></th>
+              <th scope="col"><div  title="{!$Label.c.mon_Case_number}" class="slds-text-heading--label slds-truncate">{!$Label.c.mon_Case_number}</div></th>
+              <th scope="col"><div  title="{!$Label.c.mon_Transaction_No}" class="slds-text-heading--label slds-truncate">{!$Label.c.mon_Transaction_No}</div></th>
+              <th scope="col"><div  title="{!$Label.c.mon_Closing_code}" class="slds-text-heading--label slds-truncate">{!$Label.c.mon_Closing_code}</div></th>
+              <th scope="col"><div  title="{!$Label.c.mon_Submitted_By}" class="slds-text-heading--label slds-truncate">{!$Label.c.mon_Submitted_By}</div></th>
+              <th scope="col"><div  title="{!$Label.c.mon_Date_sent_for_Approval}" class="slds-text-heading--label slds-truncate">{!$Label.c.mon_Date_sent_for_Approval}</div></th>
+             
+            </tr>
+          </thead>
+          <tbody>
+             <aura:iteration items="{!v.getTransactionsToBeApproved}" var="trans">
+			   
+			   <tr>
+          
+                  <td style="width:8px">   <ui:inputCheckbox aura:id="selectedvalue" name="{!trans.Id}" value="{!trans.selected}"/></td>  
+                   
+                  
+                     <td class="slds-truncate" title="{!trans.totalSum}">{!trans.totalSum}</td>
+                   <td class="slds-truncate" title="{!trans.claimedAmount}">{!trans.claimedAmount}</td>
+                     <td class="slds-truncate" title="{!trans.productname}">{!trans.productname}</td>
+                    <td class="slds-truncate" title="{!trans.accountName}">{!trans.accountName}</td>
+                    <td class="slds-truncate" title="{!trans.caseno}">{!trans.caseno}</td>
+                    <td class="slds-truncate" title="{!trans.name}">{!trans.name}</td>
+                   <td class="slds-truncate" title="{!trans.closingcode}">{!trans.closingcode}</td>
+                   <td class="slds-truncate" title="{!trans.originalActor.Name}">{!trans.originalActorId}</td>
+                    <td class="slds-truncate" title="{!trans.DateSubmited}">{!trans.DateSubmited}</td>
+                   
+                    <!--<td class="slds-truncate" title="{!trans.Date_Requested_On__c}">{!trans.Requesteddate}</td>-->
+                   </tr>
+                  
+                        </aura:iteration>
+         </tbody>
+            </table> 
+               </ui:scrollerWrapper>
+                 <footer class="slds-modal__footer slds-modal__footer_directional"> 
+                <lightning:buttonGroup >
+                   
+                <lightning:button variant="neutral" label="{!$Label.c.mon_Approve_Records}" iconName="utility:save" onclick="{!c.approverecords}"/>
+                      <lightning:button variant="neutral" label="{!$Label.c.mon_Reject_Records}" iconName="utility:save" onclick="{!c.rejectrecords}"/>
+       </lightning:buttonGroup> 
+            </footer>
+          </aura:if>
+    </div>
+</aura:component>

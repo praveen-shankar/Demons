@@ -1,0 +1,103 @@
+<aura:component controller="crm_NewCreateSegment" implements="force:lightningQuickActionWithoutHeader,force:hasRecordId,force:hasSObjectName" access="public" >
+   
+   <aura:attribute name="errorLogs" type="List"/>
+   <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+   <!--Attributes Declaration Starts Here-->
+   <aura:attribute name="OpportunitiesServiceGroup" type="List"/>
+   <aura:attribute name="responsibleselleroptions" type="List"/>
+   <!--For Checkbox -->
+   <aura:attribute name="OppServiceGrpSearchKey" type="Boolean" default="false"/>
+   <!--Picklist Attributes Starts Here -->
+   <aura:attribute name="opportunityRecord" type="Opportunity" default="{'sObjectType':'Opportunity','FirstName':'','LastName':'','Email':''}"/>
+   <!--Picklist Attributes Ends Here -->
+   <!--Attributes Declaration Ends Here -->
+    
+   <!--Page Container Starts Here -->
+   <div class="container">
+      <!--Header Starts Here-->
+      <div class="header-container">
+         <div>
+            <span>
+               <lightning:icon iconName="action:add_file" size="medium" alternativeText="Set Responsible Seller" />
+            </span>
+            <span class="seller-label"><b>Set Responsible Seller</b></span>
+         </div>
+      </div>
+      <!--Header Ends Here -->
+       
+      <!--Top Error Container Starts Here -->       
+      <div class="error-container">
+         <lightning:notificationsLibrary aura:id="notifLib"/>
+         <br/>
+         <div class="slds-text-color_error" style="width:100%; color:red;">
+            <aura:if isTrue="{!v.errorLogs.length>0}">
+               Responsible Seller record already created for service group 
+               <aura:iteration items="{!v.errorLogs}" var="error">
+                  <div class="slds-text-color_error" style="color:red;">
+                     {!error}
+                  </div>
+               </aura:iteration>
+            </aura:if>
+         </div>
+      </div>
+      <!--Error Container Ends Here -->
+       
+      <!--Table Container Starts Here -->
+      <div class="table-container">
+          <h2>Select Opportunity Service Group And Proposed Seller</h2>
+         <table class="slds-table slds-table_cell-buffer slds-table_bordered record-table">
+            <thead>
+               <tr class="slds-line-height_reset">
+                  <th class="slds-text-title_caps slds-clearfix" scope="col">
+                     <div class="slds-grid slds-wrap">
+                        <div class="slds-col slds-size_6-of-12">
+                           <span>Select Service Group</span>
+                        </div>
+                        <div class="slds-col slds-size_6-of-12">
+                           <span>Proposed Sales Responsible</span>
+                        </div>
+                     </div>
+                  </th>
+               </tr>
+            </thead>
+            <tbody>
+               <tr>
+                  <td>
+                     <aura:iteration items="{!v.OpportunitiesServiceGroup}" var="sg" indexVar="key">
+                        <c:NewLoadSegment serviceGroup= "{!sg.value}"  serviceGroupKey = "{!sg.key}" aura:id="segment" />
+                     </aura:iteration>
+                  </td>
+               </tr>
+            </tbody>
+         </table>
+      </div>
+      <!--Table Container Ends Here -->
+       
+       <!--Bottom Error Container Starts Here -->       
+      <div class="error-container">
+         <lightning:notificationsLibrary aura:id="notifLib1"/>
+         <br/>
+         <div class="slds-text-color_error" style="width:100%; color:red;">
+            <aura:if isTrue="{!v.errorLogs.length>0}">
+                Responsible Seller record already created for service group 
+               <aura:iteration items="{!v.errorLogs}" var="error">
+                  <div class="slds-text-color_error" style="color:red;">
+                     {!error}
+                  </div>
+               </aura:iteration>
+            </aura:if>
+         </div>
+      </div>
+      <!--Error Container Ends Here -->
+       
+      <!--Footer Buttons Starts Here -->
+      <div class="footer-container slds-float_right">
+         <lightning:button label="Save" iconName="utility:save" iconPosition="left"
+            onclick="{!c.save}"/>
+         <lightning:button label="Cancel" iconName="utility:clear" iconPosition="left"
+            onclick="{!c.cancel}"/>
+      </div>
+      <!--Footer Buttons Ends Here -->
+   </div>
+   <!--Page Container Ends Here -->	
+</aura:component>

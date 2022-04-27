@@ -1,0 +1,14 @@
+<aura:component implements="lightning:availableForFlowScreens" access="global" >
+    
+    <aura:attribute name="value" type="String" />
+    <aura:attribute name="action" type="String" />
+   
+    <div class="slds-p-top_large slds-p-bottom_large slds-align_absolute-center">
+        <lightning:buttongroup >
+    
+            <lightning:button label="Save" aura:id="saveId" 
+                              variant="brand-outline" onclick="{!c.handleChange}"/>
+
+        </lightning:buttongroup>
+    </div>
+</aura:component>

@@ -1,0 +1,10 @@
+<aura:event type="COMPONENT">
+	<aura:attribute name="disableSave" type="Boolean" default="false"/>
+    <aura:attribute name="minpriceissueAS" type="Boolean" default="false"/>
+    <aura:attribute name="discountissueAS" type="Boolean" default="false"/>
+    <aura:attribute name="minweightissueAS" type="Boolean" default="false"/>
+    <aura:attribute name="maxweightissueAS" type="Boolean" default="false"/>
+    <aura:attribute name="minweightgreater" type="Boolean" default="false"/>
+    <aura:attribute name="standardUnitPriceIssue" type="Boolean" default="false"/>
+    <aura:attribute name="UnitPriceValidAS" type="Boolean" default="false"/>    
+</aura:event>

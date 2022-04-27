@@ -1,0 +1,16 @@
+<apex:page standardController="ProcessSupport__c" extensions="ProcessSupportCustomExtension" showHeader="false" sidebar="false" action="{!loadData}">
+    <apex:pageBlock title="{!$Label.cs_Processt_tte}">
+        
+    <apex:pageBlockSection title="{!SupportName}">
+        {!SupportDescription}
+    </apex:pageBlockSection>
+    
+    <apex:pageBlockSection title="{!$Label.cs_processSupport}">
+        <apex:dataTable value="{!ProcessSupports}" var="prc">
+        <apex:column headerValue="{!$Label.cs_amne}" >
+                    <apex:outputLink value="/apex/processSupport?subject={!prc.Name}">{!prc.Name}</apex:outputLink>
+        </apex:column>
+    </apex:dataTable> 
+    </apex:pageBlockSection>
+    </apex:pageBlock>
+</apex:page>

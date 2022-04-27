@@ -1,0 +1,15 @@
+<apex:page showHeader="false" sidebar="false" controller="CustomerSearch_chooseSearchType">
+    <apex:form >
+        <apex:pageBlock >
+            <apex:outputText >
+                Forretningsområde er ikke satt på saken så KATS vet ikke hvilke søkeside man skal gå til.
+                Vennligst velg et alternativ.
+            </apex:outputText>
+            <apex:pageBlockButtons location="bottom">
+                <apex:commandButton action="{!goToPrivateSearch}" value="Gå til privatsøk"/>
+                <apex:commandButton action="{!goToBusinessSearch}" value="Gå til bedriftssøk"/>
+                <apex:commandButton action="{!goToCase}" value="Gå til sak" rendered="{!NOT(caseId == '')}"/>
+            </apex:pageBlockButtons>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

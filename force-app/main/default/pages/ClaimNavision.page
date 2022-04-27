@@ -1,0 +1,31 @@
+<apex:page showHeader="false" standardController="Monetary_Transaction__c">
+
+    <apex:form >
+    
+    <!--
+    //CSphase2, Akash, 16122016 
+    <apex:pageBlock title="Hjelpeside for utfylling av transaksjoner i Navison" mode="detail">
+            <apex:pageblockButtons >
+                <apex:commandButton onClick="window.top.close();"  value="Avslutt" />
+            </apex:pageblockButtons>
+            <apex:pageBlockSection title="Information relatert til saken">
+    -->
+    <!--// CS-Phase2- 03/01/2017- Akshata Asukar-Replaced all occurances of Account.party_number__c with Account.crm_customer_number__c-->
+        <apex:pageBlock title="{!$Label.cs_TransactionTitle}" mode="detail">
+            <apex:pageblockButtons >
+                <apex:commandButton onClick="window.top.close();"  value="{!$Label.cs_Exit}" />
+            </apex:pageblockButtons>
+            <apex:pageBlockSection title="{!$Label.cs_TransactionSubTitle}">
+                <apex:outputField value="{!Monetary_Transaction__c.Case__r.Subject}"/>
+                <apex:outputField value="{!Monetary_Transaction__c.Case__r.Account.Name}"/>
+                <apex:outputField value="{!Monetary_Transaction__c.Case__r.CaseNumber}"/>
+                <apex:outputField value="{!Monetary_Transaction__c.Case__r.Account.crm_Customer_Number__c}"/>
+                <apex:outputField value="{!Monetary_Transaction__c.Form_of_Transaction__c}"/>
+                <apex:outputField value="{!Monetary_Transaction__c.Contact__c}"/>
+                <apex:outputField value="{!Monetary_Transaction__c.Case__r.Shipment_number__c}"/>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+            
+    <apex:relatedList list="Monetary_Transaction_Line_Items__r" />
+</apex:page>

@@ -1,0 +1,165 @@
+<apex:page standardController="Contact" extensions="crm_createcontactcontroller" tabStyle="Contact" language="{!language}">
+
+<apex:form >
+
+<apex:pageBlock title="{!$Label.crm_Contacts_edit}" rendered="{!hasDuplicateContact}">
+<apex:outputText value="{!message}" style="color:red;font-size: small;/* align-items: initial; */margin-left: 30%;font-weight: 700;" ></apex:outputText>
+
+    <apex:pageBlockTable value="{!DuplicateContact}" var="item">
+        <apex:column >
+            <apex:facet name="header">Name</apex:facet>
+            <apex:outputLink value="/{!item['Id']}" target="_blank">{!item['Name']}</apex:outputLink>
+        </apex:column>
+        <apex:column >
+            <apex:facet name="header">Email</apex:facet>
+            <apex:outputField value="{!item['Email']}"/>
+        </apex:column>
+       
+         <apex:column >
+            <apex:facet name="header">Last Modified Date</apex:facet>
+            <apex:outputField value="{!item['LastModifiedDate']}"/>
+        </apex:column>
+    </apex:pageBlockTable>
+    <apex:pageBlockButtons location="top">
+    <apex:commandButton value="Save(Ignore Alert)" action="{!saveDuplicate}" />
+<apex:commandButton value="Cancel" action="{!Cancel}"/>
+    </apex:pageBlockButtons> 
+</apex:pageBlock>
+{!con.RecordTypeid}
+<apex:pageblock >
+<apex:pageMessages ></apex:pageMessages>
+<apex:pageblockSection title="{!$Label.crm_Contacts_edit}" >
+
+<apex:pageblockSectionItem >
+ <apex:outputLabel value="{!$ObjectType.Contact.fields.Firstname.Label}" />
+<apex:inputField value="{!con.firstName}"></apex:inputField> 
+</apex:pageblockSectionItem>
+
+<apex:pageblockSectionItem >
+ <apex:outputLabel value="Phone" />
+<apex:inputField value="{!con.Phone}"></apex:inputField>
+</apex:pageblockSectionItem>
+
+<apex:pageblockSectionItem >
+ <apex:outputLabel value="{!$ObjectType.Contact.fields.LastName.Label}" />
+<apex:inputField value="{!con.LastName}"></apex:inputField>
+</apex:pageblockSectionItem>
+
+<apex:pageblockSectionItem >
+ <apex:outputLabel value="Mobile" />
+<apex:inputField value="{!con.MobilePhone}"></apex:inputField>
+</apex:pageblockSectionItem>
+
+<apex:pageblockSectionItem >
+ <apex:outputLabel value="Customer Name" />
+ <apex:outputPanel styleClass="requiredInput" layout="block" id="pwPanel1" > 
+ <apex:outputPanel styleClass="requiredBlock"/>
+<apex:selectList value="{!relationaccountid}" size="1"  required="true" multiselect="false">
+<apex:selectOptions value="{!Accounts}"></apex:selectOptions>
+</apex:selectList>
+</apex:outputPanel>
+</apex:pageblockSectionItem>
+
+
+<apex:pageblockSectionItem >
+ <apex:outputLabel value="{!$ObjectType.Contact.fields.Email.Label}" />
+<apex:inputField value="{!con.Email}" required="true"></apex:inputField>
+</apex:pageblockSectionItem>
+
+
+<apex:pageblockSectionItem >
+ <apex:outputLabel value="{!$ObjectType.Contact.fields.crm_Has_agreed_to_Marketing_actvities__c.Label}" />
+<apex:inputField value="{!con.crm_Has_agreed_to_Marketing_actvities__c}"></apex:inputField>
+</apex:pageblockSectionItem>
+<apex:pageblockSectionItem >
+ <apex:outputLabel value="{!$ObjectType.Contact.fields.crm_No_to_Marketing_activities__c.Label}" />
+<apex:inputField value="{!con.crm_No_to_Marketing_activities__c}"></apex:inputField>
+</apex:pageblockSectionItem>
+
+</apex:pageblockSection>
+<apex:pageblockSection title="Sales">
+<apex:pageblockSectionItem >
+ <apex:outputLabel value="{!$ObjectType.Contact.fields.Status__c.Label}" />
+<apex:inputField value="{!con.Status__c}" required="true"></apex:inputField>
+</apex:pageblockSectionItem>
+
+<apex:pageblockSectionItem >
+ <apex:outputLabel value="{!$ObjectType.Contact.fields.crm_Source__c.Label}" />
+<apex:inputField value="{!con.crm_Source__c}"></apex:inputField>
+</apex:pageblockSectionItem>
+
+<apex:pageblockSectionItem >
+ <apex:outputLabel value="{!$ObjectType.Contact.fields.crm_function_working_area__c.Label}" />
+<apex:inputField value="{!con.crm_function_working_area__c}"></apex:inputField>
+</apex:pageblockSectionItem>
+
+<apex:pageblockSectionItem >
+ <apex:outputLabel value="{!$ObjectType.Contact.fields.crm_functional_decision_level__c.Label}" />
+<apex:inputField value="{!con.crm_functional_decision_level__c}"></apex:inputField>
+</apex:pageblockSectionItem>
+
+
+<apex:pageblockSectionItem >
+ <apex:outputLabel value="{!$ObjectType.Contact.fields.crm_contact_Interested_Courier_Express__c.Label}" />
+<apex:inputField value="{!con.crm_contact_Interested_Courier_Express__c}"></apex:inputField>
+</apex:pageblockSectionItem>
+
+
+<apex:pageblockSectionItem >
+ <apex:outputLabel value="{!$ObjectType.Contact.fields.crm_contact_Interested_in_Direct_Marketi__c.Label}" />
+<apex:inputField value="{!con.crm_contact_Interested_in_Direct_Marketi__c}"></apex:inputField>
+</apex:pageblockSectionItem>
+
+
+<apex:pageblockSectionItem >
+ <apex:outputLabel value="{!$ObjectType.Contact.fields.crm_contact_Interested_in_Domestic_trans__c.Label}" />
+<apex:inputField value="{!con.crm_contact_Interested_in_Domestic_trans__c}"></apex:inputField>
+</apex:pageblockSectionItem>
+
+<apex:pageblockSectionItem >
+ <apex:outputLabel value="{!$ObjectType.Contact.fields.crm_contact_Interested_in_ecommerce__c.Label}" />
+<apex:inputField value="{!con.crm_contact_Interested_in_ecommerce__c}"></apex:inputField>
+</apex:pageblockSectionItem>
+
+<apex:pageblockSectionItem >
+ <apex:outputLabel value="{!$ObjectType.Contact.fields.crm_contact_interested_in_International__c.Label}" />
+<apex:inputField value="{!con.crm_contact_interested_in_International__c}"></apex:inputField>
+</apex:pageblockSectionItem>
+
+<apex:pageblockSectionItem >
+ <apex:outputLabel value="{!$ObjectType.Contact.fields.crm_contact_Interested_in_Mail__c.Label}" />
+<apex:inputField value="{!con.crm_contact_Interested_in_Mail__c}"></apex:inputField>
+</apex:pageblockSectionItem>
+
+<apex:pageblockSectionItem >
+ <apex:outputLabel value="{!$ObjectType.Contact.fields.crm_contact_Interested_in_Thermo_service__c.Label}" />
+<apex:inputField value="{!con.crm_contact_Interested_in_Thermo_service__c}"></apex:inputField>
+</apex:pageblockSectionItem>
+
+
+<apex:pageblockSectionItem >
+ <apex:outputLabel value="{!$ObjectType.Contact.fields.crm_contact_Interested_in_Warehousing__c.Label}" />
+<apex:inputField value="{!con.crm_contact_Interested_in_Warehousing__c}"></apex:inputField>
+</apex:pageblockSectionItem>
+
+
+</apex:pageblockSection>
+
+
+<apex:pageblockSection title="Description Information">
+<apex:pageblockSectionItem >
+<apex:outputLabel value="Description" />
+<apex:inputField value="{!con.Description}" style="width: 400px; height: 80px"></apex:inputField>
+</apex:pageblockSectionItem>
+</apex:pageblockSection>
+
+
+
+<apex:pageBlockButtons rendered="{!!hasduplicatecontact}" >
+<apex:commandButton value="Save" action="{!saveContact}" />
+<apex:commandButton value="Cancel" action="{!Cancel}"/>
+</apex:pageBlockButtons>
+</apex:pageblock>
+
+</apex:form> 
+</apex:page>

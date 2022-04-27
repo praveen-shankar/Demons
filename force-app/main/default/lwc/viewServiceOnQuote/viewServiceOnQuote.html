@@ -1,0 +1,119 @@
+<template>
+
+        <lightning-accordion allow-multiple-sections-open
+                             onsectiontoggle={toggleSectionHandleW3web}
+                             active-section-name={activeSections} style="margin-bottom: 1cm;">
+                             
+            <lightning-accordion-section name="ServiceOverview" label="Service Overview " style="margin-bottom: 1ch;">
+                <div style="height: 400px;">
+                <lightning-card>
+                    <div style="height:450px; overflow:auto !important;">
+                <div class="slds-clearfix" style="background-color:rgb(180, 217, 241);"><lightning-button label="Add QuoteLine Items" class="slds-m-around_medium slds-float_right" style="margin-top: 0.2em;margin-bottom: 0.2em;margin-left: 0.1em;" onclick={openModal}></lightning-button><lightning-button class="delete-button-all  slds-float_right" style="margin-right: 1em;margin-left: 1em;margin-top: 0.2em;margin-bottom: 0.2em;" label="Delete" variant="brand" onclick={delActualSer}><div> </div></lightning-button><lightning-button class="clone-button slds-float_right" style="margin-top: 0.2em;margin-bottom: 0.2em;" label="Clone" variant="brand" onclick={cloneProductsAndServices}></lightning-button></div>
+    <div class="slds-grid slds-gutters" style="background-color:rgb(180, 217, 241);margin: 2em;">
+      
+        <!--This Code is for modal popup starts-->
+        <!-- <lightning-button variant="brand"
+        label="What is Modal/PopUp in LWC?"
+        title="What is Modal/PopUp in LWC?"
+        onclick={openModal}
+        class="slds-m-left_x-small">
+     </lightning-button> -->
+     <!--Use template if:true to display/hide popup based on isModalOpen value--> 
+     <template if:true={isModalOpen}>
+         <!-- Modal/Popup Box LWC starts here -->
+         <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+             <div class="slds-modal__container">
+                 <!-- Modal/Popup Box LWC header here -->
+                 <header class="slds-modal__header">
+                     <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={closeModal}>
+                         <lightning-icon icon-name="utility:close"
+                             alternative-text="close"
+                             variant="inverse"
+                             size="small" ></lightning-icon>
+                         <span class="slds-assistive-text">Close</span>
+                     </button>
+                     <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Add Quoteline Items</h2>
+                 </header>
+                 <!-- Modal/Popup Box LWC body starts here -->
+                 <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                    
+                    <lightning-card>
+                        <div>
+                            <!-- <div style="height:450px; overflow:auto !important;"> -->
+
+                            <c-create-quoteine-items record-id={recordId} ></c-create-quoteine-items>   
+                        </div>
+                         </lightning-card> 
+                    <!-- <p><b>Modals/Popup Box are used to display content in a layer above the app.
+                     </b></p>
+                     <p><b>This paradigm is used in cases such as the creation or editing of a record, as well as various types of messaging and wizards.
+                     </b></p> -->
+                 </div>
+                 <!-- Modal/Popup Box LWC footer starts here -->
+                 <!-- <footer class="slds-modal__footer">
+                     <button class="slds-button slds-button_neutral" onclick={closeModal} title="Cancel">Cancel</button>
+                     <button class="slds-button slds-button_brand" onclick={submitDetails} title="OK">OK</button>
+                 </footer> -->
+             </div>
+         </section>
+         <div class="slds-backdrop slds-backdrop_open"></div>
+     </template>
+
+     <!--This Code is for modal popup ends-->
+
+        <!-- <lightning-button
+        label="Clone it"
+        title="Clone"
+        onclick={cloningActualService}
+        ></lightning-button> -->
+        <div class="slds-col slds-size_1-of-3" style="background-color:rgb(130, 196, 240);"> 
+<h2 style="font-size: 16px; "><b>Actual services</b></h2>
+            <lightning-datatable max-row-selection=1 
+            data={ProductDataupdated}  
+            columns={columns} 
+            key-field="Id"  
+            onrowaction={handleRowActions} 
+            onrowselection={handleRowSelection}  > </lightning-datatable>
+            
+
+
+        
+        </div>
+        <div  class="slds-col slds-size_2-of-3" style="background-color:rgb(130, 196, 240);">
+            <h2 style="font-size: 16px; font-style: bold;"><b>Actual service Details</b></h2>
+          <div if:true={updatedArray}>
+            <lightning-datatable max-row-selection=1           
+            data={ActualServiceData}  
+            columns={updatedArray} 
+            key-field="Id"  
+            onrowselection={handleRowSelectionforAdd} 
+            > </lightning-datatable>
+        </div>
+            <!-- <lightning-datatable max-row-selection=1 
+            data={wiredOppLine.data}  
+            columns={columns1} 
+            key-field="Id"  
+            onrowaction={handlerowaction} 
+            onrowselection={handleRowSelection}  > </lightning-datatable> -->
+        </div>
+    </div>
+
+        <div if:true={AddServData} class="slds-col slds-size_2-of-3 slds-float--right" style="background-color:rgb(130, 196, 240); margin-top: 4em; margin-bottom: 2em;" >
+            <h2 style="font-size: 16px;"><b>Additional services</b></h2>
+            <lightning-datatable 
+            data={AddServData}  
+            columns={column2} 
+            key-field="Id"  
+            
+             > </lightning-datatable>
+  
+        </div>
+</div>
+       </lightning-card>
+    </div>
+    <div>{updateUI}</div>
+          </lightning-accordion-section>
+
+        </lightning-accordion>
+   
+</template>

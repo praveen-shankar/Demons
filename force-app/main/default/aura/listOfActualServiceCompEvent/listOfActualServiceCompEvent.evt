@@ -1,0 +1,6 @@
+<aura:event type="COMPONENT">
+	<aura:attribute name="selectedActualServiceId" type="String"/>
+    <aura:attribute name="showAddSerButtonOnTop" type="String"/>
+    <aura:attribute name="resetAddServicescallback" type="String"/>
+    <aura:attribute name="product2List" type="Product2[]" />
+</aura:event>

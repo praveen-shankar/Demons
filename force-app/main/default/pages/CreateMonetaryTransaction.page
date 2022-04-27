@@ -1,0 +1,41 @@
+<apex:page standardController="Monetary_Transaction__c" recordSetVar="Monetary_Transaction__c" extensions="CreateMonetaryTransactionController">
+<apex:form >
+<apex:sectionHeader subtitle="{!$Label.cs_select_monetary_trasaction_record_type}" title="{!$Label.cs_new_monet}" />
+<apex:outputText >{!$Label.cs_display_message_monetary_transaction}</apex:outputText>
+<br/><br/>
+<apex:pageBlock title="{!$Label.cs_select_monetary_trasaction_record_type}">
+<apex:pageBlockSection columns="2">
+<apex:pageBlockSectionItem >
+<apex:outputText >{!$Label.cs_s}</apex:outputText>
+<apex:outputPanel styleClass="requiredInput" layout="block" id="pwPanel2" > 
+                        <apex:outputPanel styleClass="requiredBlock"/>
+<apex:selectList id="chooseColor" value="{!recordTypId}" size="1" >
+<apex:selectOptions value="{!options}"/>
+</apex:selectList>
+</apex:outputPanel>
+
+
+</apex:pageBlockSectionItem>
+</apex:pageBlockSection>
+<apex:pageBlockButtons location="Bottom" >
+<apex:commandButton value="{!$Label.cs_continue}" action="{!ContinueToCase}"/>
+<apex:commandButton value="{!$Label.cs_Cancel}" action="{!Cancel}" onclick="fnCloseTab();"/>
+</apex:pageBlockButtons>
+</apex:pageBlock>
+
+</apex:form>
+
+<apex:includeScript value="/support/console/40.0/integration.js"/>
+    <script type="text/javascript">
+        function fnCloseTab() {
+            //First find the ID of the current tab to close it
+            sforce.console.getEnclosingTabId(closeSubtab);
+        }
+        
+        var closeSubtab = function closeSubtab(result) {
+            //Now that we have the tab ID, we can close it
+            var tabId = result.id;
+            sforce.console.closeTab(tabId);
+        };
+    </script>
+</apex:page>

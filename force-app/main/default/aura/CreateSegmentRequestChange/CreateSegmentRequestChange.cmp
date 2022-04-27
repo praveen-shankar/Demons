@@ -1,0 +1,61 @@
+<aura:component implements="force:lightningQuickActionWithoutHeader,force:hasRecordId,force:hasSObjectName" access="public" controller="crm_CreateSegmentRegChange">
+	   <aura:attribute name="segmentList" type="List"/>
+     <aura:attribute name="errorLogs" type="List"/>
+  
+     <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    
+    <form>  
+        <lightning:notificationsLibrary aura:id="notifLib" /> 
+        <div style="width:100%;">  
+             <div class="slds-text-title_caps slds-align_absolute-center" style="font-size:14px" >
+               <strong>Add Segment Change Request</strong></div>
+       
+            <br/>
+        <div class="slds-text-color_error" style="width:100%; color:red;">
+          <aura:if isTrue="{!v.errorLogs.length>0}"> 
+        
+             Segment change request request already created for service group 
+          <aura:iteration items="{!v.errorLogs}" var="error">
+              <div class="slds-text-color_error" style="color:red;">
+                  {!error}
+              </div>
+            </aura:iteration>
+        
+        </aura:if>
+         </div>
+      
+      <table class="slds-table slds-table_bordered slds-table_striped slds-table_cell-buffer slds-table_fixed-layout">
+          <thead>
+            <tr> <!-- class="slds-text-heading_label"-->
+              <th scope="col" width="20%"><div  title="Segment Name" class="slds-text-heading--label slds-truncate">Segment Name</div></th>
+              <th scope="col" width="20%"><div  title="Current Sales Responsible" class="slds-text-heading--label slds-truncate">Current Sales Responsible</div></th>
+              <th scope="col" width="20%"><div  title="Proposed Sales Responsible" class="slds-text-heading--label slds-truncate">Proposed Sales Responsible</div></th>
+              <th scope="col" width="18%"><div  title="Start Month" class="slds-text-heading--label slds-truncate">Start Month</div></th>
+              <th scope="col" width="22%"><div  title="Reason for Change" class="slds-text-heading--label slds-truncate">Reason for Change</div></th> 
+
+             
+            </tr>
+          </thead>
+          <tbody>
+             
+               <aura:iteration items="{!v.segmentList}" var="seg">
+                     <tr style="text-align:left">
+                         <c:LoadSegment segId="{!seg.Id}" aura:id="segment" />
+                    </tr>
+                        </aura:iteration>
+         </tbody>
+        </table>
+         
+        </div>
+        <br/>
+        <br/>
+          <div style="width:100%;">
+                <footer class="slds-modal__footer slds-modal__footer_directional">      
+         <lightning:buttonGroup >
+                <lightning:button variant="neutral" label="Cancel" iconName="utility:close" onclick="{!c.closeQuickAction}"/>    
+                <lightning:button variant="neutral" label="Save" iconName="utility:save" onclick="{!c.submit}"/>
+       </lightning:buttonGroup> 
+       </footer>   
+       </div>
+    </form>
+</aura:component>

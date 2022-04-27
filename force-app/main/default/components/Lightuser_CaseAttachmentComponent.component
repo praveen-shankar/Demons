@@ -1,0 +1,37 @@
+<apex:component controller="Lightuser_CaseAttachmentController" allowDML="true">
+<!-- Attribute Definition -->
+    <apex:attribute name="CaseId" description="Salesforce Id of the Case whose Case Attachment needs to be rendered" type="Id" required="false" assignTo="{!caseId}" />
+    
+    <!-- Component Body -->
+    <apex:componentBody >
+        <apex:form rendered="{!Isactivelightuser}">
+            <apex:pageBlock title="{!$Label.cs_Attachments}" >
+            <!--<apex:pageBlock title="Vedlegg" >-->
+                <apex:pageBlockTable value="{!attachments}" var="attachment"> 
+                    <apex:column headerValue="{!$Label.cs_file}">
+                    <!--<apex:column headerValue="Fil">-->
+                        <apex:outputLink value="{!URLFOR($Action.Attachment.Download, attachment.id)}" target="_blank" >
+                            <apex:outputText escape="false" value="{!attachment.name}"/>
+                        </apex:outputLink>
+                    </apex:column>
+                    <apex:column headerValue="{!$Label.cs_Created}" value="{!attachment.createdDate}" />
+                    <!--<apex:column headerValue="Opprettet" value="{!attachment.createdDate}" />-->
+                </apex:pageBlockTable>
+                <apex:pageBlockSection columns="3" rendered="{!isCaseOpen}">
+                    <apex:inputFile value="{!att.body}" filename="{!att.Name}" lang="NO" />
+                    
+                    <apex:commandbutton value="{!$Label.cs_AddAttach}" status="addAttachmentSpinner" action="{!NewAttachment}" />
+                    <!--<apex:commandbutton value="Legg til vedlegg" status="addAttachmentSpinner" action="{!NewAttachment}" />-->
+                    <apex:actionStatus id="addAttachmentSpinner">
+                        <apex:facet name="start"><apex:image value="{!$Resource.spinner_icon}" /></apex:facet>
+                        <apex:facet name="stop"></apex:facet>
+                    </apex:actionStatus>
+                </apex:pageBlockSection>
+                <apex:pageBlockSection columns="1" rendered="{!isCaseClosed}">
+                    <apex:outputText value="{!$Label.cs_closedAttach}"/>
+                    <!--<apex:outputText value="Saken er avsluttet, kontakt sakseier hvis du vil legge til flere vedlegg."/>-->
+                </apex:pageBlockSection>
+            </apex:pageBlock>
+        </apex:form>    
+    </apex:componentBody>
+</apex:component>

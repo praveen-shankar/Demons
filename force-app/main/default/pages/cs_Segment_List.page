@@ -1,0 +1,38 @@
+<!-- 
+Created By:Supriya Goel
+Date: 22 feb 2017
+VF page to show all the segment list on  relation level account for CS
+
+-->
+
+<apex:page standardController="Account" extensions="crm_AccountSegmentController"> 
+    
+    
+    <apex:form >
+        <apex:pageBlock tabStyle="Account" rendered="{!acnt.id!=null}">
+            
+            <apex:pageBlockSection columns="1" rendered="{!segList.size>0}">
+                <apex:pageBlockTable value="{!segList}"  var="seg" width="100%" >
+                    
+                    
+                    <apex:column headervalue="{!$Label.crm_Name}"><apex:outputLink value="/{!seg.id}" target="{!IF(flag,'_self','_blank')}">{!seg.name}</apex:outputLink></apex:column>
+                    <apex:column headervalue="{!$Label.crm_Service_Group}">{!seg.crm_Service_Group__c }</apex:column>
+                    <apex:column headervalue="{!$Label.crm_Sales_Internal_Segment}">{!seg.crm_Sales_Internal_Segment__c}</apex:column>
+                    <!--<apex:column headervalue="{!$Label.crm_Responsible_seller}"><apex:outputLink value="/{!seg.crm_Sales_Responsible__c}" target="{!IF(flag,'_self','_blank')}">{!seg.crm_Sales_Responsible__r.name}</apex:outputLink></apex:column>-->
+                    <apex:column headervalue="{!$Label.crm_Responsible_seller_1}"><apex:outputLink value="/{!seg.crm_Sales_Responsible__c}" target="{!IF(flag,'_self','_blank')}">{!seg.crm_Sales_Responsible__r.name}</apex:outputLink></apex:column>
+                    <apex:column headervalue="{!$Label.crm_customer_service_category}">{!seg.crm_Customer_Service_Category__c }</apex:column>
+                    <apex:column headervalue="{!$Label.crm_customer_service_level}">{!seg.crm_Customer_Service_Level__c}</apex:column>
+                    
+                    <apex:column headervalue="{!$Label.crm_Customer_service_Responsible_seller}"><apex:outputLink value="/{!seg.crm_Customer_Service_Responsible__c}" target="{!IF(flag,'_self','_blank')}">{!seg.crm_Customer_Service_Responsible__r.name}</apex:outputLink></apex:column>
+                    
+                    
+                </apex:pageBlockTable>
+            </apex:pageBlockSection>
+            <apex:pageBlockSection columns="1" rendered="{!segList.size==0}">
+                {!$Label.crm_Nosegment}
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+        
+    </apex:form>
+    
+</apex:page>

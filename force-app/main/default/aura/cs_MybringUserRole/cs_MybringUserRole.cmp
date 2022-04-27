@@ -1,0 +1,44 @@
+<aura:component controller="cs_MybringUserRoleController" implements="force:appHostable,flexipage:availableForAllPageTypes,force:lightningQuickAction,force:hasRecordId,flexipage:availableForRecordHome" >
+	
+    <aura:attribute name="recordId" type="Id" />
+    <aura:attribute name="customers" type="accountContactRelation[]" />
+    <aura:attribute name="mybringRole" type="String" />
+    <aura:attribute name="selectedCustomer" type="String"/>
+    <aura:attribute name="abc" type="String[]"/>
+
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:handler event="force:refreshView" action="{!c.doInit}" />
+    
+                <div class="slds" aura:id="container">
+                
+                <table class="slds-table" style="width:780px;"> 
+                 
+                    <tr>
+                        <td class="left-align ">MyBring on behalf of company
+                        </td> 
+                        <td class ="left-align"><div  style="width:500px">
+                            <lightning:select aura:id="Customers" value="{!v.selectedCustomer}" onchange="{!c.onChangeHandler}">
+								<option value="" text="" />
+								<aura:iteration items="{!v.customers}" var="item">
+									<option value="{!item.AccountId}" text="{!item.Account.Name}" />
+								</aura:iteration>
+							</lightning:select>
+                            
+                            </div>
+                        </td>
+                    </tr>   
+	
+				     <tr>
+                        <td class="left-align ">Role in MyBring
+                        </td>
+                        <td class ="left-align"><div  style="width:500px">
+                            <lightning:textarea name="mybringRole" value="{!v.mybringRole}" readonly="true" />
+                            
+                            </div>
+                        </td>
+                    </tr>
+                 </table>
+			</div>
+
+</aura:component>

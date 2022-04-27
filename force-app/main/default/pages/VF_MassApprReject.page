@@ -1,0 +1,27 @@
+<apex:page controller="MassApprRejectController">
+    <img src="/img/s.gif" alt="Home" class="pageTitleIcon" title="Home" />
+    <h1 style="margin-top: 9px;margin-bottom: 0;color: #000;font-size: 2em;font-weight: normal;">
+        {! $Label.Mass_Approve_Reject_Approval_Requests}
+    </h1>
+    <apex:form >
+        <apex:pageBlock mode="edit"><apex:pageMessages />
+            <apex:pageBlockButtons >                              
+                <apex:commandButton action="{!ApproveAllItems}" value="{! $Label.Approve}" id="BtnApproveAll" />
+                <apex:commandButton action="{!RejectAllItems}" value="{! $Label.Reject}" id="BtnRejectAll" />                
+                <apex:commandButton action="{!Cancel}" value="{! $Label.Cancel}" id="BtnCancel" />                
+            </apex:pageBlockButtons>
+            <apex:pageBlockSection id="sad" columns="1">
+                <apex:pageBlockSectionItem >
+                    {! $Label.Comments} <apex:inputTextarea value="{! Comments}"/> 
+                </apex:pageBlockSectionItem>
+                <!--<apex:pageBlockSectionItem >
+                          &nbsp; <apex:outputLabel title="labs" value="One or more of the approval requests you selected may require you to specify the next approver. 
+                    Specify the next approver using the box below."></apex:outputLabel>                    
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    Approvers <apex:inputField value="{! Approver.OwnerId}" id="Approver" required="false"/>
+                </apex:pageBlockSectionItem>    -->
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

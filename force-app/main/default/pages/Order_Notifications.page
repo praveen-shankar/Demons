@@ -1,0 +1,38 @@
+<apex:page standardController="Order" extensions="Order_SendEmailController"  action="{!loadNotification}" showHeader="false" sidebar="false">
+
+<style>
+body
+{
+    background: #ecf5ff;
+    margin-top: 2px;
+    margin-bottom: 0px;
+    margin-right: 10px;
+    margin-left: 0px;
+}
+</style>
+
+<apex:form id="note" >
+
+    <apex:pageBlock id="notification" mode="maindetail">
+        
+        <apex:pageBlockSection collapsible="false" columns="1">
+        <apex:commandButton image="{!$Resource.Order_Refresh}" value="{!$Label.cs_Refresh}" action="{!loadNotification}" rerender="notification" />        
+        </apex:pageBlockSection>
+        
+        <!-- PAGE BLOCK SECTION FOR Bedriftspakke Ekspress MESSAGE SECTION -->
+        <apex:pageBlockSection columns="3" rendered="{!isBDX}" collapsible="false" >
+            <apex:pageMessage rendered="true" severity="{!timeCheckSeverity}" detail="{!timeCheckMess}" strength="2" title="{!$Label.cs_BookingFirst}"/>
+            <apex:pageMessage rendered="true" severity="INFO" detail="{!pickupPCMess}" strength="2" title="{!$Label.cs_RetriveInfo}"/>
+            <apex:pageMessage rendered="true" severity="{!delPCSeverity}" detail="{!delPCMess}" strength="2" title="{!$Label.cs_InfoDel}"/>
+        </apex:pageBlockSection>
+        
+        
+        <!-- PAGE BLOCK SECTION FOR GENERAL MESSAGE SECTION -->
+        <apex:pageBlockSection columns="1" collapsible="false" showHeader="true">
+            <apex:pageMessages />            
+        </apex:pageBlockSection>
+    </apex:pageBlock>
+
+    
+</apex:form>
+</apex:page>

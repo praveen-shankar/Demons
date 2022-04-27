@@ -1,0 +1,77 @@
+<apex:page standardController="Account" extensions="account_heirarchy" sidebar="false"  title="View Heirarchy" >
+  <style type="text/css">
+   .accountTab .secondaryPalette, .individualPalette .accountBlock .secondaryPalette {
+    background-color: #f2f3f3;
+    border-color: #236fbd;}
+    .class1 { background-color: #236fbd !important;
+    border-color: #236fbd;
+    
+    }                
+      </style>
+      <apex:form >
+ <apex:pageBlock >
+           <div class="accountTab">
+           <apex:sectionHeader title="{!$Label.cs_Heirarchy}" subtitle="{!acc.Name}"  description="{!$Label.cs_Heirarchy_desc}"/>
+             </div>
+            <apex:pageBlockTable value="{!party}" var="acnt" id="results" border="0">
+            <apex:column headervalue="{!$Label.cs_Customer_Name}" >
+            <apex:outputLink value="/{!acnt.id}" target="_blank">  
+            <span   style="{!IF(acnt.id== acntid ,'font-weight:bold','')}">
+                {!acnt.name}      </span>                   
+                </apex:outputLink>
+            </apex:column>  
+              
+           
+              
+              <apex:column value="{!acnt.Orga__c}" headerValue="{!$ObjectType.Account.fields.Orga__c.Label}"  style="{!IF(acnt.id== acntid ,'font-weight:bold','')}"/>
+            <apex:column value="{!acnt.crm_Customer_Status_Role_1__c}" headerValue="{!$ObjectType.Account.fields.cs_Customer_Role_formula__c.Label}" style="{!IF(acnt.id== acntid ,'font-weight:bold','')}"/>
+            <apex:column value="{!acnt.ShippingPostalCode}" headerValue="{!$ObjectType.Account.fields.ShippingPostalCode.Label}"/>
+            <apex:column value="{!acnt.ShippingCity}" headerValue="{!$ObjectType.Account.fields.ShippingCity.Label}" style="{!IF(acnt.id== acntid ,'font-weight:bold','')}"/>
+            <apex:column value="{!acnt.crm_Revenue_This_Year__c }" headerValue="{!$Label.cs_Omsthisyear}" style="{!IF(acnt.id== acntid ,'font-weight:bold','')}"/> 
+            <apex:column value="{!acnt.crm_Revenue_Last_Year__c }" headerValue="{!$Label.cs_omsLastYear}" style="{!IF(acnt.id== acntid ,'font-weight:bold','')}"/>
+              </apex:pageBlockTable>
+       <apex:actionFunction name="refreshPageSize" action="{!refreshPageSize}" reRender="pgblock"/>
+     
+           <apex:pageBlock id="pgblock" >       
+          
+            <div style="padding-left:20px;">
+            <apex:pageBlockTable value="{!Accounts}" var="acnt" id="results1">
+            <apex:column headervalue="{!$Label.cs_Customer_Name}">
+            <apex:outputLink value="/{!acnt.id}" target="_blank" >
+            <span   style="{!IF(acnt.id== acntid ,'font-weight:bold','')}">
+                {!acnt.name}  </span>                         
+                </apex:outputLink>
+            </apex:column>  
+                
+            <apex:column value="{!acnt.crm_Customer_Number__c}" headerValue="{!$Label.cs_Customer_Number}"   style="{!IF(acnt.id== acntid ,'font-weight:bold','')}"/>
+            <apex:column value="{!acnt.cs_Customer_Role_formula__c}" headerValue="{!$ObjectType.Account.fields.cs_Customer_Role_formula__c.Label}" style="{!IF(acnt.id== acntid ,'font-weight:bold','')}"/>
+            <apex:column value="{!acnt.ShippingPostalCode}" headerValue="{!$ObjectType.Account.fields.ShippingPostalCode.Label}" style="{!IF(acnt.id== acntid ,'font-weight:bold','')}"/>
+            <apex:column value="{!acnt.ShippingCity}" headerValue="{!$ObjectType.Account.fields.ShippingCity.Label}" style="{!IF(acnt.id== acntid ,'font-weight:bold','')}"/>
+            <apex:column value="{!acnt.crm_Revenue_This_Year__c }" headerValue="{!$Label.cs_Omsthisyear}"  style="{!IF(acnt.id== acntid ,'font-weight:bold','')}"/>
+            <apex:column value="{!acnt.crm_Revenue_Last_Year__c }" headerValue="{!$Label.cs_omsLastYear}" style="{!IF(acnt.id== acntid ,'font-weight:bold','')}"/>
+            </apex:pageBlockTable>
+            </div>
+           
+            
+            <apex:panelGrid columns="6"> 
+                 
+                <apex:selectList value="{!size}" multiselect="false" size="1" onchange="refreshPageSize();">
+                    <apex:selectOptions value="{!paginationSizeOptions}"/>
+                </apex:selectList>
+                 
+                <apex:commandButton status="fetchStatus" reRender="pgblock" value="{!$Label.cs_First}" action="{!setCon.first}" disabled="{!!setCon.hasPrevious}" title="First Page"/> 
+  
+                <apex:commandButton status="fetchStatus" reRender="pgblock" value="{!$Label.cs_Previous}" action="{!setCon.previous}" disabled="{!!setCon.hasPrevious}" title="Previous Page"/> 
+  
+                <apex:commandButton status="fetchStatus" reRender="pgblock" value="{!$Label.cs_Next}" action="{!setCon.next}" disabled="{!!setCon.hasNext}" title="Next Page"/> 
+  
+                <apex:commandButton status="fetchStatus" reRender="pgblock" value="{!$Label.cs_Last}" action="{!setCon.last}" disabled="{!!setCon.hasNext}" title="Last Page"/> 
+  
+               <apex:outputText >{!(setCon.pageNumber * size)+1-size}-{!IF((setCon.pageNumber * size)>noOfRecords, noOfRecords,
+                     (setCon.pageNumber * size))} of {!noOfRecords}
+                </apex:outputText> 
+           </apex:panelGrid>  
+            </apex:pageblock>
+            </apex:pageBlock>
+</apex:form>
+</apex:page>

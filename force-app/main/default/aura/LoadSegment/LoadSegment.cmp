@@ -1,0 +1,52 @@
+<aura:component controller="crm_CreateSegmentRegChange" access="global">
+    <aura:attribute name="segmentlist" type="crm_Segment__c[]" />
+     <aura:attribute name="segId" type="String" />
+       <aura:attribute name="yearoptions" type="List"/>
+       <aura:attribute name="monthoptions" type="List"/>
+    
+    <aura:method name="capturesegmentdata" action="{!c.capturesegmentdata}" description="Method to be called from parent component">  
+    </aura:method> 
+     <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    
+        
+     	<div style="width:575px;text-align:left" >
+           
+                 <td width="20%;" style="text-align:left; white-space: pre-wrap;" class="slds-truncate">
+                     <ui:outputText value="{!v.segmentlist[0].crm_Service_Group__c}"  aura:id="serviceGroup"/>
+                    </td>
+                     <td width="20%" class="slds-truncate"  style="text-align:left; white-space: pre-wrap;" >
+                         <ui:outputText aura:id="responsibleSellermanager" value="{!v.segmentlist[0].crm_Sales_Responsible__r.ManagerId}" class="slds-hide"/>
+                         <ui:outputText aura:id="responsibleSellermanagerstatus" value="{!v.segmentlist[0].Responsible_seller_manager_status__c }" class="slds-hide"/>
+                         <ui:outputText aura:id="responsibleSeller" value="{!v.segmentlist[0].crm_Sales_Responsible__c}" class="slds-hide"/>
+                         <ui:outputText value="{!v.segmentlist[0].crm_Sales_Responsible__r.Name}"/></td>
+                     <td width="20%" class="slds-truncate"  style="text-align:left; white-space: pre-wrap;" >
+                           <c:userLookupTrialUsed aura:id="proposedresponsibleSeller"/> 
+                                    
+            </td>
+                     <td width="18%" class="slds-truncate"><div>
+              <ui:inputSelect aura:id="month">
+                  <ui:inputSelectOption label="None" text="None"/>
+                <aura:iteration items="{!v.monthoptions}" var="mon" indexVar="key">
+                  <ui:inputSelectOption label="{!mon.value}" text="{!mon.key}"/>
+                </aura:iteration>
+              </ui:inputSelect>
+            </div></td>
+                     
+             <!-- <td width="20%" class="slds-truncate"> <div>
+              <ui:inputSelect aura:id="year">
+                   <ui:inputSelectOption label="None" text="None"/>
+                <aura:iteration items="{!v.yearoptions}" var="yr" indexVar="key">
+                  <ui:inputSelectOption label="{!yr.value}" text="{!yr.key}"/>
+                </aura:iteration>
+              </ui:inputSelect>
+            </div></td>-->
+              <td width="22%" class="slds-truncate" style="vertical-align:top"> <div>
+                  <ui:inputTextArea aura:id="Reason_for_Change__c" rows="3"/>
+                  </div></td>                 
+            </div> 
+              
+   
+               
+	
+</aura:component>

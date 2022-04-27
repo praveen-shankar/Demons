@@ -1,0 +1,68 @@
+<aura:component controller="crm_CreateSegmentRegChange"  implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome">
+	  <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    
+    <aura:attribute name="segmentListCompleted" type="List"/>
+     <aura:attribute name="showerror" type="Boolean"/>
+    
+      <div class="slds" style="background-color:white">
+         <aura:if isTrue="{!v.showerror}"> 
+        <div class="slds-text-color_error" style="width:100%; color:red;height:60px;padding:20px">
+           No Completed records for Responsible seller change request </div>
+         
+        </aura:if>
+          
+           <aura:if isTrue="{!!v.showerror}">
+		 <div class="slds-card__header slds-grid" style="font-size:14px" >
+               <strong>Completed Segment Change Request Records</strong></div>
+       
+            <br/>
+            <ui:scrollerWrapper class="wrapui"> 
+		 <table class="slds-table slds-table_bordered slds-table_striped slds-table_cell-buffer slds-table_fixed-layout">
+           <thead>
+            <tr> <!-- class="slds-text-heading_label"-->
+             
+              <th scope="col" width="10%"><div  title="Segment Name" class="slds-text-heading--label slds-truncate">Segment Name</div></th>
+               <th scope="col" width="24%"><div  title="Customer" class="slds-text-heading--label slds-truncate">Customer</div></th>
+              <th scope="col" width="13%"><div  title="Current Sales Responsible" class="slds-text-heading--label slds-truncate">Current Sales Responsible</div></th>
+              <th scope="col" width="13%"><div  title="Proposed Sales Responsible" class="slds-text-heading--label slds-truncate">Proposed Sales Responsible</div></th>
+              <th scope="col" width="10%"><div  title="Start Date" class="slds-text-heading--label slds-truncate">Start Date</div></th>
+              <th scope="col" width="15%"><div  title="Service Group" class="slds-text-heading--label slds-truncate">Service Group</div></th>
+              <th scope="col" width="15%"><div  title="Requested On" class="slds-text-heading--label slds-truncate">Requested On</div></th>
+             
+            </tr>
+          </thead>
+          <tbody>
+             <aura:iteration items="{!v.segmentListCompleted}" var="seg">
+			   
+			   <tr>
+                   
+                   
+                   <td class="slds-truncate" title="{!seg.Name}">  <aura:if isTrue="{!$Browser.isDesktop}">
+                                        <a href="{!'/'+ seg.Id}" target="_blank">{!seg.Name}</a>
+                                        <aura:set attribute="else">
+                                         <a target="_blank" data-record="{!seg.Id}" onclick="{!c.redirectToSobject}">{!seg.Name}</a>   
+                                        </aura:set>
+                                </aura:if></td> 
+                    <td class="slds-truncate" title="{!seg.Customer__r.Name}">
+                        
+                        
+                        <aura:if isTrue="{!$Browser.isDesktop}">
+                                        <a href="{!'/'+ seg.Customer__c}" target="_blank">{!seg.Customer__r.Name}</a>
+                                        <aura:set attribute="else">
+                                         <a target="_blank" data-record="{!seg.Customer__c}" onclick="{!c.redirectToSobject}">{!seg.Customer__r.Name}</a>   
+                                        </aura:set>
+                                </aura:if></td>
+                     <td class="slds-truncate" title="{!seg.Current_Sales_Responsible__r.Name}">{!seg.Current_Sales_Responsible__r.Name}</td>
+                     <td class="slds-truncate" title="{!seg.Proposed_Sales_Responsible__r.Name}">{!seg.Proposed_Sales_Responsible__r.Name}</td>
+                    <td class="slds-truncate" title="{!seg.Start_Date__c}"> {!seg.Start_Date__c}</td>
+                    <td class="slds-truncate" title="{!seg.Service_Group__c}">{!seg.Service_Group__c}</td>
+                    <td class="slds-truncate" title="{!seg.Date_Requested_On__c}">{!seg.Date_Requested_On__c}</td>
+                   </tr>
+                  
+                        </aura:iteration>
+         </tbody>
+            </table> 
+               </ui:scrollerWrapper>
+          </aura:if>
+    </div>
+</aura:component>

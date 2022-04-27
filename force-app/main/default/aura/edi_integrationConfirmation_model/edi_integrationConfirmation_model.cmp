@@ -1,0 +1,5 @@
+<aura:component>
+    	<aura:registerEvent name="edimodelevent" type="c:edi_integrationConfirmation_event"/>
+    	<p><strong>You are about to transfer data to another system. If the EDI record is in the status "Phase Out", you will by confirming this transfer, delete data in the integration systems</strong></p>
+        <lightning:button label="Proceed" class="slds-align_absolute-center" aura:id="proceed" onclick="{! c.proceed }"/>
+</aura:component>

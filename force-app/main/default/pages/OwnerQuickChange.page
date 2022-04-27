@@ -1,0 +1,144 @@
+<apex:page standardController="Case" extensions="OwnerQuickChangeController" showHeader="false" sidebar="true">
+<apex:includeScript value="{!$Resource.jQuery}"/>
+<style type="text/css">
+body {
+    margin: 20px;
+    background-color: #e6e6e6;
+}
+form.queueChange {
+    background-color: #fff;
+    padding: 10px;
+}
+table {
+    background-color: #fff;
+    margin: 10px;
+}
+
+table.queueTable, table.userTable {
+    float: left;
+    width: 325px;
+}
+
+input {
+    margin-left: 4px;
+}
+p {
+    padding-left: 10px;
+}
+a.link {
+    display: inline-block;
+    padding: 10px 20px;
+    text-decoration: none;
+    color: #4d4f53;
+    background-color: #e6e6e6;
+    border: 1px solid #bbb;
+    width: 280px;
+    margin: 3px 1px;
+}
+a.link:focus, a.link:hover {
+    color: #fff;
+    background-color: #e32d22;
+    outline: none;
+    text-decoration: none;
+}
+</style>
+<script>
+var j$ = jQuery.noConflict(); // getting the jQuery object and declaring it as 
+                              // j$ to prevent it conflicting with standard Salesforce functionality
+
+
+j$(document).ready(function(){
+           j$.extend(j$.expr[":"], {
+           // Credits to Eric Phan http://ericphan.info/blog/2009/3/4/jquery-13-case-insensitive-contains.html
+           // this adds a case insensitive ":contains" selector. This selector selects all components that contains specified text.
+                "containsNC": function(elem, i, match, array) {
+                    return (elem.textContent || elem.innerText || "").toLowerCase().indexOf((match[3] || "").toLowerCase()) >= 0;
+                }
+            });
+            document.getElementById('{!$Component.searchForm.ownerSearch}').focus();    
+       });
+
+        //This is a small workaround for getting the component to work with the enter key
+        //I'll include this behavior as part of the component in a next release
+        function noenter(e){
+ 
+             var key;    
+             if(window.event)
+                  key = window.event.keyCode; //IE
+             else
+                  key = e.which; //firefox    
+        
+             return (key != 13);    
+
+        }
+
+    // hide all queues that doesn't contain the word from queueSearch input field
+    function filterOwners() {
+        var ownerName = document.getElementById('{!$Component.searchForm.ownerSearch}').value;
+        if(ownerName == '') {
+            j$('table.queueTable td').show();
+            j$('table.userTable td').show();
+        } else {
+            j$('table.queueTable td:containsNC(' + ownerName + ')').show();
+            j$('table.queueTable td:not(:containsNC(' + ownerName + '))').hide();
+            j$('table.userTable td:containsNC(' + ownerName + ')').show();
+            j$('table.userTable td:not(:containsNC(' + ownerName + '))').hide();
+        }
+    }
+    
+    function setHiddenOwnerId(ownerId) {
+        // setting the hidden field to the chosen queueId. The hidden field is tied to a controller Id variable.
+        document.getElementById('{!$Component.searchForm.hiddenOwnerId}').value=ownerId;
+        changeOwner();
+    }
+    
+    function closePopupAndRefreshCase() {
+
+        //window.opener.location.href="/{!$CurrentPage.parameters.Id}";
+        //self.close();
+
+    }
+    
+    
+</script>
+<!-- showHeader="false" sidebar="true" -->
+
+<apex:form id="searchForm" styleClass="queueChange">
+    <apex:actionFunction name="changeOwner" action="{!changeOwner}" status="queueChangeStatus" />
+    <!--CSphase2, Akash, 20122016-->
+    <h1><!--Bytte eier for sak-->{!$Label.cs_OwnerChange} {!case.CaseNumber}</h1>
+    <apex:actionStatus id="queueChangeStatus" onstart="isLoading(true)" onstop="isLoading(false)">
+        <apex:facet name="start"><apex:image value="{!$Resource.spinner_icon}" /></apex:facet>
+    </apex:actionStatus>
+<p>
+    <!--CSphase2, Akash, 20122016-->
+    <!--<apex:outputLabel value="Søk/filtrer etter kønavn/brukernavn" />-->
+    <apex:outputLabel value="{!$Label.cs_Filter}" />
+    
+    <apex:inputText Id="ownerSearch" onkeyup="filterOwners();" onkeypress="return noenter(event);"></apex:inputText>
+</p>
+    <hr />
+    <!--CSphase2, Akash, 20122016-->
+    <!--<h1>Velg kø eller bruker du vil bytte sakseier til</h1>-->
+    <h1>{!$Label.cs_ownerChangeselect}</h1>
+    <div class="owners">
+    <apex:dataTable value="{!queues}" var="queue" Id="Queues" styleClass="queueTable">
+        <apex:column >
+        <!--CSphase2, Akash, 20122016-->
+            <apex:facet name="header"><b><!--Kø-->{!$label.cs_Queue}</b></apex:facet>
+            <a class="link" href="#" onclick="setHiddenOwnerId('{!queue.Id}');return false;">{!queue.Name}</a>
+        </apex:column>
+    </apex:dataTable>
+   User count -  {!Mapsize}
+    <apex:dataTable value="{!UserMap}" var="user" Id="Users" styleClass="userTable">
+        <apex:column >
+        <!--CSphase2, Akash, 20122016-->
+            <apex:facet name="header"><b><!--Bruker-->{!$Label.cs_User}</b></apex:facet>
+            <a class="link" href="#" onclick="setHiddenOwnerId('{!UserMap[user]}');return false;">{!user}</a>
+        </apex:column>
+    </apex:dataTable>
+        <div style="clear: both;"></div>
+    </div>
+    <apex:inputHidden value="{!ownerId}" id="hiddenOwnerId" />
+</apex:form>
+</apex:page>

@@ -1,0 +1,141 @@
+<aura:component implements="lightning:actionOverride,flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickActionWithoutHeader,force:hasSObjectName" access="public" controller="crm_addServicesControllerLightning">
+    <aura:attribute name="recordId" type="String" access="public" />
+    <aura:attribute name="sObjectName" type="String" access="public" />
+    <aura:attribute name="partyrecordId" type="String" />
+    <aura:attribute name="servicefamily" type="String" />
+    <aura:attribute name="saveerror" type="String" />
+    <aura:attribute name="showspinner" type="Boolean" default="false" />
+    <aura:attribute name="selectedActualServiceIdFromList" type="String" default="" />
+    <aura:attribute name="selectedActualServiceIdFromListName" type="String" default="" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:attribute name="opp" type="Opportunity" />
+    <aura:attribute name="product2optionsTopLevel" type="Product2[]" />
+    <aura:attribute name="additionalservicesList" type="Object" />
+    <aura:attribute name="additionalservicesListBackup" type="Object" />
+    <aura:attribute name="vasSurColumns" type="List" />
+    <aura:attribute name="showTable" type="Boolean" default="false" />
+    <aura:attribute name="showContainer2" type="Boolean" default="false" />
+    <aura:attribute name="showContainer3" type="Boolean" default="false" />
+    <aura:attribute name="listofactualserviceflag" type="Boolean" default="false" />
+    <aura:attribute name="showMsgWhnNoAddSer" type="String" default="" />
+    <aura:attribute name="showAddSerButton" type="Boolean" default="false" />
+    <aura:attribute name="sortedDirection" type="String" default="asc" />
+    <aura:attribute name="sortedBy" type="String" />
+    <aura:attribute name="allSelectedVASSurchargeIds" type="List" access="public" />
+    <aura:attribute name="allSelectedVASSurchargeRecords" type="Product2[]" access="public" />
+    <aura:attribute name="resetAddServicescallbackTop" type="Boolean" default="false" />
+    <aura:attribute name="additionalServicesFields" type="crm_Dynamic_Columns_Add_Opp_Services__c[]" />
+    <aura:handler name="change" value="{!v.resetAddServicescallbackTop}" action="{!c.resetAddServicescallbackTopChange}" />
+    <aura:handler name="progressIndicatorEvent" event="c:addServiceProgressIndicatorEvent" action="{!c.proceedToStepOne}" />
+    <aura:handler name="progressIndicatorEvent2" event="c:addServiceProgressIndicatorEvent2" action="{!c.proceedToStepThree}" />
+    <aura:handler name="listOfActualServiceEvent" event="c:listOfActualServiceCompEvent" action="{!c.handleSelectedActualService}" />
+    <aura:handler name="lightningDataTableEventAS" event="c:lightningDataTableEventAS" action="{!c.handleinputActualServiceData}" />
+    <aura:attribute name="capturedASDetails" type="Object" />
+    
+    <div class="slds-grid slds-grid_vertical">
+        <div class="slds-text-title_caps slds-align_absolute-center slds-border_bottom">
+            <lightning:icon iconName="standard:product_item_transaction" size="small" alternativeText="Add Services to Opportunity" /> &nbsp;
+            <strong>Add Services</strong></div>
+        <div class="slds-p-top_large"></div>
+        <div>
+            <lightning:progressIndicator currentStep="step1" type="path" aura:id="indicator">
+                <lightning:progressStep label="Stage 1" value="step1" />
+                <lightning:progressStep label="Stage 2" value="step2" />
+                <lightning:progressStep label="Stage 3" value="step3" />
+            </lightning:progressIndicator>
+        </div>
+        <lightning:notificationsLibrary aura:id="notifLib" />
+        <div aura:id="container1">
+            <div class="slds-container_fluid slds-align_absolute-center slds-border_bottom" id="oppdiv">
+                <strong>Opportunity Details</strong>
+            </div>
+            <div class="slds-p-top_large"></div>
+            <div class="slds-container_fluid slds-align_absolute-center slds-box">
+                <dl class="slds-list_horizontal slds-wrap">
+                    <dt class="slds-item_label slds-text-color_weak slds-truncate" title="Opportunity Name">Name</dt>
+                    <dd class="slds-item_detail slds-truncate" title="Opportunity Name"><strong>{!v.opp.Name}</strong></dd>
+                    <dt class="slds-item_label slds-text-color_weak slds-truncate" title="Opportunity Service Family">Service Family</dt>
+                    <dd class="slds-item_detail slds-truncate" title="Opportunity Service Famlily"><strong>{!v.opp.crm_Opp_Service_Family__c}</strong></dd>
+                    <dt class="slds-item_label slds-text-color_weak slds-truncate" title="Opportunity Customer">Customer</dt>
+                    <dd class="slds-item_detail slds-truncate" title="Opportunity Customer"><strong>
+               			<a href="javascript:void(0)" onclick="{!c.orgNavigation}">{!v.opp.Account.Name}</a></strong>
+                    </dd>
+                </dl>
+            </div>
+            <div class="slds-p-top_large"></div>
+            <aura:if isTrue="{!v.listofactualserviceflag}">
+                <div class="slds-container_fluid">
+                    <c:listOfActualServices opportunityId="{#v.recordId}" />
+                </div>
+            </aura:if>
+            <div class="slds-container_fluid slds-box slds-scrollable">
+                <lightning:button variant="base" disabled="{!or(v.showAddSerButton,v.product2optionsTopLevel.length==0)}" label="Find Valid Combinations Of Additional Services" onclick="{!c.queryAdditionalServices}" />
+                <aura:if isTrue="{!v.showTable}">
+                    <div class="slds-float_right">Number of hits: {!v.additionalservicesList.length}</div>
+                    <lightning:datatable onsort="{!c.updateColumnSorting}" data="{!v.additionalservicesList}" columns="{!v.vasSurColumns}" minColumnWidth="100px" onrowselection="{!c.handleSelectedAddServices}" keyField="Id" sortedBy="{!v.sortedBy}" sortedDirection="{!v.sortedDirection}" aura:id="dtable" />
+                    <aura:set attribute="else">
+                        <br></br>
+                        <strong>{!v.showMsgWhnNoAddSer}</strong>
+                    </aura:set>
+                </aura:if>
+            </div>
+            <div class="slds-docked-form-footer">
+                <aura:if isTrue="{!!empty(v.product2optionsTopLevel)}">
+                    <lightning:button variant="neutral" label="Cancel" iconName="utility:close" iconPosition="left" onclick="{!c.closeQuickAction}" />
+                    <lightning:button iconName="utility:forward" variant="neutral" label="Next" onclick="{!c.proceedToStepTwo}" class="slds-float_right" />
+                <aura:set attribute="else">
+                	<lightning:button variant="neutral" label="Cancel" iconName="utility:close" iconPosition="left" onclick="{!c.closeQuickAction}" />
+                </aura:set>
+                </aura:if>
+            </div>
+        </div>
+
+        <div aura:id="container2">
+            <aura:if isTrue="{!v.showContainer2}">
+            	<c:addVASandSurcharges OpprecordId="{!v.opp.Id}" allSelectedVASSurchargeIds="{!v.allSelectedVASSurchargeIds}" selectedActualServiceId="{!v.selectedActualServiceIdFromList}" product2options="{!v.product2optionsTopLevel}" servicefamily="{!v.servicefamily}" aura:id="addVASSurchargeId" />
+        	</aura:if>
+        </div>
+
+		<div aura:id="container3">
+            <aura:if isTrue="{!v.showContainer3}">
+			<div class="slds-page-header">
+				<div class="slds-text-heading_medium slds-text-align_center slds-text-title_caps">
+					<strong>Additional Services</strong>
+				</div>
+				<aura:if isTrue="{!!empty(v.saveerror)}">
+					<ui:message title="Error While Saving" severity="error" closable="false">
+						<p><strong>{!v.saveerror}</strong></p>
+					</ui:message>
+				</aura:if>
+				<aura:if isTrue="{!v.showspinner}">
+					<div >
+						<lightning:spinner variant="brand" aura:id="mySpinner" alternativeText="Processing..." />
+					</div>
+				</aura:if>
+			</div>
+			<div class="slds-container_fluid">
+				<aura:if isTrue="{!!empty(v.allSelectedVASSurchargeRecords)}">
+					<aura:iteration items="{!v.allSelectedVASSurchargeRecords}" var="item">
+						<div class="slds-box">
+							<strong>{!item.Name}&nbsp;({!item.crm_Service_Type__c})</strong>
+							<br/>
+							<c:lightningDataTableAdditionalServices actualServiceFields="{#v.additionalServicesFields}" aura:id="lightningDataTableAdditionalServicesId" productId="{!item.Id}"/>
+						</div>
+					</aura:iteration>
+					<aura:set attribute="else">
+						<div class="slds-text-heading_medium slds-text-title_caps slds-text-align_center slds-text-color_error">No Additional Services Selected</div>
+					</aura:set>
+				</aura:if>
+			</div>
+			<div class="slds-docked-form-footer">
+				<lightning:button class="slds-float_left" variant="neutral" label="Cancel" iconName="utility:close" iconPosition="left" onclick="{!c.closeQuickAction}" />
+				<lightning:buttonGroup class="slds-float_right" aura:id="btngroup">
+					<lightning:button iconName="utility:back" variant="neutral" label="Back" onclick="{!c.proceedToStepTwo}" />
+					<lightning:button iconName="utility:save" variant="neutral" label="Save" onclick="{!c.save}" aura:id="savebutton"/>
+				</lightning:buttonGroup>
+			</div>
+		</aura:if>
+        </div>
+		
+        </div>
+</aura:component>

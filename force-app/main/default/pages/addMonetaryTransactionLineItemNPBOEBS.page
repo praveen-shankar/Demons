@@ -1,0 +1,136 @@
+<apex:page Standardcontroller="Monetary_Transaction_Line_Item__c" extensions="Article_Extension_NPB_OEBS" action="{!loadData}">
+<!--CSphase2, Akash, 27122016-->
+    <apex:sectionHeader subtitle="{!$Label.cs_transactionLine}" title="{!$Label.cs_AddNew}" />
+
+    <apex:form >
+    <apex:pageBlock mode="maindetail">
+            <apex:pageMessages showDetail="false"/>
+            <br></br>
+            <apex:pageBlockSection columns="1" showHeader="false">
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="{!$Label.cs_transactionnumber}"></apex:outputLabel>
+                    <apex:outputLabel value="{!MTName}"></apex:outputLabel>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="{!$Label.cs_Product}"></apex:outputLabel>
+                    <apex:outputLabel value="{!MTProduct}"></apex:outputLabel>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+            <apex:actionRegion >
+            
+            
+            <apex:pageBlockSection columns="1" showHeader="false" id="thePageBlock">
+            
+                <apex:pageBlockSectionItem helpText="{!typehelptext}">
+                    <apex:outputLabel value="{!$Label.cs_Paymenttype}" for="article"></apex:outputLabel>
+                    <apex:selectList id="article" required="true" style="requiredInput"
+                     value="{!Monetary_Transaction_Line_Item__c.Type__c}" size="1" title="Utbetalingstype">
+                        <apex:selectOptions value="{!allowedarticles}"></apex:selectOptions>
+                        <apex:actionSupport event="onchange"  rerender="thePageBlock"/>
+                    </apex:selectList>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem rendered="{!Monetary_Transaction_Line_Item__c.Type__c == 'Regress'}">
+                     <apex:outputLabel value="{!$Label.cs_recourse} {!$Label.cs_Type}"/>
+                     <apex:selectList id="article" required="true" style="requiredInput"
+                     value="{!Monetary_Transaction_Line_Item__c.Regress_type__c}" size="1">
+                        <apex:selectOptions value="{!RegressType}"></apex:selectOptions>
+                    </apex:selectList>
+                </apex:pageBlockSectionItem>
+                <apex:pageblockSectionItem rendered="{!Monetary_Transaction_Line_Item__c.Type__c == 'Regress'}">
+                    <apex:outputLabel value="{!$Label.cs_Forwarder}"/>
+                    <apex:inputText value="{!trans}"/>
+                </apex:pageblockSectionItem>
+                <apex:pageblockSectionItem rendered="{!Monetary_Transaction_Line_Item__c.Type__c == 'Regress'}">
+                    <apex:outputLabel value="{!$Label.cs_Carnumbering}"/>
+                    <apex:inputText value="{!bil}"/>
+                </apex:pageblockSectionItem>
+                <apex:pageblockSectionItem rendered="{!Monetary_Transaction_Line_Item__c.Type__c == 'Regress'}">
+                    <apex:outputLabel value="Accounting Unit"></apex:outputLabel>
+                    <apex:selectList id="article" required="true" style="requiredInput"
+                     value="{!Monetary_Transaction_Line_Item__c.cs_Accounting_Unit__c}" size="1" title="Utbetalingstype">
+                        <apex:selectOptions value="{!OperatingUnit}"></apex:selectOptions>
+                    </apex:selectList>
+                </apex:pageblockSectionItem>
+                 <!-- <apex:pageblockSectionItem rendered="{!Monetary_Transaction_Line_Item__c.Type__c == 'Regress'}">
+                  <apex:outputLabel value="{!$Label.cs_Description}"></apex:outputLabel>
+                    <apex:inputText value="{!Monetary_Transaction_Line_Item__c.Description__c}"/>
+                </apex:pageblockSectionItem>-->
+                <apex:pageblockSectionItem rendered="{!Monetary_Transaction_Line_Item__c.Type__c == 'Regress'}">
+                    <apex:outputLabel value="{!$Label.cs_Customer} ({!$Label.cs_recourse})"></apex:outputLabel>
+                    <apex:outputLabel value="{!monetarytrans.Regress_Customer__r.Name}" />
+                </apex:pageblockSectionItem>
+                
+                <apex:pageBlockSectionItem rendered="{!Monetary_Transaction_Line_Item__c.Type__c == 'Manuell Behandling'}">
+                    <apex:outputLabel value="{!$Label.cs_invoice_number}"> </apex:outputLabel>
+                    <apex:inputField value="{!Monetary_Transaction_Line_Item__c.Invoice_number__c}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageblockSectionItem rendered="{!Monetary_Transaction_Line_Item__c.Type__c == 'Manuell Behandling'}">
+                    <apex:outputLabel value="Accounting Unit"></apex:outputLabel>
+                    <apex:selectList id="article" required="true" style="requiredInput"
+                     value="{!Monetary_Transaction_Line_Item__c.cs_Accounting_Unit__c}" size="1" title="Utbetalingstype">
+                        <apex:selectOptions value="{!OperatingUnit}"></apex:selectOptions>
+                    </apex:selectList>
+                </apex:pageblockSectionItem>
+               <!-- <apex:pageblockSectionItem rendered="{!Monetary_Transaction_Line_Item__c.Type__c == 'Manuell Behandling'}">
+                    <apex:outputLabel value="{!$Label.cs_Description}"></apex:outputLabel>
+                    <apex:inputField value="{!Monetary_Transaction_Line_Item__c.Description__c}"/>
+                </apex:pageblockSectionItem>-->
+                <apex:pageblockSectionItem rendered="{!IF(OR(Monetary_Transaction_Line_Item__c.Type__c == 'Kompensasjon',Monetary_Transaction_Line_Item__c.Type__c == 'Erstatning',Monetary_Transaction_Line_Item__c.Type__c == 'Refusjon'),true,false)}">
+                    <apex:outputLabel value="Accounting Unit"></apex:outputLabel>
+                    <apex:selectList id="article" required="true" style="requiredInput"
+                     value="{!Monetary_Transaction_Line_Item__c.cs_Accounting_Unit__c}" size="1" title="Utbetalingstype">
+                        <apex:selectOptions value="{!OperatingUnit}"></apex:selectOptions>
+                    </apex:selectList>
+                </apex:pageblockSectionItem>
+               <!-- <apex:pageblockSectionItem rendered="{!IF(OR(Monetary_Transaction_Line_Item__c.Type__c == 'Kompensasjon',Monetary_Transaction_Line_Item__c.Type__c == 'Erstatning',Monetary_Transaction_Line_Item__c.Type__c == 'Refusjon'),true,false)}">
+                    <apex:outputLabel value="{!$Label.cs_Description}"></apex:outputLabel>
+                    <apex:inputField value="{!Monetary_Transaction_Line_Item__c.Description__c}"/>
+                </apex:pageblockSectionItem>--> 
+                
+            </apex:pageBlockSection>
+            </apex:actionRegion>
+            
+            <apex:pageBlockSection >
+                    <apex:pageBlockSectionItem rendered="{!MTRecordTypeName!=$Label.cs_transactionCurrency}">
+                        <apex:outputLabel value="{!$Label.cs_AmountsexcludingVAT}"></apex:outputLabel>
+                        <apex:inputField value="{!Monetary_Transaction_Line_Item__c.Line_Amount__c}" required="true"/>
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem rendered="{!MTRecordTypeName==$Label.cs_transactionCurrency}">
+                        <apex:outputLabel value="{!$Label.cs_Amount} {!MTCurrency}"></apex:outputLabel>
+                        <apex:inputField value="{!Monetary_Transaction_Line_Item__c.Amount_foreign_currency__c}" required="true"/>
+                    </apex:pageBlockSectionItem>
+                </apex:pageBlockSection>
+                
+                <apex:pageBlockButtons location="bottom">
+                    <apex:commandButton value="{!$Label.cs_Save} {!$Label.cs_transactionLine}" action="{!validateAndSave}"/>
+                    <apex:commandButton value="{!$Label.cs_Back}" action="{!cancelAndBack}" immediate="true"/>
+                </apex:pageBlockButtons>
+                   
+                        
+        </apex:pageBlock>
+    </apex:form>  
+        <apex:form >
+            <apex:pageMessages />
+            <apex:detail relatedList="true"></apex:detail>
+            <apex:pageblock id="CustomList" title="{!$Label.cs_EarlierTransactionLines}"  >
+                <apex:pageBlockTable value="{!items}" var="o" rendered="{!NOT(ISNULL(items))}">
+                <apex:column value="{!o.createddate}"/>
+                <apex:column value="{!o.name}"/>
+                <apex:column value="{!o.Type__c}"/>
+                <apex:column rendered="{!(MTRecordTypeName!=$Label.cs_transactionCurrency)}" value="{!o.Regress_Account__c}"/>
+                <apex:column rendered="{!(MTRecordTypeName!=$Label.cs_transactionCurrency)}" value="{!o.Line_Amount__c}"/>
+                 <apex:column rendered="{!(MTRecordTypeName==$Label.cs_transactionCurrency)}" value="{!o.Amount_foreign_currency__c}"/>
+                <apex:column rendered="{!(MTRecordTypeName==$Label.cs_transactionCurrency)}" value="{!o.Valutakode__c}"/>
+                
+                
+                <apex:column value="{!o.Article_Number__c}"/>
+              <!--  <apex:column value="{!o.Invoice_number__c}"/>
+                <apex:column value="{!o.cargo_division_code__c}"/>
+                <apex:column value="{!o.cargo_product_code__c}"/>-->
+                </apex:pageBlockTable>
+               <apex:outputLabel value="{!$Label.cs_Notransactionlinesregistered}" rendered="{!(ISNULL(items))}" styleClass="noRowsHeader"></apex:outputLabel>
+        </apex:pageblock>
+    </apex:form>
+    
+</apex:page>

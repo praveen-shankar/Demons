@@ -1,0 +1,44 @@
+<apex:page standardController="Account" extensions="CustomerDetailExtension" rendered="{!hasEConnectData}"> 
+    <div style="overflow:auto; height:350px;">
+    <table>
+        <tr>
+        <!----CS Phase 2 14122016, Akshata -Added the labels-->
+            <th width="200">{!$Label.cs_Market_Area}</th>
+            <th width="50">{!$Label.cs_Segment}</th>
+            <th width="50">{!$Label.cs_customer_teams}</th>
+            <th width="200">{!$Label.cs_Responsible}</th>
+            <th width="70">{!$Label.cs_Telephone}</th>
+            <th width="200">{!$Label.cs_email}</th>
+            <th width="200">{!$Label.cs_Other_subordinated}</th>
+            <th width="70">{!$Label.cs_Telephone}</th>
+            <th width="200">{!$Label.cs_email}</th>
+             <!----CS Phase 2 14122016, Akshata -Added the labels-->
+        </tr>
+        <apex:repeat value="{!divisionElements.divisionTypes}" var="division">
+            <tr style="padding-bottom:20px">
+                <td><b><apex:outputText value="{!division.DivisionName}"/></b></td>
+                <td><apex:outputText value="{!division.SegmentName}"/></td>
+                <td><apex:outputText value="{!division.SubSegmentName}"/></td>
+                <td><apex:outputText value="{!division.SalesPerson.Name.FullName}"/></td>
+                <td><apex:outputText value="{!division.SalesPerson.PhoneNumber}"/></td>
+                <td><apex:outputText value="{!division.SalesPerson.Email}"/></td>
+                <td><apex:outputText value="{!division.OtherSalesPerson.Name.FullName}"/></td>
+                <td><apex:outputText value="{!division.OtherSalesPerson.PhoneNumber}"/></td>
+                <td><apex:outputText value="{!division.OtherSalesPerson.Email}"/></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+        
+        </apex:repeat>
+    </table>
+    </div>
+</apex:page>

@@ -1,0 +1,244 @@
+<apex:page controller="crm_mycustomers" sidebar="false">
+  <apex:form >
+
+  <!--<apex:pageBlock rendered="{!Accounts.size>0}" title="Search Result" > -->
+    <apex:outputPanel rendered="{!Accounts.size>0}" >   
+      <apex:actionFunction name="refreshPageSize" action="{!refreshPageSize}" status="fetchStatus" reRender="pgblock"/>
+          <apex:pageBlock id="pgblock" >
+            <apex:pageBlockSection title="My Customers" collapsible="false" columns="1">
+         <apex:pageblockTable value="{!Accounts}" var="a"  >
+         
+     
+     
+       <apex:column >
+                        <apex:facet name="header">
+                            <apex:commandLink value="Name" action="{!toggleSort}" rerender="pgblock">
+                                <apex:param name="sortField" value="Name" assignTo="{!sortField}"/>
+                            </apex:commandLink>
+                        </apex:facet>
+                     <apex:outputlink value="/{!a.id}"  target="{!IF(flag,'_self','_blank')}">{!a.Name}</apex:outputlink>  
+                    </apex:column>    
+         
+       
+    
+       <apex:column >
+              <apex:facet name="header">
+                            <apex:commandLink value="Organization No" action="{!toggleSort}" rerender="pgblock">
+                                <apex:param name="sortField" value="Orga__c" assignTo="{!sortField}"/>
+                            </apex:commandLink>
+                        </apex:facet>  {!a.Orga__c} 
+                        
+                      </apex:column>   
+                      
+   
+       <apex:column >
+          <apex:facet name="header">
+               <apex:commandLink value="Company Group Name" action="{!toggleSort}" rerender="pgblock">
+                     <apex:param name="sortField" value="crm_Company_Group_Name__c" assignTo="{!sortField}"/>
+                        </apex:commandLink>
+                        </apex:facet>  
+      
+      {!a.crm_Company_Group_Name__c }  </apex:column>   
+      
+       <apex:column >
+          <apex:facet name="header">
+               <apex:commandLink value="Postcode" action="{!toggleSort}" rerender="pgblock">
+                     <apex:param name="sortField" value="crm_bus_addr_Zip_Code__c" assignTo="{!sortField}"/>
+                        </apex:commandLink>
+                       </apex:facet>  
+      {!a.crm_bus_addr_Zip_Code__c} 
+        </apex:column>  
+      <apex:column >
+          <apex:facet name="header">
+               <apex:commandLink value="City" action="{!toggleSort}" rerender="pgblock">
+                     <apex:param name="sortField" value="crm_bus_addr_City__c" assignTo="{!sortField}"/>
+                        </apex:commandLink>  
+          </apex:facet>  
+        {!a.crm_bus_addr_City__c}    </apex:column>  
+        
+         <apex:column >
+          <apex:facet name="header">
+               <apex:commandLink value="No of Department" action="{!toggleSort}" rerender="pgblock">
+                     <apex:param name="sortField" value="City" assignTo="{!sortField}"/>
+                        </apex:commandLink>  
+            </apex:facet>  
+       <apex:outputText value="{0, number, 0}">
+       <apex:param value="{!FLOOR(a.crm_Count_of_Relation_level_Accounts__c)}" />
+         </apex:outputText>
+         
+              </apex:column> 
+              
+     <apex:column >
+          <apex:facet name="header">
+               <apex:commandLink value="Revenue This Yr ( {!defaultCur} )" action="{!toggleSort}" rerender="pgblock">
+                     <apex:param name="sortField" value="crm_Revenue_This_Year__c" assignTo="{!sortField}"/>
+                        </apex:commandLink>           
+               </apex:facet>  
+      <apex:outputText id="RevenueThisYr" value="{0,number,#,###}"> 
+        <apex:param value="{!(a.crm_Revenue_This_Year__c)}"/> 
+        </apex:outputText>
+     
+     </apex:column>   
+     
+      <apex:column >
+          <apex:facet name="header">
+               <apex:commandLink value="Revenue Last Yr ( {!defaultCur} )" action="{!toggleSort}" rerender="pgblock">
+                     <apex:param name="sortField" value="crm_Revenue_Last_Year__c" assignTo="{!sortField}"/>
+                        </apex:commandLink>  
+                         </apex:facet>     
+         <apex:outputText id="RevenueLastYr" value="{0,number,#,###}"> 
+        <apex:param value="{!(a.crm_Revenue_Last_Year__c)}"/> 
+        </apex:outputText> </apex:column>   
+       
+    </apex:pageBlockTable>   
+       
+  <apex:panelGrid columns="8"> 
+                 
+                <apex:selectList value="{!size}" multiselect="false" size="1" onchange="refreshPageSize();">
+                    <apex:selectOptions value="{!paginationSizeOptions}"/>
+                </apex:selectList>
+                 
+                <apex:commandButton status="fetchStatus" reRender="pgblock" value="First" action="{!setCon.first}" disabled="{!!setCon.hasPrevious}" title="First Page"/> 
+  
+                <apex:commandButton status="fetchStatus" reRender="pgblock" value="Previous" action="{!setCon.previous}" disabled="{!!setCon.hasPrevious}" title="Previous Page"/> 
+  
+                <apex:commandButton status="fetchStatus" reRender="pgblock" value="Next" action="{!setCon.next}" disabled="{!!setCon.hasNext}" title="Next Page"/> 
+  
+                <apex:commandButton status="fetchStatus" reRender="pgblock" value="Last" action="{!setCon.last}" disabled="{!!setCon.hasNext}" title="Last Page"/> 
+  
+                <apex:outputText >{!(setCon.pageNumber * size)+1-size}-{!IF((setCon.pageNumber * size)>noOfRecords, noOfRecords,
+                     (setCon.pageNumber * size))} of {!noOfRecords}
+                </apex:outputText> 
+          
+          </apex:panelGrid>  
+  
+           
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+     </apex:outputPanel>   
+        <!--</apex:pageBlock>-->
+   
+    
+    <!------contacts------------------>
+
+     <apex:outputPanel rendered="{!Contacts.size>0}">   
+      <apex:actionFunction name="refreshPageSize1" action="{!refreshPageSize1}" status="fetchStatus" reRender="pgcontactblock"/>
+          <apex:pageBlock id="pgcontactblock" >
+            <apex:pageBlockSection title="My Contacts" collapsible="false" columns="1">
+         <apex:pageblockTable value="{!Contacts}" var="a"  >
+         
+       aaaaqqw{!Contacts}
+     
+       <apex:column >
+                        <apex:facet name="header">
+                            <apex:commandLink value="Name" action="{!toggleSortContact}" rerender="pgcontactblock">
+                                <apex:param name="sortField" value="Name" assignTo="{!sortField}"/>
+                            </apex:commandLink>
+                        </apex:facet>
+                     <apex:outputlink value="/{!a.id}"  target="{!IF(flag,'_self','_blank')}">{!a.Name}</apex:outputlink>  
+                    </apex:column>    
+         
+       
+    
+      <apex:column >
+              <apex:facet name="header">
+                            <apex:commandLink value="Customer" action="{!toggleSortContact}" rerender="pgcontactblock">
+                                <apex:param name="sortField" value="account.name" assignTo="{!sortField}"/>
+                            </apex:commandLink>
+                        </apex:facet>  {!a.account.name} 
+                        
+                      </apex:column>   
+                      
+   
+       <apex:column >
+          <apex:facet name="header">
+               <apex:commandLink value="Email" action="{!toggleSortContact}" rerender="pgcontactblock">
+                     <apex:param name="sortField" value="email" assignTo="{!sortField}"/>
+                        </apex:commandLink>
+                        </apex:facet>  
+      
+      {!a.email}  </apex:column>   
+      
+       <apex:column >
+          <apex:facet name="header">
+               <apex:commandLink value="Source" action="{!toggleSortContact}" rerender="pgcontactblock">
+                     <apex:param name="sortField" value="crm_Source__c" assignTo="{!sortField}"/>
+                        </apex:commandLink>
+                       </apex:facet>  
+      {!a.crm_Source__c} 
+        </apex:column>  
+     <!-- <apex:column >
+          <apex:facet name="header">
+               <apex:commandLink value="City" action="{!toggleSort}" rerender="pgblock">
+                     <apex:param name="sortField" value="crm_bus_addr_City__c" assignTo="{!sortField}"/>
+                        </apex:commandLink>  
+          </apex:facet>  
+        {!a.crm_bus_addr_City__c}    </apex:column>  
+        
+         <apex:column >
+          <apex:facet name="header">
+               <apex:commandLink value="No of Department" action="{!toggleSort}" rerender="pgblock">
+                     <apex:param name="sortField" value="City" assignTo="{!sortField}"/>
+                        </apex:commandLink>  
+            </apex:facet>  
+       <apex:outputText value="{0, number, 0}">
+       <apex:param value="{!FLOOR(a.crm_Count_of_Relation_level_Accounts__c)}" />
+         </apex:outputText>
+         
+              </apex:column> 
+              
+     <apex:column >
+          <apex:facet name="header">
+               <apex:commandLink value="Revenue This Yr" action="{!toggleSort}" rerender="pgblock">
+                     <apex:param name="sortField" value="crm_Revenue_This_Year__c" assignTo="{!sortField}"/>
+                        </apex:commandLink>           
+               </apex:facet>  
+       <apex:outputField value="{!a.crm_Revenue_This_Year__c}"/>
+     
+     </apex:column>   
+     
+      <apex:column >
+          <apex:facet name="header">
+               <apex:commandLink value="Revenue Last Yr" action="{!toggleSort}" rerender="pgblock">
+                     <apex:param name="sortField" value="crm_Revenue_Last_Year__c" assignTo="{!sortField}"/>
+                        </apex:commandLink>  
+                         </apex:facet>     
+        <apex:outputField value="{!a.crm_Revenue_Last_Year__c}"/> </apex:column>   -->
+       
+    </apex:pageBlockTable>     
+       
+  <apex:panelGrid columns="8"> 
+                 
+                <apex:selectList value="{!size1}" multiselect="false" size="1" onchange="refreshPageSize1();">
+                    <apex:selectOptions value="{!paginationSizeOptions1}"/>
+                </apex:selectList>
+                 
+                <apex:commandButton status="fetchStatus" reRender="pgcontactblock" value="First" action="{!setCon.first}" disabled="{!!setCon.hasPrevious}" title="First Page"/> 
+  
+                <apex:commandButton status="fetchStatus" reRender="pgcontactblock" value="Previous" action="{!setCon.previous}" disabled="{!!setCon.hasPrevious}" title="Previous Page"/> 
+  
+                <apex:commandButton status="fetchStatus" reRender="pgcontactblock" value="Next" action="{!setCon.next}" disabled="{!!setCon.hasNext}" title="Next Page"/> 
+  
+                <apex:commandButton status="fetchStatus" reRender="pgcontactblock" value="Last" action="{!setCon.last}" disabled="{!!setCon.hasNext}" title="Last Page"/> 
+  
+                <apex:outputText >{!(setCon1.pageNumber * size1)+1-size1}-{!IF((setCon1.pageNumber * size1)>noOfRecords1, noOfRecords1,
+                     (setCon1.pageNumber * size1))} of {!noOfRecords1}
+                </apex:outputText> 
+          
+          </apex:panelGrid>  
+  
+           
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+     </apex:outputPanel>   
+      
+    
+ <apex:pageBlock title="Search Result"  rendered="{!if(Accounts.size==0,true, false)}">
+     There are no records to display
+      </apex:pageBlock>
+  <!-- End Default Content REMOVE THIS -->
+
+       
+ </apex:form>
+  <!-- End Default Content REMOVE THIS -->
+</apex:page>

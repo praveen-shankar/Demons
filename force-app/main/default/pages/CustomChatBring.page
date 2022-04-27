@@ -1,0 +1,453 @@
+<apex:page showHeader="false" language="no">
+    
+    <apex:stylesheet value="{!URLFOR($Resource.ChatCSS3,'style.css')}" />
+    <style>
+        
+        span.liveAgentQueuePosition:empty::before { content: '1'; }
+        
+        #liveAgentClientChat.liveAgentStateWaiting {
+        // The CSS class that is applied when the chat request is waiting to be accepted
+        // See "Waiting State" screenshot below
+        }
+        #liveAgentClientChat {
+        // The CSS class that is applied when the chat is currently engaged
+        // See "Engaged State" screenshot below
+        }
+        #liveAgentClientChat.liveAgentStateEnded {
+        // The CSS class that is applied when the chat has ended
+        // See "Ended State" screenshot below
+        
+        
+        }
+        body { overflow: hidden; width: 100%; height: 100%; padding: 0; margin: 0 }
+        
+        #waitingMessage {
+        height: 1000px; 
+        width: 100%; 
+        vertical-align: middle; 
+        text-align: center;
+        display: none; 
+        }
+        
+        #closeMessage {
+        height: 1000px; 
+        width: 100%; 
+        vertical-align: middle; 
+        text-align: center;
+        display: none; 
+        font-family:'Foundrymonolinepn bold', sans-serif;
+        margin-left: 1px;  
+        font-style: italic;
+        font-size: 18px;  
+        margin-top: 50px;        
+        } 
+        
+        #liveAgentMessageContainer{
+        visibility: hidden;
+        height : 0px;
+        }
+        
+        
+        .ingress1 {
+        display: block;
+        max-width: 570px;
+        margin: 0px auto;
+        -webkit-transition: opacity 200ms ease;
+        transition: opacity 200ms ease;
+        font-family:'Foundrymonolinepn bold', sans-serif;
+        color: #444;
+        font-size: 15px;
+        line-height: 30px;
+        text-align: center;
+        letter-spacing: -0.02em;
+        }
+        
+        .ingress1.chat {
+        margin-top: 24px;
+        text-align: center;
+        font-size: 18px;  
+        }   
+        
+        .bold {
+        font-family:'Foundrymonolinepn medium', sans-serif;
+        font-weight :700;
+        font-size :15px;
+        }    
+        #liveAgentClientChat.liveAgentStateWaiting #waitingMessage { display: table; }
+        #liveAgentClientChat.liveAgentStateEnded #closeMessage{ display: table; }
+        
+        
+        .logo-div {
+        display: inline-block;
+        width: 155px;
+        margin-top: 0px;
+        position : absolute;
+        left : 27%;
+        }
+        
+        .logo-div img {
+        vertical-align: middle;
+        display: inline-block;
+        }
+        
+        
+        .liveAgentSaveButton{
+        width: 160px;
+        height: 31px;
+        margin-left: 1%;
+        border: 3px solid transparent;
+        background: #666;
+        cursor: pointer;
+        border-radius: 0;
+        right: -67px;
+        padding: 0 0 3px;
+        font-family: 'Foundrymonolinepn regular', sans-serif;
+        color: #ffffff;
+        font-size: 15px;
+        padding-top : 3px;    
+        }
+        
+        
+        
+        .liveAgentEndButton {
+        width: 160px;
+        height: 31px;
+        margin-left: 30px;
+        margin-right: 1%px;
+        border: 3px solid transparent;
+        background: #7bc144;
+        cursor: pointer;
+        border-radius: 0;
+        right: -67px;
+        padding: 0 0 3px;
+        font-family: 'Foundrymonolinepn regular', sans-serif;
+        color: #ffffff;
+        font-size: 15px;
+        float:right;
+        display:block;
+        padding-top : 3px;    
+        
+        }
+        
+        #liveAgentChatLog {
+        width: auto;
+        height: auto;
+        top: 85px;
+        position: absolute;
+        overflow-y: auto;
+        left: 0;
+        right: 0;
+        bottom: 45px;
+        border: none;
+        }
+        
+        #liveAgentChatLogText .operator{
+        
+        //CSS for the agent message
+        //Kundeservice: hi what is the issue which you are facing?
+        margin-left: 10px;  
+        
+        }
+        
+        #liveAgentChatLogText .operator .name{
+        
+        //CSS for the agent message
+        //Kundeservice:
+        
+        margin-bottom: 6px;
+        font-family: 'Foundrymonolinepn bold', sans-serif;
+        color: #444;
+        font-size: 15px;
+        line-height: 26px;
+        letter-spacing: -0.02px;
+        }
+        
+        
+        #liveAgentChatLogText .operator .messageText{
+        
+        //CSS for the agent message
+        //what is the issue which you are facing?
+        
+        display: block;
+        max-width: 570px;
+        margin-right: 10px;
+        margin-bottom: 12px;
+        margin-left: auto;
+        font-family: 'Foundrymonolinepn regular', sans-serif;
+        color: #444;
+        font-size: 15px;
+        line-height: 26px;
+        font-weight: 400;
+        letter-spacing: -0.02em;
+        }
+        
+        #liveAgentChatLogText .operator .timestamp{
+        margin-top: -10px;
+        font-family: 'Foundrymonolinepn bold', sans-serif;
+        color: #c1c1c1;
+        font-size: 15px;   
+        }
+        
+        
+        #liveAgentChatLogText .client{
+        
+        //CSS for the customer message
+        //Meg: i have not recieved my parcel
+        
+        margin-right: 10px;
+        text-align: right;
+        
+        }
+        
+        #liveAgentChatLogText .client .name{
+        
+        //CSS for the customer message
+        //Meg:
+        
+        margin-bottom: 6px;
+        font-family: 'Foundrymonolinepn bold', sans-serif;
+        color: #444;
+        font-size: 15px;
+        line-height: 26px;
+        margin-top: 6px;
+        text-align: right;
+        letter-spacing: -0.02px;
+        margin-top: 6px;
+        text-align: right;
+        }
+        
+        
+        #liveAgentChatLogText .client .messageText{
+        
+        //CSS for the customer message
+        //i have not recieved my parcel
+        display: block;
+        max-width: 570px;
+        margin-right: 10px;
+        margin-bottom: 12px;
+        margin-left: auto;
+        font-family: 'Foundrymonolinepn regular', sans-serif;
+        color: #444;
+        font-size: 15px;
+        font-weight: 400;
+        letter-spacing: -0.02em;
+        text-align: left;
+        }
+        
+        #liveAgentChatLogText .timestamp{
+        
+        margin-top: 4px;
+        font-family: 'Foundrymonolinepn bold', sans-serif;
+        color: #c1c1c1;
+        font-size: 11px; 
+        text-align: right;
+        margin-bottom: 12px;
+        border-bottom: 1px solid #e6e6e6;
+        
+        }  
+        
+        
+        .liveAgentChatInput {
+        width: 70%;
+        height: 31px;
+        max-width: 470px;
+        margin-bottom: 24px;
+        float: left;
+        border: 3px solid #c1c1c1;
+        -webkit-transition: all 300ms ease;
+        transition: all 300ms ease;
+        font-family: 'Foundrymonolinepn regular', sans-serif;
+        font-size: 15px;
+        position: absolute; 
+        height: auto; 
+        margin-right:67px;
+        display: block;
+        float: left;
+        margin: 0 10px 0 0;
+        bottom: 0%;
+        } 
+        
+        .liveAgentSendButton {
+        width: 94px;
+        height: 36px;
+        margin-left: 30px;
+        margin-right: 1%px;
+        border: 3px solid transparent;
+        background: #7bc144;
+        cursor: pointer;
+        border-radius: 0;
+        right: -67px;
+        padding: 0 0 3px;
+        font-family: 'Foundrymonolinepn regular', sans-serif;
+        color: #ffffff;
+        font-size: 15px;
+        float:right;
+        display:inline;
+        right :1%;
+        bottom : 0%;
+        position: absolute;
+        padding-top : 3px;        
+        }
+        
+        .liveAgentCancelButton{        
+        width: 122px;
+        height: 36px;    
+        margin-right: 1%px;
+        border: 3px solid transparent;
+        background: #7bc144;
+        cursor: pointer;
+        border-radius: 0;
+        right: -67px;
+        padding: 0 0 3px;
+        font-family: 'Foundrymonolinepn regular', sans-serif;
+        color: #ffffff;
+        font-size: 15px;
+        padding-top : 3px;        
+        }
+        
+        p.closemsg{
+        font-family:'Foundrymonolinepn bold', sans-serif;
+        margin-top : -2px;
+        text-align: left; 
+        color: #444;
+        position :absolute;
+        }     
+        
+        p.text{
+        font-family:'Foundrymonolinepn medium', sans-serif;
+        margin-top: 40px;
+        font-size: 18px;
+        margin-left: 5px;
+        text-align: left; 
+        color: #444
+        }     
+        p.desc{
+        font-family:'Foundrymonolinepn medium', sans-serif;
+        margin-top: 42px;
+        font-size: 18px;
+        text-align: left; 
+        color: #444;
+        overflow-y:auto;
+        max-height: 36px;
+        margin-right : 5px;
+        }
+        
+        .desclabel{
+        font-family:'Foundrymonolinepn medium', sans-serif;
+        margin-top: 40px;
+        //margin-left: 5px;
+        text-align: left; 
+        color: #444;
+        font-weight :700;
+        font-size :15px;
+        }
+        
+    </style>  
+    
+    <div class="logo-div" style="top: auto; bottom:auto;  position: absolute; margin-left: 30px;">
+        <img src="{!$Resource.BringLogo}" height="80" width="150" alt="amazonlogo"/>
+        
+    </div>
+    
+    <div style="top: 15%; left: 5px; right: 5px; bottom: 5px; position: absolute; z-index:
+                0; ">
+        <liveAgent:clientChat >
+            
+            
+            <liveAgent:clientChatAlertMessage />
+            <liveAgent:clientChatStatusMessage />   
+            
+            <div id="waitingMessage">
+                
+                <p class="ingress1 chat"><span id= "demo1" class ="bold"> </span> <!--Vennligst vent, vi leter etter en ledig kunderådgiver.-->{!$Label.cs_chatwait}</p>
+                <p class="ingress1 chat"><span class="bold"></span></p>
+                <img src="{!$Resource.loadingstate}" height="70" width="75"/><br/> 
+                <!--CSphase2, Akash, 19122016-->
+                <!--<liveAgent:clientChatCancelButton label="Lukk chat" />       -->   
+                
+                <br/>
+                <h3 class="ingress1 chat" >Du er nummer <liveAgent:clientChatQueuePosition /> i køen</h3>
+                 <br/> 
+                 
+                <liveAgent:clientChatCancelButton label="{!$Label.cs_CloseChat}" />   
+            </div>
+            
+            <div id="closeMessage">     
+                <p class="closemsg"><!--CSphase2, Akash, 19122016-->
+                    <!--Samtalen er avsluttet-->{!$Label.cs_ChatTerminated}  
+                </p>
+                
+            </div>
+            <div style="top: 0; right: 0; bottom: 20%; left: 0; padding: 0;
+                        word-wrap: break-word; z-index: 0;">
+                <div id ="description">  
+                    
+                    <p class="desc bold"><span class="desclabel"><!--Beskrivelse:--> {!$Label.cs_describe}</span> <span style ="font-size: 15px;font-family: 'Foundrymonolinepn regular', sans-serif;font-weight: 400;color: #444" id= "demo" ></span></p>   
+                </div><!--CSphase2, Akash, 19122016-->
+                <!--<liveAgent:clientChatLog visitorNameLabel="Meg" agentTypingLabel="Kundeservice-Anders skriver..." showTimeStamp="True" id="log" chatEndedByVisitorLabel="Du har avsluttet samtalen"  />-->
+                <liveAgent:clientChatLog visitorNameLabel="{!$Label.cs_Me}" agentTypingLabel="{!$Label.cs_typingAgent}" showTimeStamp="True" id="log" chatEndedByVisitorLabel="{!$Label.cs_EndChat}"  />
+            </div>   
+            <div id ="buttonid" style="width:100%; height : inherit; right: 0; bottom: 0; left: 0; margin-right:
+                                       62px;">
+                
+            </div>
+            <div class ="header" id ="header" style="top: 0%; left: 0; right: 0; bottom: auto; height: 0px; position: absolute;box-shadow:none;">
+                <!--CSphase2, Akash, 19122016-->
+                <!--<liveAgent:clientChatSaveButton label="Lagre chat" />
+                <liveAgent:clientChatEndButton label="Lukk chat"/>-->
+                <liveAgent:clientChatSaveButton label="{!$Label.cs_SaveChat}" />
+                <liveAgent:clientChatEndButton label="{!$Label.cs_CloseChat}"/>
+            </div>
+            <div id ="inputblock" style="width:100%; height : inherit; right: 0; bottom: 0; left: 0; margin-right:
+                                         62px;">
+                <liveagent:clientChatInput />
+                
+                <liveAgent:clientChatSendButton label="Send" id="sendbuttonid"/>
+            </div>
+            
+        </liveAgent:clientChat>
+    </div>
+    
+    <script type="text/javascript">
+    
+    function getCookie(description) {
+        // alert('hi');    
+        var descrip = description + "=";
+        var ca = document.cookie.split(';');
+        for(var i = 0; i <ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0)==' ') {
+                c = c.substring(1);
+            }
+            if (c.indexOf(descrip) == 0) {
+                alert('inside adasdsd```');
+                return c.substring(descrip.length,c.length);
+                alert(c.substring(descrip.length,c.length));
+            }
+        }
+        return "";
+    }
+    
+    function ReadCookie(cookieName) {
+        var theCookie=" "+document.cookie;
+        var ind=theCookie.indexOf(" "+cookieName+"=");
+        if (ind==-1) ind=theCookie.indexOf(";"+cookieName+"=");
+        if (ind==-1 || cookieName=="") return "";
+        var ind1=theCookie.indexOf(";",ind+1);
+        if (ind1==-1) ind1=theCookie.length; 
+        return unescape(theCookie.substring(ind+cookieName.length+2,ind1));
+        
+    }
+    
+    document.getElementById("demo").innerHTML = ReadCookie('description');
+    //document.getElementById("demo1").innerHTML = ReadCookie('name');
+    //document.getElementById("liveAgentMessageContainer").style.display = "none";
+    //var result = ReadCookie('description');
+    // alert('result:::'+result);
+    // test(result);
+    
+    function fi(){
+        document.getElementById('liveAgentQueuePosition').style.display = 'inline' ;
+    }
+    </script>    
+</apex:page>

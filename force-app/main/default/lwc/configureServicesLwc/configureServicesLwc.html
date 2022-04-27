@@ -1,0 +1,38 @@
+<template>
+    <h1>Hello World</h1>
+    <lightning-card title="Configure Service" icon-name="action:new_note" size="small">
+       <div class="slds-p-around_medium">
+          
+       
+        <lightning-record-edit-form>
+            <div class="slds-grid slds-wrap" style="background:#eee; border:1px #ddd solid; padding:10px;">
+                <div class="slds-col slds-size_6-of-12 slds-p-horizontal_medium">
+                    <lightning-input-field field-name="crm_Discount__c"></lightning-input-field>
+                </div>
+                <div class="slds-col slds-size_6-of-12 slds-p-horizontal_medium">
+                    <lightning-input-field field-name="crm_Minimum_Price__c"></lightning-input-field>
+                </div>
+                <div class="slds-col slds-size_6-of-12 slds-p-horizontal_medium">
+                    <lightning-input-field field-name="	UnitPrice"></lightning-input-field>
+                </div> 
+                <div class="slds-col slds-size_6-of-12 slds-p-horizontal_medium">
+                    <lightning-input-field field-name="crm_Min_Weight__c"></lightning-input-field>
+                </div>
+                <div class="slds-col slds-size_6-of-12 slds-p-horizontal_medium">
+                    <lightning-input-field field-name="crm_Max_Weight__c"></lightning-input-field>
+                </div>
+                <div class="slds-col slds-size_6-of-12 slds-p-horizontal_medium">
+                    <lightning-input-field field-name="crm_Terminals__c"></lightning-input-field>
+                </div>
+            </div>
+             
+             
+            <div class="slds-text-align--center slds-m-top_medium">
+                <lightning-button variant="destructive" title="Reset Services" class="slds-m-top_small slds-m-horizontal_small" label="Reset Services" onclick={resetFormAction}></lightning-button>                
+                <lightning-button variant="brand" disabled={disabledButton} class="slds-m-top_small" type="submit" label="Save Record"></lightning-button>
+            </div>
+        </lightning-record-edit-form>
+    </div>  
+<br/><br/>
+    </lightning-card>
+</template>

@@ -1,0 +1,391 @@
+<apex:page standardController="Case" extensions="Lightuser_CreateCaseController" showHeader="true" sidebar="false">
+    <apex:includeScript value="{!$Resource.auto_completeKATS_js}" />
+    <apex:stylesheet value="{!$Resource.auto_comlete_css}"/>
+    
+  <style>
+        .cField{
+            width:300px;
+        }
+        
+        .leftCell {
+            width:130px;
+        }
+        /*workaround for getting SF helptext to work when you dont want to show the header.
+        You then set showheader = true and it will be hidden by the css
+        */
+        .bPageHeader{
+            display: none;
+        }
+    </style>
+
+<script>
+        
+        //This is a small workaround for getting the component to work with the enter key
+        //I'll include this behavior as part of the component in a next release
+        function noenter(e){
+ 
+             var key;    
+             if(window.event)
+                  key = window.event.keyCode; //IE
+             else
+                  key = e.which; //firefox    
+        
+             return (key != 13);    
+
+        }
+        
+        function disableautocomplete() {
+          var forms = document.getElementsByTagName('form');
+          
+          for (var i = 0; i < forms.length; ++i) {
+            if (forms[i].setAttribute) {
+              forms[i].setAttribute('autocomplete', 'off')
+            } else {
+              forms[i].autocomplete = 'off'
+            }
+          }
+        }
+        
+        if (window.addEventListener) {
+          window.addEventListener('load', disableautocomplete, true)
+        } else if (window.attachEvent) {
+          window.attachEvent('onload', disableautocomplete)
+        } else {
+          window.onload = disableautocomplete
+        }
+       
+       
+        var customerSearchWin=null;
+        function openCustomerSearch(actorNumber)
+        {
+            var url="/default/Lightuser_SearchCustomer?actorNumber=" + actorNumber;
+            customerSearchWin=window.open(url, 'Popup','height=500,width=1200,left=100,top=100,resizable=no,scrollbars=yes,toolbar=no,status=no');
+            customerSearchWin.focus();
+            return false;
+        }
+                      
+                      
+        function setActorNumber(actorNumber, actorName)
+        {
+            document.getElementById('{!$Component.j_id0:TEMPFORM:thePageBlock:j_id118:lightuser_pageblocksectionitem:actorNumber}').value = actorNumber;
+            document.getElementById('{!$Component.j_id0:TEMPFORM:thePageBlock:j_id118:j_id121:actorName}').value = actorName;
+            
+            if (null!=customerSearchWin)
+            {
+                customerSearchWin.close();
+            }  
+            
+            
+        }
+        
+        function setRecordType() 
+        {
+            window.location="/default/Lightuser_CreateCase?user=" + document.getElementById('{!$Component.j_id0:TEMPFORM:thePageBlock:case_information.usernameSection.userName}').value + "&unit=" + document.getElementById('{!$Component.j_id0:TEMPFORM:thePageBlock:case_information:unitSection:unit}').value + "&record=" + document.getElementById('{!$Component.j_id0:TEMPFORM:thePageBlock:case_information:recordtypeSection:record}').value;
+        }
+</script>
+    <apex:include pageName="LightuserCases" />
+
+    <apex:form style="padding:30px 30px 0px 30px" id="TEMPFORM">
+        <apex:pageblock id="thePageBlock" rendered="{!Isactivelightuser}">
+            
+            <apex:pageBlockButtons >
+                <!--<apex:commandButton action="{!saveCase}" value="Lagre sak" />
+                Csphase2 supriya 20122016
+                -->
+               <apex:commandButton action="{!saveCase}" value="{!$Label.cs_save_case}" /> 
+            </apex:pageBlockButtons>
+            
+            <apex:pageBlockSection columns="1" id="case_information">
+
+               <!-- <apex:PageBlockSectionItem helpText="Avvik benyttes når det avdekkes avvik eller feil i forbindelse med innlevering, produksjon eller utlevering. Når denne sakstypen benyttes, opprettes det sak i Kundeservice, og forholdet vurderes tatt opp med kunden. 
+Gjenligg benyttes når det er gjenligg på terminal, i ruteklargjøring eller omdeling. Det opprettes ikke sak i Kundeservice, men informasjonen benyttes i kvalitetsrapportering og til spørsmål fra kunder.
+" id="recordtypeSection">
+                    <apex:outputLabel value="Sakstype*"/>
+                    CsPhase2 Supriya 20122016
+                    -->
+                    
+                    <apex:PageBlockSectionItem helpText="{!$Label.cs_Create_case_type_help}" id="recordtypeSection">
+                    <apex:outputLabel value="{!$Label.cs_Case_Type}*"/>
+                 
+                    <apex:inputField value="{!case.recordTypeId}" onChange="setRecordType();" id="record"/>
+                </apex:PageBlockSectionItem>
+                
+                <apex:PageBlockSectionItem id="usernameSection" helpText="{!$ObjectType.Case.fields.Created_by_Name__c.inlineHelpText}">
+                    <!--<apex:outputLabel value="Bruker (Fullt navn)*"/>
+                    
+                    CsPhase2 Supriya 20122016
+                    -->
+                    
+                    <apex:outputLabel value="{!$Label.cs_User_fullname}*"/>
+                    <apex:inputField id="userName" value="{!Case.Created_by_Name__c}" />
+                </apex:PageBlockSectionItem>
+                
+                <apex:PageBlockSectionItem id="unitSection" helpText="{!$ObjectType.Case.fields.Created_by_Unit__c.inlineHelpText}">
+                    <!--<apex:outputLabel value="Reg. av enhet*" />
+                    
+                    CSPhase2 Supriya 20122016
+                    -->
+                    
+                    <apex:outputLabel value="{!$Label.cs_reg_Device}*" />
+                    <apex:inputField id="unit" onkeypress="return noenter(event)" value="{!pu.name}" styleClass="cField">
+                        <c:PostalUnit_AutoCompleteComponent Width="300" ClassName="autocomplete" InputId="{!$Component.unit}" AutoCompleteId="unitACId" />
+                    </apex:inputField>
+                </apex:PageBlockSectionItem>
+                
+                <apex:PageBlockSectionItem id="unit_to_blameSection" helpText="{!$ObjectType.Case.Fields.unit_to_blame__c.inlineHelpText}">
+                    <!--<apex:outputLabel value="Sak relatert til enhet" />
+                    CSPhase2 Supriya 201222016
+                    
+                    -->
+                    
+                    <apex:outputLabel value="{!$Label.cs_Case_related_to_unit}" />
+                    <apex:inputField id="unit_to_blame" onkeypress="return noenter(event)" value="{!pu_to_blame.name}" styleClass="cField">
+                        <c:PostalUnit_AutoCompleteComponent Width="300" ClassName="autocomplete" InputId="{!$Component.unit_to_blame}" AutoCompleteId="unit_to_blameACId" />
+                    </apex:inputField>
+                </apex:PageBlockSectionItem>
+ 
+                <apex:PageBlockSectionItem helpText="{!$ObjectType.Case.Fields.deviation_time_of_incident__c.inlineHelpText}" >
+                     <!--<apex:outputLabel value="Tid for hendelse*"/>
+                     CSPhase2 , Supriya , 20122016
+                     -->
+                     
+                     <apex:outputLabel value="{!$Label.cs_Time_Event}*"/>
+                     <apex:inputField value="{!case.deviation_time_of_incident__c}"/>
+                </apex:PageBlockSectionItem>
+                
+                <apex:pageblockSectionItem helpText="{!$ObjectType.Case.Fields.Code_Event__c.inlineHelpText}">
+                    <!--<apex:outputLabel value="Henvendelsestype*"/>
+                    CSPhase2 supriya 20122016
+                    
+                    -->
+                    
+                    <apex:outputLabel value="{!$Label.cs_EnquiryType}*"/>
+                    <apex:outputPanel styleClass="requiredInput" layout="block">
+                        <apex:selectList size="1" value="{!eventId}" multiselect="false">
+                            <apex:selectoptions value="{!EventOpts}" />
+                            <apex:actionSupport event="onchange" action="{!setCaseCategory}" reRender="thePageBlock"/>
+                        </apex:selectList>
+                        <apex:outputText value="{!noEventMsg}" rendered="{!NOT(ISNULL(noEventMsg))}" style="color:#BA1919"/>
+                    </apex:outputPanel> 
+                </apex:pageblockSectionItem>
+
+                <apex:pageblockSectionItem helpText="{!$ObjectType.Code_Event_Prod__c.Fields.Product__c.inlineHelpText}"> 
+                    <apex:outputLabel value="Produktfamilie / Produkt*"/>
+                    <apex:outputPanel styleClass="requiredInput" layout="block">
+                        <apex:selectList size="1" value="{!productFamily}" id="productFam">
+                            <apex:selectoptions value="{!productFamiliesOpts}" />
+                            <apex:actionSupport event="onchange" reRender="product,reason1,reason2,rute,distribusjon"/>
+                        </apex:selectList>
+                        <!-- Produkt Navn -->
+                        <apex:selectList size="1" value="{!productId}" id="product">
+                            <apex:selectoptions value="{!productOpts}" />
+                            <apex:actionSupport event="onchange" reRender="reason1,reason2,rute,distribusjon"/>
+                        </apex:selectList>
+                        <apex:outputText value="{!noProductMsg}" rendered="{!NOT(ISNULL(noProductMsg))}" style="color:#BA1919"/>
+                    </apex:outputPanel>
+                </apex:pageblockSectionItem>
+            
+                
+                <apex:pageblockSectionItem helpText="{!$ObjectType.Case.Fields.Code_Reason1__c.inlineHelpText}">
+                    <!--<apex:outputLabel value="Årsak 1*"/>
+                    Csphase2 Supriya 20122016
+                    -->
+                    <apex:outputLabel value="{!$Label.cs_Cause} 1*"/>
+                    
+                    <apex:outputPanel styleClass="requiredInput" layout="block">
+                        <apex:selectList size="1" value="{!reason1Id}" id="reason1">
+                            <apex:selectoptions value="{!Reason1Opts}" />
+                            <apex:actionSupport event="onchange" reRender="reason2"/>
+                        </apex:selectList>
+                        <apex:outputText value="{!noReason1Msg}" rendered="{!NOT(ISNULL(noReason1Msg))}" style="color:#BA1919"/>
+                    </apex:outputPanel>
+                </apex:pageblockSectionItem>
+            
+
+                <apex:pageblockSectionItem helpText="{!$ObjectType.Case.Fields.Code_Reason2__c.inlineHelpText}">
+                    <!--<apex:outputLabel value="Årsak 2"/>
+                     Csphase2 Supriya 20122016
+                    -->
+                    <apex:outputLabel value="{!$Label.cs_Cause} 2"/>
+                    <apex:outputPanel styleClass="requiredInput" layout="block">
+                        <apex:selectList size="1" value="{!reason2Id}" id="reason2">
+                            <apex:selectoptions value="{!Reason2Opts}" />
+                        </apex:selectList>
+                        <apex:outputText value="{!noReason2Msg}" rendered="{!NOT(ISNULL(noReason2Msg))}" style="color:#BA1919"/>
+                    </apex:outputPanel>
+                </apex:pageblockSectionItem>
+            
+                <apex:PageBlockSectionItem helpText="{!$ObjectType.Case.Fields.measures__c.inlineHelpText}">
+                    <!--<apex:outputLabel value="Tiltak*"/>
+                     Csphase2 Supriya 20122016
+                    -->
+                    <apex:outputLabel value="{!$Label.cs_measures}*"/>
+                    <apex:inputField value="{!case.measures__c}" id="tiltak">
+                    </apex:inputField>
+                </apex:PageBlockSectionItem>
+            
+            
+            
+                <apex:PageBlockSectionItem rendered="{!case.recordTypeId == gjenliggId}" helpText="{!$ObjectType.Case.Fields.deviation_route__c.inlineHelpText}" id="rute">
+                        <!--<apex:outputLabel value="Rute*"/>
+                         Csphase2 Supriya 20122016
+                    -->
+                    <apex:outputLabel value="{!$Label.cs_Route}*"/>
+                        <apex:inputField value="{!case.deviation_route__c}" />
+                </apex:PageBlockSectionItem>
+
+                <!-- The following two fields will be made visible only for a specific value seleted
+                     in the field Henvendelsestyp. When visible, it will be mandatory for the user to select -->
+                <apex:pageBlockSectionItem rendered="{!case.Category__c == 'Avvik som skal krediteres'}" helpText="{!$Label.Lightuser_CreateCase_OrdernummerFeil}">
+                       <!-- <apex:outputLabel value="Ordrenummer med feil*"/>
+                       CSphase2 supriya 20122016
+                       -->
+                       <apex:outputLabel value="{!$Label.cs_Order_number_of_errors}*"/>
+                        <apex:outputPanel styleClass="requiredInput" layout="block">
+                            <apex:inputText value="{!old_Order_Number}"/>
+                            <apex:outputText value="{!noOldOrderNum}" rendered="{!NOT(ISNULL(noOldOrderNum))}" style="color:#BA1919"/>
+                        </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem rendered="{!case.Category__c == 'Avvik som skal krediteres'}" helpText="{!$Label.Lightuser_CreateCase_OrdernummerRikitig}">
+                        <!--<apex:outputLabel value="Riktig ordrenummer*"/>
+                        CSpahse2 Supriya 20122016
+                        -->
+                        <apex:outputLabel value="{!$Label.cs_order_number}*"/>
+                        <apex:outputPanel styleClass="requiredInput" layout="block">
+                            <apex:inputText value="{!new_Order_Number}"/>
+                            <apex:outputText value="{!noNewOrderNum}" rendered="{!NOT(ISNULL(noNewOrderNum))}" style="color:#BA1919"/>
+                        </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+
+                
+            
+            </apex:pageBlockSection>
+            
+            
+            
+            <apex:pageBlockSection id="distribusjon" collapsible="false" columns="1" rendered="{!(case.recordTypeId == gjenliggId) && (case.Category__c == 'Gjenligg distribusjon' || case.Category__c == 'Utleveringshindringer distribusjon')}" >
+                <apex:PageBlockSectionItem >
+                    <!--<apex:outputLabel value="Berørte postnummer fra*"/>
+                    CSphase2 Supriya 20122016
+                     -->
+                    <apex:outputLabel value="{!$Label.cs_Affected_Postal_code_from}*"/>
+                    <apex:inputField value="{!case.deviation_postal_nmb_from__c}" html-maxlength="4"/>
+                </apex:PageBlockSectionItem>
+                <apex:PageBlockSectionItem >
+                    <!--<apex:outputLabel value="Berørte postnummer til*"/>
+                     CSphase2 Supriya 20122016
+                     -->
+                     <apex:outputLabel value="{!$Label.cs_Affected_Postal_code_to}*"/>
+                    <apex:inputField value="{!case.deviation_postal_nmb_to__c}" html-maxlength="4"/>
+                </apex:PageBlockSectionItem>
+                <apex:PageBlockSectionItem helpText="{!$ObjectType.Case.Fields.deviation_nmb_households__c.inlineHelpText}">
+                    <!--<apex:outputLabel value="Antall HH/VH – husholdninger*"/>
+                     CSphase2 Supriya 20122016
+                     -->
+                    <apex:outputLabel value="{!$Label.cs_Number_of_HH_VH_households}*"/>
+                    <apex:inputField value="{!case.deviation_nmb_households__c}" />
+                </apex:PageBlockSectionItem>
+                <apex:PageBlockSectionItem >
+                    <!--<apex:outputLabel value="Utleveringshindringer eksakt adresse*"/>
+                    CSphase2 Supriya 20122016
+                     -->
+                     <apex:outputLabel value="{!$Label.cs_Delivery_problems_exact_address}*"/>
+                    <apex:inputField value="{!case.deviation_affected_address__c}" />
+                </apex:PageBlockSectionItem>
+                <apex:PageBlockSectionItem >
+                    <!--<apex:outputLabel value="Adresse eksakt Postnr.*"/>
+                     CSphase2 Supriya 20122016
+                     -->
+                     <apex:outputLabel value="{!$Label.cs_Address_exact_Zip}*"/>
+                    <apex:inputField value="{!case.deviation_affected_postal_nmb__c}" />
+                </apex:PageBlockSectionItem>
+            </apex:pageBlockSection>
+            
+            <apex:pageBlockSection id="terminal" columns="1" rendered="{!(case.recordTypeId == gjenliggId) && (case.Category__c == 'Gjenligg produksjon og ruteklargjøring')}">
+                <apex:PageBlockSectionItem helpText="{!$ObjectType.Case.Fields.Letter_priority__c.inlineHelpText}">
+                    <!--<apex:outputLabel value="Strøm*"/>
+                    CSphase2 Supriya 20122016
+                     -->
+                     <apex:outputLabel value="{!$Label.cs_Current}*"/>
+                    <apex:inputField value="{!case.Letter_priority__c}" />
+                </apex:PageBlockSectionItem>
+                <apex:PageBlockSectionItem helpText="{!$ObjectType.Case.Fields.deviation_depature_spread__c.inlineHelpText}">
+                   <!-- <apex:outputLabel value="Avgang/spredning*"/>
+                   CSphase2 Supriya 20122016
+                     -->
+                     <apex:outputLabel value="{!$Label.cs_Departure_proliferation}*"/>
+                    <apex:inputField value="{!case.deviation_depature_spread__c}" />
+                </apex:PageBlockSectionItem>
+                <apex:PageBlockSectionItem helpText="{!$ObjectType.Case.Fields.deviation_shipments_nmb__c.inlineHelpText}">
+                    <!--<apex:outputLabel value="Antall – sendinger*"/>
+                     CSphase2 Supriya 20122016
+                     -->
+                     <apex:outputLabel value="{!$Label.cs_Number_broadcasts}*"/>
+                    <apex:inputField value="{!case.deviation_shipments_nmb__c}" />
+                </apex:PageBlockSectionItem>
+            </apex:pageBlockSection>
+            
+            
+            
+            <apex:pageBlockSection columns="1">
+                <apex:PageBlockSectionItem id="lightuser_pageblocksectionitem" helpText="Søk etter bedriftskunde. Søket vil oppdatere feltet kundenavn automatisk ved treff på søket">
+                    <!--<apex:outputLabel value="Søk Aktør-/Kundenr."><img src="/s.gif" class="lookupIcon" onmouseout="this.className='lookupIcon';" onmouseover="this.className='lookupIconOn';" onclick="openCustomerSearch(document.getElementById('{!$Component.actorNumber}').value);"/></apex:outputLabel>
+                    CSphase 2 Supriya 20122016
+                    -->
+                    
+                    <apex:outputLabel value="{!$Label.cs_Search_Performer_Customer_no}"><img src="/s.gif" class="lookupIcon" onmouseout="this.className='lookupIcon';" onmouseover="this.className='lookupIconOn';" onclick="openCustomerSearch(document.getElementById('{!$Component.actorNumber}').value);"/></apex:outputLabel>
+                    <apex:inputText id="actorNumber" value="{!customerNumber}"/>
+                    
+                   
+                </apex:PageBlockSectionItem>
+                <apex:PageBlockSectionItem >
+                   <!-- <apex:outputLabel value="Kundenavn"/>
+                    CSphase 2 Supriya 20122016
+                    -->
+                    <apex:outputLabel value="{!$Label.cs_Customer_Name}"/>
+                    <apex:InputText id="actorName" disabled="true" size="100"/>
+                </apex:PageBlockSectionItem>
+                <apex:PageBlockSectionItem >
+                    <!--<apex:outputLabel value="Emne*"/>
+                     CSphase 2 Supriya 20122016
+                    -->
+                    <apex:outputLabel value="{!$Label.cs_Subject}*"/>
+                    <apex:inputField id="subject" value="{!case.Subject}" style="width:630px;" required="true"/>
+                </apex:PageBlockSectionItem>
+                <apex:PageBlockSectionItem >
+                    <!--<apex:outputLabel value="Beskrivelse*"/>
+                     CSphase 2 Supriya 20122016
+                    -->
+                    <apex:outputLabel value="{!$Label.cs_Description}*"/>
+                    <apex:inputField value="{!case.description}" style="height:150px; width:630px" />
+                </apex:PageBlockSectionItem>
+            </apex:pageBlockSection>
+            <apex:pageblockSection columns="1" >
+                <apex:PageBlockSectionItem >
+                   <!-- <apex:outputLabel value="Hva som registreres i beskrivelsesfeltet"/>
+                    <apex:outputText >
+                        - Kundenavn hvis ikke registrert på aktør i feltet over<br/>
+                        - Innled meldingen med POSTEN STÅR eller post sendt<br/>
+                        - Ordrenr/Referanse/Tittel på sending hvis kjent<br/>
+                        - 3.part/trykkeri og/eller kontaktperson hvis kjent<br/>
+                        - Avviksårsak<br/>
+                        - Innleveringsdato/innleveringssted<br/>
+                        - Opprinnelig/ny distribusjonsdato<br/>
+                        - Omfang: Antall lastbærere/kolli/sendinger/reol/enhet berørt<br/>
+                        - Format: standard, store eller maxi<br/>
+                        - Annen relevant info til avviket, ev løsningsforslag<br/>
+                        - Vedlegg bilde/dokument hvis nyttig for saken(vedlegg kan legges til når saken er lagret)<br/>
+                        - Feil pakking/merking av avis<br/>
+                        - Avvik/gjenligg PRU: Skriv sendingsnavn på berørte sendinger
+                        
+                        CSPhase2, Supriya 20122016
+                        -->
+                        
+                        <apex:outputLabel value="{!$Label.cs_recorded_in_description_field}"/>
+                    <apex:outputText value="{!$Label.cs_messagerecord}" escape="false"/>
+
+                </apex:PageBlockSectionItem>
+            </apex:pageblockSection>
+        </apex:pageblock>
+             </apex:form>
+</apex:page>

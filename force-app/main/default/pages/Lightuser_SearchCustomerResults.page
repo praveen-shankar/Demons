@@ -1,0 +1,74 @@
+<apex:page controller="CustomerServiceSearchController">
+    <apex:stylesheet value="{!URLFOR($Resource.kats_css)}" />
+    
+    <script>
+        function selectValue(actorNumber, actorName) {
+            var opener=window.opener;
+            if (null==opener)
+            {
+               opener=window.parent.opener;
+            }
+            //alert(actorName);
+            opener.setActorNumber(actorNumber, actorName);
+        }
+    </script>
+    
+<!--    {!account_search_results.size==0}-->
+    
+<!--    <apex:outputPanel id="business_account_search_results" layout="block" rendered="{!NOT(account_search_results.size==0)}">-->
+    
+    
+    
+        <!--CSphase2, Akash, 21122016-->
+    
+        <!--<apex:pageblock id="pageblock" title="Kunde søk" >-->
+        <apex:pageblock id="pageblock" title="{!$Label.cs_Customer} {!$Label.cs_Search}" >
+    <!-- If no matches are returned -->
+    <apex:form rendered="{!AND(Has_account_search_results,NOT(HasSearchResults))}" id="no_results">
+        <!--KATS finner ikke kunden du søkte etter, prøv å endre søkekritere.--><!--CSphase2, Akash, 21122016-->
+        {!$Label.cs_CustomerResult}
+    </apex:form>
+    <apex:form id="account_search_results" onsubmit="resetFieldValueById('{!$Component.account_search_results.pageblock.new_account_name}');" rendered="{!AND(Has_account_search_results,HasSearchResults)}">
+<!--rendered="{!has_account_search_results}"-->
+            <table class="KATS_table">
+                <tr><!--CSphase2, Akash, 21122016-->
+                    <!--<th>Aktørnavn</th>
+                    <th>Aktørnummer</th>
+                    <th>Status</th>
+                    <th>Adresse</th>
+                    -->
+                    <th>{!$Label.cs_performerName}</th>
+                    <th>{!$Label.cs_Actor_number}</th>
+                    <th>{!$Label.cs_Status}</th>
+                    <th>{!$Label.cs_Address}</th>
+                    <th></th>
+                </tr>
+
+                <apex:variable var="rowNum" value="0" />
+                
+                <apex:repeat value="{!account_search_results}" var="account_search_result">
+                    <tr class="{!IF(selected_account_search_result=VALUE(rowNum), 'KATS_selected', '')}">
+                        <td>
+                            <a href="#" onclick="selectValue('{!account_search_result.partyNumber}', '{!account_search_result.name}')"><apex:outputText title="{!$Label.cs_Name}" value="{!account_search_result.name}" />
+                            <!--<apex:outputText title="Name" value="{!account_search_result.name}" />--></a>
+                        </td>
+                        <td><apex:outputText title="{!$Label.cs_PartyNumber}" value="{!account_search_result.partyNumber}" /></td>
+                        <td><apex:outputText title="{!$Label.cs_Status}" value="{!account_search_result.status}" /></td>
+                        <td><apex:outputText title="{!$Label.cs_Address}" value="{!account_search_result.address}" /></td>
+                        <!--
+                        <td><apex:outputText title="Party Nummer" value="{!account_search_result.partyNumber}" /></td>
+                        <td><apex:outputText title="Status" value="{!account_search_result.status}" /></td>
+                        <td><apex:outputText title="Adresse" value="{!account_search_result.address}" /></td>
+                        --><!--CSphase2, Akash, 21122016-->
+                    </tr>
+                    <apex:variable var="rowNum" value="{!VALUE(rowNum) + 1}" />
+                </apex:repeat>
+            </table>
+
+    </apex:form>
+        </apex:pageblock>
+
+
+
+<!--    </apex:outputPanel>-->
+</apex:page>

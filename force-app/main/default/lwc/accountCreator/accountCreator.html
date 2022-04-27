@@ -1,0 +1,61 @@
+<template>
+    <lightning-card title="Create Account Record using LDS">
+        <lightning-layout>
+            <lightning-layout-item size="6">
+                <!-- Displaying fields to get information. -->
+                <lightning-input class="slds-p-around_medium" label="Name" name="accoutName" 
+                    onchange={nameChangedHandler}></lightning-input>
+                <lightning-input class="slds-p-around_medium" label="Account Number" name="accoutNumber" 
+                    onchange={numberChangedHandler}></lightning-input>
+                <lightning-input class="slds-p-around_medium" label="Phone" type="phone" name="accountPhone" 
+                    onchange={phoneChangedHandler}></lightning-input>
+                <br/>
+                <lightning-button class="slds-m-left_x-small" label="Create Account" variant="brand" 
+                    onclick={createAccount}></lightning-button>
+            </lightning-layout-item>
+            <lightning-layout-item size="6">
+                <p class="slds-text-heading_small">Latest Account Details</p>
+                
+                <!-- Displaying Account Information. -->
+                <div class="slds-p-left_medium">
+                    <p><lightning-formatted-text value={accountName}></lightning-formatted-text></p>
+                    <p><lightning-formatted-text value={accountId}></lightning-formatted-text></p>
+                    <p><lightning-formatted-text value={accountNumber}></lightning-formatted-text></p>
+                    <p><lightning-formatted-text value={accountPhone}></lightning-formatted-text></p>
+                </div>
+            </lightning-layout-item>
+        </lightning-layout>
+    </lightning-card>
+
+    <div class="slds-grid slds-gutters">
+        <div class="slds-col slds-size_1-of-2">
+    <lightning-input type="checkbox" label="Show details" onchange={handleChange}></lightning-input>
+        </div>
+        <div class="slds-col slds-size_1-of-2">
+    <lightning-input type="checkbox" label="Show details" onchange={handleIt}></lightning-input>
+    </div>
+</div>
+            <template if:true={areDetailsVisible}>
+    <lightning-input 
+        label="Discount"
+        type="string"
+        value={stringValue}
+        name="Discount"
+        class="string-input"
+        onchange={discountChangedHandler}
+    ></lightning-input>
+</template>
+
+
+<template if:true={areFieldsVisible}>
+    <lightning-input 
+        label="Asv"
+        type="string"
+        value={stringValue}
+        name="ASV"
+        class="string-input"
+        onchange={discountChangedHandler}
+    ></lightning-input>
+</template>
+            
+</template>

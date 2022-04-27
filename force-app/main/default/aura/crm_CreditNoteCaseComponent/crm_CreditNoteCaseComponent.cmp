@@ -1,0 +1,195 @@
+<aura:component controller="crm_CreditNoteController" implements="flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickAction" access="global" >
+   <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+   <aura:attribute type="String" name="strTheme"/>
+   <aura:attribute type="String" name="strCurrentVFRecordId"/>
+   <aura:attribute type="String" name="strCustomerName" default=""/>
+   <aura:attribute type="String" name="intOrderNumber" default=""/>
+   <aura:attribute type="String" name="intShipmentNumber" default=""/>
+   <aura:attribute type="String" name="intPhoneNumber" default=""/>
+   <aura:attribute type="String" name="strEmail" default=""/>
+    <aura:attribute type="String" name="strCustomerNumber" default=""/>
+   <aura:attribute type="List" name="responseResult" default=""/>
+   <aura:attribute type="string" name="options" default=""/>
+   <aura:attribute type="List" name="headersLabels" default=""/>
+   <aura:attribute type="Boolean" name="isResetDisabled" default="true"/>
+   <aura:attribute type="Boolean" name="isRefundDisabled" default="true"/>
+    <aura:attribute type="Boolean" name="btnCancelTransactionIsDisabled" default="true"/>
+   <aura:attribute type="Map" name="selectedRefundData" default=""/>
+    <aura:attribute type="Map" name="mapModifyselectedRefundData" default=""/>
+   <aura:attribute type="string" name="jwtAccessToken" default=""/>
+   <aura:attribute type="string" name="strErrorSuccessMessage" default=""/>
+   <aura:attribute type="string" name="isClassicTheme" default="false"/>
+   <aura:attribute type="string" name="ErrorTitle" default="false"/>
+   <aura:attribute name="Server_Selection_value" type="String" default="Digital_Stamp"/>
+   <lightning:navigation aura:id="navService"/>
+   <aura:attribute name="isModalOpen" type="boolean" default="false"/>
+   <aura:attribute name="isSuccessModalOpen" type="boolean" default="false"/>
+    <aura:attribute type="string" name="digitollTransactionStatus" default=""/>
+   <aura:attribute name="Server_Selection" type="List" default="[]"/>
+    
+   <div aura:id="myAnchor"></div>
+   <aura:if isTrue="{!v.isModalOpen}">
+      <ui:message class="slds-is-active" title="{!v.ErrorTitle}" severity="error" closable="false">
+         {!v.strErrorSuccessMessage}
+      </ui:message>
+   </aura:if>
+   <aura:if isTrue="{!v.isSuccessModalOpen}">
+      <ui:message title="{!$Label.c.CreditNote_Success}" severity="confirm" closable="false">
+         {!v.strErrorSuccessMessage}
+      </ui:message>
+   </aura:if>
+   <!--/div-->
+   <div>
+      <div class="searchDiv slds-p-around_medium" aura:id="idSearchDiv">
+         <lightning:recordEditForm onsubmit="">
+            <lightning:messages />
+            <div class="slds-grid slds-wrap" style="width:500px" >
+               <span class="slds-size_1-of-1" onchange="{!c.resetInputVal}"  >
+                  <lightning:radioGroup name="radioGroup"
+                     options="{! v.Server_Selection }"
+                     value="{! v.Server_Selection_value }"
+                     type="radio" 
+                     class="customRadioCls"/>
+                  <br/>
+               </span>
+               <span class="slds-size_1-of-1" onkeyup="{!c.fnOnKeyPressValidate}">
+                  <lightning:input aura:id="searchField" label="{!$Label.c.CreditNote_OrderNumber}" name="{!$Label.c.CreditNote_OrderNumber}" value="{!v.intOrderNumber}" />
+                  <br/>
+               </span>
+               <span class="slds-size_1-of-1" onkeyup="{!c.fnOnKeyPressValidate}">
+                  <lightning:input aura:id="searchField" label="{!$Label.c.CreditNote_ShipmentNumber}" name="{!$Label.c.CreditNote_ShipmentNumber}" value="{!v.intShipmentNumber}" />
+                  <br/>
+               </span>
+               <aura:if isTrue="{!v.Server_Selection_value == 'Digital_Stamp'}">
+                  <div class="slds-size_1-of-1">
+                     <span onkeyup="{!c.fnOnKeyPressValidate}">
+                        <lightning:input aura:id="searchField" type="email" label="{!$Label.c.CreditNote_EmailAddress}" name="{!$Label.c.CreditNote_EmailAddress}" value="{!v.strEmail}" />
+                        <br/>
+                     </span>
+                  </div>
+               </aura:if>
+               <div class="slds-size_1-of-1">
+                  <span onkeyup="{!c.fnOnKeyPressValidate}">
+                     <lightning:input aura:id="searchField" type="tel"  label="{!$Label.c.CreditNote_PhoneNumber}" name="{!$Label.c.CreditNote_PhoneNumber}" value="{!v.intPhoneNumber}" />
+                     <br/>
+                  </span>
+               </div>
+               <aura:if isTrue="{!v.Server_Selection_value == 'Digital_Stamp'}">
+                  <div class="slds-size_1-of-1">
+                     <span onkeyup="{!c.fnOnKeyPressValidate}">
+                        <lightning:input aura:id="searchField" label="{!$Label.c.CreditNote_CustomerName}" name="{!$Label.c.CreditNote_CustomerName}" value="{!v.strCustomerName}" />
+                        <br/>
+                     </span>
+                  </div>
+               </aura:if>
+               
+            </div>
+            <div>
+               <aura:if isTrue="{!v.isResetDisabled}">
+                  <lightning:button aura:id="searchButton" variant="brand" label="{!$Label.c.CreditNote_Search}" onclick="{!c.fnDoSubmit}" disabled="true" />
+                  <lightning:button aura:id="resetButton" variant="brand" label="{!$Label.c.CreditNote_RESET}" onclick="{!c.resetInputVal}" class="" disabled="true" />
+                  <aura:set attribute="else">
+                     <lightning:button aura:id="searchButton" variant="brand" label="{!$Label.c.CreditNote_Search}" onclick="{!c.fnDoSubmit}"  />
+                     <lightning:button aura:id="resetButton" variant="brand" label="{!$Label.c.CreditNote_RESET}" onclick="{!c.resetInputVal}" class=""/>
+                  </aura:set>
+               </aura:if>
+               <aura:if isTrue="{!v.isClassicTheme}">
+                  <lightning:button variant="brand" label="{!$Label.c.CreditNote_Close}" onclick="{!c.fnRedirectToParent}" class="slds-m-right_x-small"/>
+               </aura:if>
+            </div>
+         </lightning:recordEditForm>
+      </div>
+      <div class="responsetableRecord slds-scrollable slds-m-top_medium" aura:id="idTableDiv" style="display:none ;height:300px;" >
+         <div class="slds-text-longform" style="width:150%;">
+            <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_striped">
+               <thead>
+                  <tr class="slds-line-height_reset">
+                     <th class="" scope="col">
+                        <div class="slds-truncate" title="Refund">Refund </div>
+                     </th>
+                     <aura:iteration items="{!v.headersLabels}" var="labelHeader">
+                        <th class="" scope="col">
+                           <div class="slds-truncate" title="{!labelHeader}">{!labelHeader}</div>
+                        </th>
+                     </aura:iteration>
+                  </tr>
+               </thead>
+               <tbody>
+                  <aura:iteration items="{!v.responseResult}" var="row" indexVar='key'>
+                      <!--{!row.key} -->
+                     
+                         
+                         <tr class="slds-hint-parent">
+                             <th data-label="Opportunity Name" scope="row">
+                               <ui:inputRadio text="{!row}" name="others" change="{!c.fnRadioChanged}" />
+                            </th>
+                              <aura:iteration items="{!row.value}" var="pairVar" indexVar='pairKey'>
+                                 
+                                  <aura:if isTrue="{!not(pairKey > 8) }" >
+                                      <td data-label="">
+                                          <div class="slds-truncate" title="{!pairVar.value}">{!pairVar.value}</div>
+                                      </td>
+                                  </aura:if>
+                              </aura:iteration>
+                          </tr>
+                     
+                             
+                        <!--th data-label="Opportunity Name" scope="row">
+                           <ui:inputRadio text="{!row}" name="others" change="{!c.fnRadioChanged}" />
+                        </th>
+                        <td data-label="Close Date">
+                           <div class="slds-truncate" title="{!row.orderNumber}">{!row.orderNumber}</div>
+                        </td>
+                        <td >
+                           <div class="slds-truncate" title="{!row.shipmentNumber}">{!row.shipmentNumber}</div>
+                        </td>
+                        <td >
+                           <div class="slds-truncate" title="{!row.transactionAmount}">{!row.transactionAmount}</div>
+                        </td>
+                        <td >
+                           <div class="slds-truncate" title="{!row.transactionDate}">{!row.transactionDate}</div>
+                        </td>
+                        <td >
+                           <div class="slds-truncate" title="{!row.userName}">{!row.userName}</div>
+                        </td>
+                        <td >
+                           <div class="slds-truncate" title="{!row.emailAddress}">{!row.emailAddress}</div>
+                        </td>
+                        <td >
+                           <div class="slds-truncate" title="{!row.phoneNumber}">{!row.phoneNumber}</div>
+                        </td>
+                        <td >
+                           <div class="slds-truncate" title="{!row.transactionId}">{!row.transactionId}</div>
+                        </td>
+                     </tr-->
+                  </aura:iteration>
+               </tbody>
+            </table>
+            <!--div style="height: 300px">
+               <lightning:datatable
+                  columns="{!v.headersLabels}"
+                  data="{!v.responseResult}"
+                  keyField="id"
+                  onrowaction="{! c.handleRowAction }"
+                  onheaderaction="{! c.handleHeaderAction }"/>
+               </div-->
+         </div>
+      </div>
+   </div>
+   <div Style="display:none;" class="back_table_button">
+      <lightning:buttonGroup class=" slds-m-top_medium" >
+         <lightning:button variant="brand" label="{!$Label.c.CreditNote_Back}" onclick="{!c.fnBackToSearch}" class="slds-m-right_x-small"/>
+         <aura:if isTrue="{!v.isRefundDisabled}">
+            <lightning:button variant="brand" label="{!$Label.c.CreditNote_Refund}" onclick="{!c.fnSendRefundData}" class="slds-m-right_x-small" disabled="true"/>
+            <aura:set attribute="else">
+               <lightning:button variant="brand" label="{!$Label.c.CreditNote_Refund}" onclick="{!c.fnSendRefundData}" class="slds-m-right_x-small"/>
+            </aura:set>
+         </aura:if>
+          <aura:if isTrue="{!v.Server_Selection_value == 'Digitoll'}">
+          	<lightning:button variant="brand" label="{!$Label.c.CreditNote_CancelTransaction}" onclick="{!c.fnCancelTransactionPrivateBasen}" class="slds-m-right_x-small" disabled="{!v.btnCancelTransactionIsDisabled}"/>
+          </aura:if>
+         <lightning:button variant="brand" label="{!$Label.c.CreditNote_Close}" onclick="{!c.fnRedirectToParent}" class="slds-m-right_x-small"/>
+      </lightning:buttonGroup>
+      <span class="slds-float--right slds-m-top_small"><b>Record Count : {!v.responseResult.length} </b></span>
+   </div>
+</aura:component>

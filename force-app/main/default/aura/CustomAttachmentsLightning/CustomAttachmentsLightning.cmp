@@ -1,0 +1,51 @@
+<aura:component implements="flexipage:availableForRecordHome,force:hasRecordId" access="global" controller="CustomAttachmentsLightning">
+    <aura:attribute name="sobjectApiName" type="String" default='Custom_Attachment_Details__c' /> 
+    <aura:attribute name="recordId" type="String"/>
+  <aura:attribute name="customActions" type="List"/>    
+    <aura:attribute name="sobjectLabelPlural" type="String"  default='Custom Attachment Details'/>    
+	<aura:attribute name="mydata" type="Object"/>
+    <aura:attribute name="mycolumns" type="List"/>
+    <aura:attribute name="showheader" type="boolean" default="true"/>
+
+    <!-- handlers-->
+   <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+
+    <aura:handler name="change" value="{!v.columns}" action="{!c.handleColumnsChange }"/>
+	<aura:handler event="force:showToast" action="{!c.handleToastEvent}"/>  
+    
+    
+    <div class="c-container">
+        <lightning:card class="slds-card_boundary" iconName="{!v.iconName}">
+         
+            <aura:set attribute="actions">
+                   <aura:if isTrue="{!v.showheader}">
+                <lightning:overlayLibrary aura:id="overlayLib"/>
+                <lightning:button label="New" onclick="{!c.handleCreateRecord}"/>
+              </aura:if>
+                </aura:set>
+          
+            <aura:set attribute="title">
+                <b><a class="slds-card__header-link" onclick="{!c.handleGotoRelatedList}">{!(v.sobjectLabelPlural)}</a></b>
+            </aura:set>             
+    <!-- <aura:set attribute="footer">
+                <aura:if isTrue="{!not(empty(v.mydata))}">  
+                	<a onclick="{!c.handleGotoRelatedList}">View All</a>
+                </aura:if>
+            </aura:set>-->
+                                                 
+            <aura:if isTrue="{!not(empty(v.mydata))}">  
+                
+    <!-- the container element determine the height of the datatable -->
+    <div style="height: 100px">
+        <lightning:datatable
+            columns="{!v.mycolumns}"
+            data="{!v.mydata}"
+            keyField="id"
+            hideCheckboxColumn="true"
+            onrowaction="{!c.handleRowAction }"/>
+    </div>			</aura:if>
+            
+        </lightning:card>
+    </div>
+
+</aura:component>

@@ -1,0 +1,56 @@
+<apex:page standardController="Case_Attachment__c"  docType="html-5.0" extensions="CustomEditAttachmentController">
+    <apex:sectionHeader title="Attachment Edit" subtitle="{!Case_Attachment__c.Name}"></apex:sectionHeader>
+    <apex:form >
+        <apex:pageBlock title="Attachment Edit" id="pageBlock" mode="edit">
+            <apex:pageBlockButtons >
+                <apex:commandButton action="{!save}" value="Save"></apex:commandButton>
+                <apex:commandButton action="{!cancel}" value="Cancel"></apex:commandButton>
+            </apex:pageBlockButtons>
+            <apex:pageBlockSection columns="2" title="Attachment Information">
+                <apex:inputField value="{!Case_Attachment__c.name}"></apex:inputField>               
+                <apex:inputField value="{!Case_Attachment__c.Case__c}" required="true"></apex:inputField>
+                <apex:inputField value="{!Case_Attachment__c.Description__c}"></apex:inputField> 
+                <br/>            
+                <apex:outputLabel value="Choose with whom you want to share"  for="type">
+                                
+                                <apex:selectList value="{!groupType}" size="1" id="type"> 
+                                     <apex:selectOption itemValue="None" itemLabel="Please select"/>
+                                    <apex:selectOption itemValue="Public Groups" itemLabel="Public Groups"/>
+                                    <apex:selectOption itemValue="Roles" itemLabel="Roles"/>
+                                    <apex:selectOption itemValue="Users" itemLabel="Users"/>
+                                    <apex:actionSupport event="onchange"  reRender="members,selectedmembers" action="{!change}"/>
+                                </apex:selectList> 
+                </apex:outputLabel>
+                 <apex:outputPanel >
+                 <apex:outputLabel value="Keyword "/>
+                <apex:inputText value="{!Keyword}" label="Keyword"/>
+                <apex:commandButton value="Search" action="{!change}" reRender="members"  /> 
+                </apex:outputPanel>                                
+                                    
+                                    
+                                        <apex:outputLabel value="Available Members" for="members" />
+                                        <apex:outputLabel value="Selected Members" for="selectedmembers"  />
+                                        <apex:outputPanel id="members" >
+                                    <apex:selectList value="{!selectedValue}" size="10" multiselect="true"  style="width:250px">
+                                        <apex:selectOptions value="{!allOptions}"/>
+                                    </apex:selectList> 
+                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                             &nbsp;&nbsp;&nbsp;&nbsp;
+                                        <apex:commandbutton value=">>" action="{!add}" rerender="selectedmembers,members"/>
+                                        <apex:commandbutton value="<<" action="{!remove}" rerender="selectedmembers,members"/>
+               
+                
+                </apex:outputPanel>
+                <apex:outputPanel id="selectedmembers" >
+                                    <apex:selectList value="{!valuepresent}" size="10" multiselect="true"  style="width:250px">
+                                        <apex:selectOptions value="{!Selected}"/>
+                                    </apex:selectList>                                
+                            </apex:outputPanel>                    
+                       
+                     </apex:pageBlockSection>                                                      
+                    
+            </apex:pageBlock>   
+                       
+        </apex:form>
+</apex:page>

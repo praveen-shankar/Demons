@@ -1,0 +1,69 @@
+<apex:page controller="Case_SubmitPlanWizardController" wizard="true" showHeader="false" sidebar="false">
+    <script>
+        function confirmCancel() {
+           <!-- var isCancel = confirm("Sikker på at du vil avbryte?"); -->
+             var isCancel = confirm("{!$Label.cs_isCancel}");
+            if (isCancel) window.close();
+                  
+            return false;
+        }  
+    </script>
+
+    <!-- <apex:sectionHeader title="Last opp sendeplan" subtitle="Steg 3 av 4"/>  -->
+    <apex:sectionHeader title="{!$Label.cs_Upload_Plan}" subtitle="{!$Label.cs_Step} 3 {!$Label.cs_of} 4"/>
+    
+    <apex:form >
+        <!--<apex:pageBlock title="Godkjenn sendeplan" mode="edit">-->
+        <apex:pageBlock title="{!$Label.cs_Approve_Submit_Plan}" mode="edit">
+            
+            <apex:pageBlockButtons >
+                <!--<apex:commandButton action="{!step2}" value="Forrige"/>
+                <apex:commandButton value="Avbryt" onclick="return confirmCancel()" immediate="true"/>
+                <apex:commandButton action="{!save}" status="save" value="Opprett sendeplaner"/>-->
+                <apex:commandButton action="{!step2}" value="{!$Label.cs_Previous}"/>
+                <apex:commandButton value="{!$Label.cs_Cancel}" onclick="return confirmCancel()" immediate="true"/>
+                <apex:commandButton action="{!save}" status="save" value="{!$Label.cs_Create_Submit_Plans}"/>
+                
+                <apex:actionStatus id="save">
+                    <apex:facet name="start"><apex:image value="{!$Resource.spinner_icon}" /></apex:facet>
+                    <apex:facet name="stop"></apex:facet>
+                </apex:actionStatus>
+            </apex:pageBlockButtons>
+            
+            <apex:pageBlockTable value="{!plannedShipments}" var="plannedShipment">
+            <!--
+            <apex:column headerValue="Emne" value="{!plannedShipment.Subject}"/>
+                <apex:column headerValue="Konto id" value="{!plannedShipment.AccountId}"/>
+                <apex:column headerValue="Kontakt id" value="{!plannedShipment.ContactId}"/>
+                <apex:column headerValue="Innleveringssted" value="{!plannedShipment.Submission_place_TEXTONLY__c}"/>
+                <apex:column headerValue="Produkt" value="{!plannedShipment.Produkt__c}"/>
+                <apex:column headerValue="Innleverings Dato" value="{!plannedShipment.Submission_date__c}"/>
+                <apex:column headerValue="Vekt" value="{!plannedShipment.Vekt_pr_sending__c}"/>
+                <apex:column headerValue="Delinnlevering" value="{!plannedShipment.Part_of_submission__c}"/>
+                <apex:column headerValue="Type" value="{!plannedShipment.Type__c}"/>
+                <apex:column headerValue="Kategori" value="{!plannedShipment.Category__c}"/>
+                <apex:column headerValue="Bestillingsdato" value="{!plannedShipment.Booking_date__c}"/>
+                <apex:column headerValue="Sperrefrist" value="{!plannedShipment.Release_deadline__c}"/>
+                <apex:column headerValue="Bestemt dato" value="{!plannedShipment.Distribution_date__c}"/>
+                <apex:column headerValue="Opplag" value="{!plannedShipment.Number_of_circulation__c}"/>
+            -->
+                <apex:column headerValue="{!$Label.cs_Subject}" value="{!plannedShipment.Subject}"/>
+                <apex:column headerValue="{!$Label.cs_Customer} id" value="{!plannedShipment.AccountId}"/>
+                <apex:column headerValue="{!$Label.cs_Contact} id" value="{!plannedShipment.ContactId}"/>
+                <apex:column headerValue="{!$Label.cs_Filing_Location}" value="{!plannedShipment.Submission_place_TEXTONLY__c}"/>
+                <apex:column headerValue="{!$Label.cs_Product}" value="{!plannedShipment.Produkt__c}"/>
+                <apex:column headerValue="{!$Label.cs_submission}" value="{!plannedShipment.Submission_date__c}"/>
+                <apex:column headerValue="{!$Label.cs_Weight}" value="{!plannedShipment.Vekt_pr_sending__c}"/>
+                <apex:column headerValue="{!$Label.cs_Submission_Part}" value="{!plannedShipment.Part_of_submission__c}"/>
+                <apex:column headerValue="{!$Label.cs_Type}" value="{!plannedShipment.Type__c}"/>
+                <apex:column headerValue="{!$Label.Category}" value="{!plannedShipment.Category__c}"/>
+                <apex:column headerValue="{!$Label.cs_Booking_Date}" value="{!plannedShipment.Booking_date__c}"/>
+                <apex:column headerValue="{!$Label.cs_Release_Date}" value="{!plannedShipment.Release_deadline__c}"/>
+                <apex:column headerValue="{!$Label.cs_Release_Date}" value="{!plannedShipment.Distribution_date__c}"/>
+                <apex:column headerValue="{!$Label.cs_circulation}" value="{!plannedShipment.Number_of_circulation__c}"/>
+            </apex:pageBlockTable> 
+            
+        </apex:pageBlock>
+    </apex:form>
+    
+</apex:page>

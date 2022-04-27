@@ -1,0 +1,124 @@
+<apex:page showHeader="false" standardStylesheets="false" sidebar="false" applyHtmlTag="false" applyBodyTag="false" docType="html-5.0">
+    <apex:includeScript value="/support/console/40.0/integration.js" />
+    <html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+    <head>
+        <title>Snarveier</title>
+        <apex:stylesheet value="{!URLFOR($Resource.SLDS, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+    </head>
+
+    <apex:remoteObjects jsNamespace="customSettings" id="remote">
+        <apex:remoteObjectModel jsShorthand="Custom_links" name="Custom_Links__c" fields="Link_Label__c,Order__c,Path__c" />
+    </apex:remoteObjects>
+
+    <body>
+
+        <!-- REQUIRED SLDS WRAPPER -->
+        <div class="slds">
+
+            <!-- MASTHEAD -->
+            <p hidden="true" class="slds-text-heading--label slds-m-bottom--small">
+                Quick Links
+            </p>
+            <!-- / MASTHEAD -->
+
+            <!-- PRIMARY CONTENT WRAPPER -->
+            <div class="myapp">
+
+                <ul id="linkList" class="slds-has-block-links">
+                </ul>
+            </div>
+            <!-- / PRIMARY CONTENT WRAPPER -->
+        </div>
+        <!-- / REQUIRED SLDS WRAPPER -->
+
+    </body>
+    <!-- JAVASCRIPT -->
+    <script>
+        
+        if (!String.prototype.endsWith) {
+        String.prototype.endsWith = function(searchString, position) {
+                var subjectString = this.toString();
+                if (typeof position !== 'number' || !isFinite(position) ||
+                        Math.floor(position) !== position || position > subjectString.length) {
+                        position = subjectString.length;
+                }
+                position -= searchString.length;
+                var lastIndex = subjectString.indexOf(searchString, position);
+                return lastIndex !== -1 && lastIndex === position;
+            };
+        }
+        
+        
+        if (!String.prototype.includes) {
+        String.prototype.includes = function(search, start) {
+                'use strict';
+                if (typeof start !== 'number') {
+                        start = 0;
+                }
+
+                if (start + search.length > this.length) {
+                        return false;
+                } else {
+                        return this.indexOf(search, start) !== -1;
+                }
+            };
+        }
+        
+        function updateOutputDiv() {
+
+            var link = new customSettings.Custom_links();
+            var ul = document.getElementById("linkList");
+
+            link.retrieve({
+                    orderby: [{
+                        Order__c: "ASC NULLS LAST"
+                    }],
+                    limit: 20
+                },
+                function(error, records) {
+                    if (error) {
+                        alert(error.message);
+                    } else {
+
+                        records.forEach(function(record) {
+                            var label = record.get("Link_Label__c");
+                            var path = record.get("Path__c");
+                            var a = document.createElement("a");
+                            a.appendChild(document.createTextNode(label));
+                            a.title = label;
+                            a.onclick = function() {
+                                OpenNewTab(path, label, label + "_id");
+                            }
+                            var li = document.createElement("li");
+                            li.appendChild(a);
+                            ul.appendChild(li);
+                        });
+
+
+
+                    }
+                }
+            );
+        }
+
+        updateOutputDiv();
+
+        function OpenNewTab(url, name, tabId) {
+            if (url.endsWith("VF")) {
+                url = window.location.protocol + "//" + window.location.hostname + "/apex/" + url.substr(0, url.lastIndexOf("VF"));
+            } else if (url.includes("UnifiedSearchResults")) {
+                url = window.location.protocol + "//" + window.location.hostname + url;
+            } else if (url.includes("showAllTabs")) {
+                url = window.location.protocol + "//" + window.location.hostname + url;
+            }
+            if(url.includes("posten.no"))
+                window.open(url);
+            else    
+                sforce.console.openPrimaryTab(null, url, true, name, null, tabId);
+        }
+    </script>
+    <!-- / JAVASCRIPT -->
+
+    </html>
+</apex:page>

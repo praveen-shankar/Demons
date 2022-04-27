@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ApexPage xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>46.0</apiVersion>
+    <availableInTouch>false</availableInTouch>
+    <confirmationTokenRequired>false</confirmationTokenRequired>
+    <description>This page provides an option to the user to notify a particular Postal unit to send mails to their owners or hold it.
+C-01784
+Author: Rohit Paul
+Email: rohit.paul@capgemini.com
+Date: 27-Jul-2015</description>
+    <label>Send Email to Postal Unit</label>
+</ApexPage>

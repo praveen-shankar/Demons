@@ -1,0 +1,29 @@
+<aura:component >
+    <aura:attribute name="data" type="Object"/>
+	<div>
+    <lightning:card >
+        <aura:set attribute="title">
+            <lightning:icon iconName="utility:connected_apps" size="small"/>
+            {!v.data.crm_Product_Name__c}
+        </aura:set>
+
+        <aura:set attribute="footer">
+            <lightning:badge label="{!v.data.Product2.crm_Service_Type__c}"/>
+            <lightning:badge label="{! 'Service Id:' + v.data.crm_ProductCode__c}"/>
+        </aura:set>
+  
+        <div class="slds-grid slds-wrap">
+            <aura:if isTrue="{!!empty(v.data.crm_Discount__c)}">
+            <div class="slds-size_2-of-2">
+    			<div class="slds-box slds-box_x-small slds-text-align_center slds-m-around_x-small">Discount: {!v.data.crm_Discount__c} %</div>
+  			</div>
+            </aura:if>
+            <aura:if isTrue="{!!empty(v.data.crm_Unit_Price__c)}">
+            <div class="slds-size_2-of-2">
+    			<div class="slds-box slds-box_x-small slds-text-align_center slds-m-around_x-small">Unit Price: {!v.data.crm_Unit_Price__c + ' ' + v.data.Opportunity.CurrencyIsoCode}</div>
+  			</div>
+            </aura:if>    
+      </div>
+    </lightning:card>
+    </div>    
+</aura:component>

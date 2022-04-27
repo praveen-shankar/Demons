@@ -1,0 +1,53 @@
+<apex:page controller="Case_SubmitPlanWizardController" wizard="true" showHeader="false" sidebar="false">
+
+    <script>
+        function confirmCancel() {
+    <!--        var isCancel = confirm("Sikker på at du vil avbryte?"); Commented by Rajesh Singh as part of Object Translation -->
+            var isCancel = confirm("{!$Label.cs_isCancel}");
+            if (isCancel) window.close();
+            return false;
+        }
+    </script>
+
+    <!--<apex:sectionHeader title="Last opp sendeplan" subtitle="Steg 1 av 4"/> Commented by Rajesh Singh as part of Object Translation -->
+    <apex:sectionHeader title="{!$Label.cs_Upload_Plan}" subtitle="{!$Label.cs_Step} 1 {!$Label.cs_of} 4"/>
+
+    <apex:form >
+        
+        <!-- <apex:pageBlock title="Legg inn CSV fil" mode="edit"> Commented by Rajesh Singh as part of Object Translation  -->
+        <apex:pageBlock title="{!$Label.cs_Add_CSV_File}" mode="edit">
+             
+             <!---
+              <apex:commandButton action="{!step1}" value="Forrige" disabled="true"/>
+                <apex:commandButton value="Avbryt" onclick="return confirmCancel()" immediate="true"/>
+                <apex:commandButton action="{!step2}" status="load" value="Neste"/> Commented by Rajesh Singh as part of Object Translation -->
+                
+            <apex:pageBlockButtons >
+                <apex:commandButton action="{!step1}" value="{!$Label.cs_Previous}" disabled="true"/>
+                <apex:commandButton value="{!$Label.cs_Cancel}" onclick="return confirmCancel()" immediate="true"/>
+                <apex:commandButton action="{!step2}" status="load" value="{!$Label.cs_Next}"/>
+                
+                <apex:actionStatus id="load">
+                    <apex:facet name="start"><apex:image value="{!$Resource.spinner_icon}" /></apex:facet>
+                    <apex:facet name="stop"></apex:facet>
+                </apex:actionStatus>
+            </apex:pageBlockButtons>
+            
+            <apex:messages style="color:red"/>
+            <apex:PageBlockSection >
+            
+                <apex:selectRadio value="{!product}">
+                    <apex:selectOptions value="{!items}"/>
+                </apex:selectRadio><p/>
+            
+                <apex:PageBlockSectionItem >
+                <!--<apex:outputLabel value="Legg inn CSV fil:"/> Commented by Rajesh Singh as part of Object Translation --> 
+                    <apex:outputLabel value="{!$Label.cs_Add_CSV_File}"/>
+                    <apex:inputFile value="{!csvFile.body}" filename="{!csvFile.name}" lang="NO" contentType="{!csvFile.contentType}" fileSize="{!fileSize}" />
+                </apex:PageBlockSectionItem>
+            </apex:PageBlockSection>
+            
+        </apex:pageBlock>
+    </apex:form>
+
+</apex:page>

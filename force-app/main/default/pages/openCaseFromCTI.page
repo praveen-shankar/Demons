@@ -1,0 +1,5 @@
+<apex:page standardController="Case" extensions="cti_agentController" action="{!prepareCaseForAgent}">
+        <!--CSphase2, Akash, 20122016-->
+        <!--DONE CALLING on case-->{!$Label.cs_CTI} {!case.casenumber}
+
+</apex:page>

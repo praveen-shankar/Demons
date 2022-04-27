@@ -1,0 +1,97 @@
+<!--Sakshi: Show All the Opportunities where the logged in user (EDI user) is added as an Opportunity Team Member, Condition: Agreement StartDate is within 30 days-->
+<aura:component controller="EDIOpportunitiesTeamMember" Implements="flexipage:availableForRecordHome,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickAction">
+   <!--Attributes Declaration -->
+   <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+   <aura:attribute name="AllOpportunities" type="List"/>
+   <aura:attribute name="showspinner" type="boolean" default="false"/>
+
+   <!--Conatiner Starts Here -->
+   <div class="container">
+      <div class="opportunity-container">
+         <!--Header Starts Here -->
+         <div class="header-container">
+            <div class="header slds-clearfix">
+               <div class="slds-float_left">
+                  <span>
+                     <lightning:icon iconName="standard:opportunity" size="small" alternativeText="Shows Opportunities Where I am added as a Team Member" />
+                  </span>
+                  <span><b> Opportunity Membership </b></span>
+                  <span>
+                     <lightning:buttonIcon size="small" iconName="utility:refresh"  alternativeText="Reload" onclick="{! c.doInit }"/>
+                  </span>
+               </div>
+            </div>
+         </div>
+         <!--Header Ends Here -->
+         <!--Opportunity Table Conatiner Starts Here -->
+         <div class="table-container">
+            <aura:if isTrue="{!v.showspinner}">
+               <lightning:spinner alternativeText="Loading" size="medium" aura:id="spinner" variant="brand"/>
+            </aura:if>
+            <table class="slds-table slds-table_cell-buffer slds-table_bordered record-table">
+               <thead>
+                  <tr class="slds-line-height_reset">
+                     <th class="slds-text-title_caps" scope="col">                      
+                        <label class="slds-form-element__label input-label" for="input-name">Name</label>                           
+                     </th>
+                     <th class="slds-text-title_caps" scope="col">
+                        <label class="slds-form-element__label input-label" for="input-name">Party Name</label>                         
+                     </th>
+                     <th class="slds-text-title_caps" scope="col">                        
+                        <label class="slds-form-element__label input-label" for="input-name">Service Group</label>                           
+                     </th>
+                     <th class="slds-text-title_caps" scope="col">                       
+                        <label class="slds-form-element__label input-label" for="input-name">Owner</label>
+                     </th>
+                     <th class="slds-text-title_caps" scope="col">
+                        <label class="slds-form-element__label input-label" for="input-name">Agreement Start Date</label>                          
+                     </th>
+                  </tr>
+               </thead>
+               <tbody>
+                  <aura:iteration items="{!v.AllOpportunities}" var="item">
+                     <tr>
+                        <td  title="{!item.Name}" class="nobordertop">
+                           <div class="slds-truncate">
+                              <a href="{!'/lightning/r/Opportunity/' + item.Id + '/view'}" target="_blank">{!item.Name}</a>
+                              <aura:set attribute="else">
+                                 <a target="_blank" data-record="{!item.Id}">{!item.Name}</a>   
+                              </aura:set>
+                           </div>
+                        </td>
+                        <td title="{!item.Account.Name}" class="nobordertop">
+                           <div class="slds-truncate">
+                              <a href="{!'/lightning/r/Account/' + item.AccountId + '/view'}" target="_blank">{!item.Account.Name}</a>
+                              <aura:set attribute="else">
+                                 <a target="_blank" data-record="{!item.Id}">{!item.Account.Name}</a>   
+                              </aura:set>
+                           </div>
+                        </td>
+                        <td title="{!item.crm_Opp_Service_Group__c}" class="nobordertop">
+                           <div class="slds-truncate">{!item.crm_Opp_Service_Group__c}</div>
+                        </td>
+                        <td title="{!item.Owner.Name}" class="nobordertop">
+                           <div class="slds-truncate">
+                              <a href="{!'/lightning/r/User/' + item.OwnerId + '/view'}" target="_blank">{!item.Owner.Name}</a>
+                              <aura:set attribute="else">
+                                 <a target="_blank" data-record="{!item.Id}">{!item.Owner.Name}</a>   
+                              </aura:set>
+                           </div>
+                        </td>
+                        <td title="{!item.crm_Agreement_Start_Date__c}" class="nobordertop">
+                           <!--<div class="slds-truncate">{!item.crm_Agreement_Start_Date__c}</div>-->
+                           <div class="slds-truncate">
+                              <lightning:formattedDateTime value="{!item.crm_Agreement_Start_Date__c}" year="2-digit" month="short" day="2-digit" weekday="short"/>
+                           </div>
+                        </td>
+                     </tr>
+                  </aura:iteration>
+               </tbody>
+            </table> 
+         </div>
+         <!--Opportunity Table Container Ends Here -->
+      </div>
+      <!--End Opportunity Container -->            
+   </div>
+   <!--End Container -->
+</aura:component>

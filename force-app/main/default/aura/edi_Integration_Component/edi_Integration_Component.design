@@ -1,0 +1,7 @@
+<design:component label="Integration systems for EDI">
+    <design:attribute name="showsystemLM" label="Show System LM" default="true"/>
+    <design:attribute name="showsystemMB" label="Show System MB" default="true"/>
+    <sfdc:objects>
+        <sfdc:object>Edi_Information__c</sfdc:object>
+    </sfdc:objects>
+</design:component>

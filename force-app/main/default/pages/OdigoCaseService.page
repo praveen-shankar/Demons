@@ -1,0 +1,65 @@
+<!-- Author: Rajeev Shekhar -->
+<!-- Odigo CTI Project      -->
+
+<apex:page controller="OdigoCaseService" showHeader="true" sidebar="false">
+        <apex:includeScript value="/support/console/40.0/integration.js" />
+        <apex:includeScript value="/soap/ajax/40.0/connection.js" />
+        <script type="text/javascript">
+                window.addEventListener('DOMContentLoaded', function() {
+                        if (sforce.console.isInConsole())
+                                initialize();
+                        else
+                                doNothing();
+                });
+                
+                /*Function invoked on page load. Controller is invoked where the case is created.*/
+                function initialize() {
+                        Visualforce.remoting.Manager.invokeAction(
+                                '{!$RemoteAction.OdigoCaseService.OdigoCaseService}',
+                                '{!$CurrentPage.parameters.Skill_ID}',
+                                '{!$CurrentPage.parameters.Phone_number}',
+                                '{!$CurrentPage.parameters.Call_Folder_ID}',
+                                '{!$CurrentPage.parameters.International_phone_number}',
+                                '{!$CurrentPage.parameters.Call_Ref}',
+                                handleResult, {
+                                        buffer: true,
+                                        escape: true,
+                                        timeout: 120000
+                                }
+                        );
+                }
+                
+                /*Handle controller result*/
+                function handleResult(result, event) {
+                        console.log("result is:" + result);
+                        if (event.status && Visualforce.remoting.Util.isNotEmpty(result)) {
+                                queryOldTabId(result);
+                        } else if (event.type === 'exception') {
+                                queryOldTabId("{!URLFOR($Action.Case.NewCase)}");
+                        }
+                }
+                
+                /*Query old tabId and replace it with new data*/
+                function queryOldTabId(res) {
+                        sforce.console.getEnclosingPrimaryTabId(function(result) {
+                                var tabId = result.id;
+                                openCaseTab(res, tabId);
+                        });
+                }
+                
+                /*Open the new case created in a new primary tab*/
+                function openCaseTab(res, tabId) {
+                        sforce.console.openPrimaryTab(tabId, res, true);
+                }
+                
+                /*Function to make sure that no action is executed if the context is outside the console.
+                  Current page URL is redirected to Chatter page so we prevent duplicate case creation during an active call.*/
+                function doNothing() {
+                        alert('Error: This page works only in Salesforce console.');
+                        location.replace('/_ui/core/chatter/ui/ChatterPage');
+                }
+        </script>
+
+
+
+</apex:page>

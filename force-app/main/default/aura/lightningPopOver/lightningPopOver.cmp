@@ -1,0 +1,68 @@
+<aura:component >
+   <aura:attribute name="data" type="Object"/>
+   <div>
+      <lightning:card >
+         <aura:set attribute="title">
+            <lightning:icon iconName="utility:connected_apps" size="small"/>
+            {!v.data.actualservice.Product2.Name}
+         </aura:set>
+         <aura:set attribute="footer">
+            <lightning:badge label="Actual Service"/>
+            <lightning:badge label="{! 'Service Id:' + v.data.actualservice.Product2.crm_ERP_Product_ID__c}"/>
+         </aura:set>
+         <div class="slds-grid slds-wrap">
+            <aura:if isTrue="{!!empty(v.data.actualservice.UnitPrice)}">
+               <div class="slds-size_2-of-2">
+                  <div class="slds-box slds-box_x-small slds-text-align_center slds-m-around_x-small">{!$Label.c.Unit_Price}: {!v.data.actualservice.UnitPrice + ' ' + v.data.actualservice.Opportunity.CurrencyIsoCode}</div>
+               </div>
+            </aura:if> 
+            <aura:if isTrue="{!!empty(v.data.actualservice.crm_Discount__c)}">
+               <div class="slds-size_2-of-2">
+                  <div class="slds-box slds-box_x-small slds-text-align_center slds-m-around_x-small">{!$Label.c.Discount}: {!v.data.actualservice.crm_Discount__c} %</div>
+               </div>
+            </aura:if>
+            <aura:if isTrue="{!!empty(v.data.actualservice.crm_Minimum_Price__c)}">
+               <div class="slds-size_2-of-2">
+                  <div class="slds-box slds-box_x-small slds-text-align_center slds-m-around_x-small">{!$Label.c.Minimum_Price}: {!v.data.actualservice.crm_Minimum_Price__c + ' ' + v.data.actualservice.Opportunity.CurrencyIsoCode}</div>
+               </div>
+            </aura:if>
+            <aura:if isTrue="{!!empty(v.data.actualservice.crm_Local__c)}">
+               <div class="slds-size_2-of-2">
+                  <div class="slds-box slds-box_x-small slds-text-align_center slds-m-around_x-small">{!$Label.c.Local_Domestic}: {!v.data.actualservice.crm_Local__c}</div>
+               </div>
+            </aura:if>
+             <aura:if isTrue="{!!empty(v.data.actualservice.IsPayerReceiverorSender__c)}">
+               <div class="slds-size_2-of-2">
+                  <div class="slds-box slds-box_x-small slds-text-align_center slds-m-around_x-small">{!$Label.c.IsPayerReceiverorSender}: {!v.data.actualservice.IsPayerReceiverorSender__c}</div>
+               </div>
+            </aura:if>
+            <aura:if isTrue="{!!empty(v.data.actualservice.crm_Terminals__c)}">
+               <div class="slds-size_2-of-2">
+                  <div class="slds-box slds-box_x-small slds-text-align_center slds-m-around_x-small">{!$Label.c.Terminals}: {!v.data.actualservice.crm_Terminals__c}</div>
+               </div>
+            </aura:if>
+            <aura:if isTrue="{!!empty(v.data.actualservice.crm_Conversion_Factor__c)}">
+               <div class="slds-size_2-of-2">
+                  <div class="slds-box slds-box_x-small slds-text-align_center slds-m-around_x-small">{!$Label.c.Conversion_Factor}: {!v.data.actualservice.crm_Conversion_Factor__c}</div>
+               </div>
+            </aura:if>
+              <aura:if isTrue="{!!empty(v.data.actualservice.crm_Min_Weight__c)}">
+              <div class="slds-size_2-of-2">
+                  <div class="slds-box slds-box_x-small slds-text-align_center slds-m-around_x-small">{!$Label.c.Weight_Interval_From}: {!v.data.actualservice.crm_Min_Weight__c}</div>
+               </div>
+             </aura:if>
+               <aura:if isTrue="{!!empty(v.data.actualservice.crm_Max_Weight__c)}">
+              <div class="slds-size_2-of-2">
+                  <div class="slds-box slds-box_x-small slds-text-align_center slds-m-around_x-small">{!$Label.c.Weight_Interval_To}: {!v.data.actualservice.crm_Max_Weight__c}</div>
+               </div>
+             </aura:if>
+              <div class="slds-size_2-of-2">
+                   <div class="slds-box slds-box_x-small slds-text-align_center slds-m-around_x-small">{!$Label.c.Free_PickUp}: <ui:outputCheckbox  value="{!v.data.actualservice.crm_Free_Pickup__c}"/></div>
+               </div>
+               <div class="slds-size_2-of-2">
+                   <div class="slds-box slds-box_x-small slds-text-align_center slds-m-around_x-small">{!$Label.c.Passive_Return}: {!v.data.actualservice.crm_Passive_Return__c}</div>
+               </div>
+         </div>
+      </lightning:card>
+   </div>
+</aura:component>

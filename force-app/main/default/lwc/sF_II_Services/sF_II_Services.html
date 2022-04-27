@@ -1,0 +1,60 @@
+<template>   
+      <lightning-accordion allow-multiple-sections-open
+                           onsectiontoggle={toggleSectionHandleW3web}
+                           active-section-name={activeSections}>
+          <lightning-accordion-section name="ServiceOverview" label="Service Overview ">
+<!-- <div>{progressValue}
+
+  <lightning-datatable max-row-selection=1 data={progressValue}  columns={columns} key-field="Id"  onrowaction={handlerowaction} onrowselection={handleRowSelection}  > </lightning-datatable>
+</div> -->
+<!-- <button onclick={showRecordId}>ShowRecordId</button> -->
+            <div class="slds-grid slds-gutters">
+              <div class="slds-col slds-size_1-of-3">          
+                <h3 class="slds-text-heading_medium"><lightning-icon icon-name="custom:custom20" size="small"></lightning-icon> <strong style="color:#270086; font-size:13px;"> Add Services </strong></h3>
+                  <c-add-services onprogressvaluechange={hanldeProgressValueChange} onserviceidchange={handleserviceidchange} onactivesectionhandle={handleactivesection} onactivesectionsurcharge={handleactiveSectionSurcharge} onarrayhandle={handleMaximizeCounter} onmakearrayempty={handleMakeArrayEmpty}></c-add-services>               
+                </div>
+                       
+              <div class="slds-col slds-size_1-of-3">
+                <h3 class="slds-text-heading_medium"><lightning-icon icon-name="custom:custom20" size="small"></lightning-icon> <strong style="color:#270086; font-size:13px;"> Configure Services </strong></h3>
+               <c-configure-service service-name={serviceName} record-id={recordId} actual-service-id={actualServiceId}></c-configure-service>
+              </div>
+
+              <div class="slds-col slds-size_1-of-3"> 
+                <h3 class="slds-text-heading_medium"><lightning-icon icon-name="custom:custom20" size="small"></lightning-icon> <strong style="color:#270086; font-size:13px;"> Additional Services </strong></h3>            
+ 
+                  <c-additional-services service-name={serviceName} record-id={recordId} actual-service-id={actualServiceId} active-section-name={activeSectionName} onarrayhandle={handleArray} active-section-surcharge={activeSectionSurcharge} current-active-section-name={currentactiveSectionName} ></c-additional-services>    
+              </div>
+            </div>
+            <div > 
+              <h3 class="slds-text-heading_medium"><lightning-icon icon-name="custom:custom20" size="small"></lightning-icon> <strong style="color:#270086; font-size:13px;"> View Services </strong></h3>            
+                <c-view-services record-id={recordId}></c-view-services>    
+            </div>
+
+            <!-- <div class='slds-col'>
+              <c-multi-record-creation></c-multi-record-creation>
+            </div> -->
+          <!-- <div class="slds-m-around_medium"> -->
+
+          </lightning-accordion-section>
+
+        </lightning-accordion>
+   
+    </template>
+
+
+            <!-- <ligthning-input label="sF_II_AddServices" type="number" min="0"
+    max="100" value={sF_II_AddServices} onchange={changepercent}></ligthning-input>    -->
+  
+              <!-- <div class="tabContent">
+                  <div class="postImage">					
+                      <a href="https://www.w3web.net/all-published-post/" target="_blank" rel="noopener noreferrer">
+                          <img src="https://www.w3web.net/wp-content/uploads/2020/08/sitemap.png" width="200" height="150"/>
+                      </a>
+                  </div> 
+                <div class="imgRt"> 
+                  <h3 class="slds-text-heading_medium slds-text-colorerror"><strong>Tutorial W3web</strong></h3> 
+                  <p class="titleTag"><b><a href="https://www.w3web.net/all-published-post/" target="_blank" rel="noopener noreferrer">Salesforce Tutorial Easy to Learn Step-by-Step.</a></b></p><br/>
+                  <p>Easy to learn step-by-step online free tutorial from www.w3web.net</p><br/>                      
+                  <p>w3web.net is the place where you can learn step-by-step about Blog, WordPress, Salesforce Lightning Component, Lightning Web Component (LWC), Visualforce, Technical of Computer Application, Salesforce Plugin, JavaScript, Jquery, CSS, Computer & Accessories, Software Configuration, Customization, Development and much<span class="readMore"><a href="https://www.w3web.net/" target="_blank" rel="noopener noreferrer">more...</a></span></p>
+                </div>    
+              </div> -->

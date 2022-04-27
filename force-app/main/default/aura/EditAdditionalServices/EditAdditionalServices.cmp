@@ -1,0 +1,69 @@
+<aura:component controller="crm_editServicesControllerLightning" access="global" >
+    
+ <aura:attribute name="oppaddLineitemId" type="String" />  
+ <aura:attribute name="additionalService" type="OpportunityLineItem[]" />
+  <aura:attribute name="additionalServicesColumns" type="crm_Dynamic_Columns_Add_Opp_Services__c[]"/>
+    <aura:attribute name="additionalServiceValue" type="OpportunityLineItem[]" />
+          
+   <aura:attribute name="showMinimumPrice" type="Boolean" default="false"/> 
+   <aura:attribute name="showMininumPricePercent" type="Boolean" default="false"/> 
+   <aura:attribute name="showConversionFactor" type="Boolean" default="false"/> 
+    <aura:attribute name="showDirection" type="Boolean" default="false"/> 
+     <aura:attribute name="showLocal" type="Boolean" default="false"/> 
+     <aura:attribute name="showPriceList" type="Boolean" default="false"/> 
+     <aura:attribute name="showPriceUnit" type="Boolean" default="false"/> 
+     <aura:attribute name="showTerminal" type="Boolean" default="false"/> 
+     <aura:attribute name="showUnitPrice" type="Boolean" default="false"/> 
+     <aura:attribute name="showDiscount" type="Boolean" default="false"/>   
+    
+     <aura:attribute name="ConversionFactorOptions" type="List"/>  
+     <aura:attribute name="DirectionOptions" type="List"/>
+     <aura:attribute name="LocalOptions" type="List"/>
+     <aura:attribute name="PricelistOptions" type="List"/>
+     <aura:attribute name="PriceUnitOptions" type="List"/>
+     <aura:attribute name="TerminalOptions" type="List"/>
+    
+    
+    <!--<aura:registerEvent name="saveEvent" type="c:saveEvent"/>-->
+    <aura:method name="captureadditionalservicesdata" action="{!c.captureadditionalservicesdata}" description="Method to be called from parent component">  
+    </aura:method> 
+     <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    
+        <form> 
+            <div style="width:640px;" class="slds-box" aura:id="lightningDataTableAdditionalServicesId">
+				
+            
+                <div>
+							<strong>{!v.additionalService[0].Product2.Name}</strong>
+							<br/>
+              </div>          
+         <div class="c-container">
+      <div class="slds-scrollable--x">
+         <lightning:layout verticalAlign="center">
+            <table class="slds-table slds-table--bordered slds-table--striped" >
+               <tr>
+                  <lightning:layoutItem flexibility="auto" padding="around-small">
+                      <aura:if isTrue="{!v.showDiscount}" >
+                         
+                        <lightning:input type="number"  name="Discount%" label="Discount%" aura:id="crm_Discount__c" value="{!v.additionalService[0].crm_Discount__c}" min="0" max="100"  onchange="{!c.trackInputDiscount}"/>
+                        </aura:if>  
+                          
+                         <aura:if isTrue="{!v.showUnitPrice}" >
+                        
+                           <lightning:input type="number" label="Unit Price" name="Unit Price" aura:id="crm_Unit_Price__c" value="{!v.additionalService[0].crm_Unit_Price__c}"  min="0" onchange="{!c.trackInputUnitPrice}"/>
+                       
+                        </aura:if>  
+                  </lightning:layoutItem>
+               </tr>
+            </table>
+         </lightning:layout>
+      </div>
+   </div>
+         
+            </div>       
+             
+        </form>
+   
+	
+</aura:component>

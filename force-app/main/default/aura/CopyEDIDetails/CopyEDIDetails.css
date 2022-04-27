@@ -1,0 +1,154 @@
+.THIS .clone-text
+{
+    font-weight: bold; 
+    font-size: 15px;
+}
+
+.THIS .clone-text2
+{
+    font-weight: bold; 
+    font-size: 14px;
+    padding: 0px 0px 10px 24px;
+}
+.THIS .party-search 
+{
+    margin-top:5px; 
+    width: 165%;
+}
+.THIS .org-label
+{
+    display: inline;
+    vertical-align: middle;
+    font-size: .8125rem;
+}
+.THIS .org-input
+{
+    margin-top: 5px;
+}
+.THIS .table-container
+{
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+.THIS .filter-container 
+{
+    border: 1px solid rgb(221, 219, 218);
+    padding: 10px;
+}
+
+.THIS .search-tips
+{
+    margin-right: 10px;
+}
+
+.THIS .info-icon .slds-icon_small
+{
+    width: 1.2rem !important;
+    height: 1.2rem !important;
+    margin-bottom: 2px;
+}
+.THIS .search-org
+{
+    margin-top: 25px;
+    margin-left: 20px;
+}
+.THIS .header-container
+{
+    margin-bottom: 20px;
+}
+.THIS .filter-container
+{
+    margin-bottom: 20px;
+}
+.THIS .copy-edi-table 
+{
+    margin-top: 20px; 
+}
+.THIS .party-name
+{
+    width: 25% !important;
+}
+.THIS .party-relation-input
+{
+    width: 50% !important; 
+}
+.THIS .party-relation-grid
+{
+    width: 50% !important;
+}
+.THIS .party-rel-input
+{
+    width: 115% !important; 
+}
+.THIS .organisation-input
+{
+    width: 60% !important;
+}
+.THIS .button-container
+{
+    padding-top: 17px;
+}
+.THIS.slds-spinner_container 
+{  
+  z-index: 10000;
+  position: fixed;   
+}
+.THIS .table-border
+{
+	border: 1px solid rgb(221, 219, 218);
+    
+}
+.THIS .copy-btn-section
+{
+    float: right; 
+    padding-right: 10px;
+    margin-bottom: 20px;
+}
+.THIS .slds-table thead th 
+{
+    background-color: rgb(243, 242, 242) !important;
+    border-color: rgba(27, 82, 151, 1.0) !important;
+}
+.THIS .slds-button_neutral[disabled], .THIS .slds-button_neutral:disabled, .THIS .slds-button--neutral[disabled], .THIS .slds-button--neutral:disabled 
+{
+   background-color: rgb(250, 246, 246) !important;
+   border-color: rgb(244, 246, 249) !important; 
+   cursor: default;
+   color: rgb(156,151,151)!important;
+}
+
+.THIS .slds-button_neutral:hover, .THIS .slds-button_neutral:focus, .THIS .slds-button--neutral:hover, .THIS .slds-button--neutral:focus 
+{
+    background-color: rgb(244, 246, 249);
+}
+.THIS .slds-button[disabled], .THIS .slds-button:disabled 
+{
+   background-color: rgb(250, 246, 246) !important;
+   border-color: rgb(244, 246, 249) !important; 
+   cursor: default;
+   color: rgb(156,151,151)!important;
+}
+.THIS .slds-button_neutral
+{
+    border-radius: .25rem .25rem .25rem .25rem !important;
+    text-align: center !important;
+    vertical-align: middle !important;
+    border: 1px solid rgb(221, 219, 218) !important;
+    transition: border .15s linear !important;
+    background-color: rgba(27, 82, 151, 1.0) !important;
+    border-color: rgba(27, 82, 151, 1.0) !important;
+    color: rgb(255, 255, 255) !important;
+}
+.THIS .btn-search , .THIS .copy-edi-btn
+{
+    margin-right: 10px;
+}
+.THIS .text-bold
+{
+    font-weight: bold;
+    font-size: 15px;
+}
+.THIS .pagination-buttons
+{
+    margin-bottom: 10px;
+}

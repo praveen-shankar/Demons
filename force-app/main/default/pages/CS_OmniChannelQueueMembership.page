@@ -1,0 +1,118 @@
+<!-- Author: Rajeev Shekhar -->
+<!-- Odigo CTI Project      -->
+
+<apex:page controller="CS_OmniChannelQueueMembershipController"  id="thepage">
+
+    <style>
+        .greenColour {
+            background-color: #98FB98;
+        }
+
+        .yellowColour {
+            background-color: #FFFF00;
+        }
+    </style>
+
+    <apex:remoteObjects jsNamespace="presence">
+        <apex:remoteObjectModel name="UserServicePresence" fields="ServicePresenceStatusId,UserId,CreatedDate" jsShorthand="omnistatus"/>
+    </apex:remoteObjects>
+
+    <apex:actionStatus id="status">
+        <apex:facet name="start">
+            <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; opacity: 0.25; z-index: 1000; background-color: black;">
+                &nbsp;
+            </div>
+            <div style="position: fixed; left: 0; top: 0; bottom: 0; right: 0; z-index: 1001; margin: 50% 30%">
+                <div style="display: inline-block; padding: 2px; background-color: #fff; width: 125px;">
+                    <img src="/img/loading.gif" style="float: left; margin: 8px;" />
+                    <span style="display: inline-block; padding: 10px 0px;">{!$Label.Please_Wait_Omni}...</span>
+                </div>
+            </div>
+        </apex:facet>
+    </apex:actionStatus>
+
+    <apex:sectionHeader title="{!$Label.Queue_Membership}" />
+    
+    <apex:pageMessages />
+    <apex:form id="theform">
+        <apex:pageMessage summary="{!$Label.Omni_page_msg}" severity="warning" rendered="{!$Label.Omni_page_msg_allow}" />
+       <!-- <apex:actionPoller action="{!refresh}" interval="30" id="poller" enabled="{!autorefresh}" />-->
+        <apex:commandButton value="{!$Label.Add_Me_Button}" id="addButton" title="{!$Label.Click_to_save}" action="{!addMembership}" status="status" oncomplete="omni.Logout();"/>
+        <apex:commandButton value="{!$Label.Remove_Me_Button}" id="removeButton" title="{!$Label.Click_to_save}" action="{!removeMembership}" status="status" oncomplete="omni.Logout();" />
+       <apex:commandButton value="{!$Label.Reload_Omni}" action="{!refresh}" title="{!$Label.Click_to_refresh}" />
+        <apex:commandButton value="Omni-Login" onclick="omni.LastOmniStatusId();" title="{!$Label.Login_last_omni}" />
+        <apex:commandButton value="{!btnName}" action="{!setAutoRefresh}" title="{!$Label.Omni_Auto_Refresh_Title}"/>
+       <br></br><apex:outputText rendered="{!autorefresh}" value="{!$Label.Omni_Auto_Refresh_Status}" style="font-weight: bold;color: #00cc00;"></apex:outputText>
+        <div style="overflow: scroll;  height: 300px;">
+            <apex:pageBlock id="pageblock">
+                <apex:pageBlockTable value="{!allQueues}" var="s" id="pageblocktable">
+                    <apex:column value="{!s.publicgroupname}" headerValue="{!$Label.Group}" />
+                    <apex:column value="{!s.member}" headerValue="{!$Label.Relationship}" />
+                    <apex:column value="{!s.workitemsize}" headerValue="{!$Label.Total_Waiting}" styleClass="{!if(ISNULL(s.workitemsize),"greenColour","yellowColour")}"/>
+                    <apex:column headerValue="{!$Label.Select_group}" id="selectcolumn">
+                        <apex:inputCheckbox value="{!s.selection}" id="checkbox"/>
+                    </apex:column>
+                </apex:pageBlockTable>
+            </apex:pageBlock>
+        </div>
+    </apex:form>
+
+    <script src="/support/console/40.0/integration.js" type="text/javascript"></script>
+    <script>
+        var omni = {
+            LastOmniStatusId: function() {
+                var usp = new presence.omnistatus();
+                usp.retrieve({
+                    where: {
+                        UserId: {
+                            eq: '{!$User.Id}'
+                        }
+                    },
+                    orderby: [{
+                        CreatedDate: "DESC NULLS LAST"
+                    }],
+                    limit: 1
+                }, this.Login);
+            },
+
+
+            handleFailure: function(error) {
+                console.log("An error has occurred " + error.message);
+                location.reload(true);
+            },
+
+
+            Logout: function() {
+                sforce.console.presence.logout();
+                location.reload(true);
+            },
+
+
+            Login: function(error, res, event) {
+                console.log("Result:" + JSON.stringify(res));
+                if (error) {
+                    this.handleFailure(error);
+                } else {
+                    var statusId = res[0].get('ServicePresenceStatusId');
+                    console.log("Last omni channel status Id: " + statusId);
+                    sforce.console.presence.login(statusId.substring(0, 15));
+                    location.reload(true);
+                }
+            }
+        };
+        
+        sforce.console.addEventListener(sforce.console.ConsoleEvent.PRESENCE.WORK_ACCEPTED, function(result) {
+            console.log("Workitem accepted");
+            console.log(JSON.stringify(result));
+            sforce.console.presence.getServicePresenceStatusId(function(res) {
+                    console.log("current status: "+JSON.stringify(res));
+                    if (res.success && res.statusApiName == "Online_Tilgjengelig_Telefon_og_Saker") {
+                        sforce.console.presence.setServicePresenceStatus("{!$Label.Opptatt_med_sak_Omni_Id}");
+                    }
+            });
+
+        });
+        
+    </script>
+
+</apex:page>

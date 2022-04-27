@@ -1,0 +1,289 @@
+<!--<apex:page showHeader="false" language="no"> -->
+<!--CSphase2, Akash, 19122016-->
+<apex:page showHeader="false" language="no"> 
+
+<!-- This page is customized for Norwegian Language -->
+
+<apex:stylesheet value="{!URLFOR($Resource.ChatCSS3,'style.css')}" />
+
+  
+  <!-- This script takes the endpoint URL parameter passed from the deployment 
+  page and makes it the action for the form -->
+  
+
+<!-- This script takes the endpoint URL parameter passed from the deployment 
+  page and makes it the action for the form -->
+  
+  <script type="text/javascript">
+    onload=function()
+        {
+    enableScrolling();
+    }
+    function enableScrolling()
+    {
+      document.body.scroll = "yes"; // IE 
+    }
+ </script> 
+ 
+<script type="text/javascript">
+   (function() 
+    {
+      function handlePageLoad() 
+      {
+        var endpointMatcher = new RegExp("[\\?\\&]endpoint=([^&#]*)");
+        document.getElementById('prechatForm').setAttribute('action',decodeURIComponent(endpointMatcher.exec(document.location.search)[1]));
+      } 
+      if(window.addEventListener)
+      {    
+        window.addEventListener('load', handlePageLoad, false);
+      }
+      else
+      {
+        window.attachEvent('onload', handlePageLoad, false);
+      }
+    }
+    )();
+</script>
+
+
+<Style>
+
+#PopupWindow { overflow-y:scroll;}     
+.errorMsg
+{
+    color: red;
+    font-size: 1.2em;
+    color: red;
+    display:none;
+    text-align: right;
+    font-family: 'Foundrymonolinepn bold', sans-serif;
+    max-width: 470px;
+}
+
+.fieldItem
+{
+    padding: 8px 4px;
+}
+
+
+</style>
+
+  <form name="email-form" class="w-clearfix" method='post' id="prechatForm" onsubmit="return validateForm()" style="scroll-y:auto">
+
+    <div class="step-start" style="opacity: 1; transition: opacity 1000ms; -webkit-transition: opacity 1000ms;">
+    
+    <div class="inside-chat">
+        <p class="ingress chat">
+        <!--CSphase2, Akash, 19122016-->
+        <!--Velkommen til chat.
+        <br/>Hva kan vi hjelpe deg med?</p>
+        -->
+        {!$Label.cs_WelcomeChat}
+        <br/>{!$Label.cs_chatHelp}</p>
+        <div class="form-div">
+            <div class="w-form">
+                <!--CSphase2, Akash, 19122016-->
+                    <div class="fieldItem" id="custName">
+                    <!--<label for="liveagent.prechat:Kundenavn" class="form-label">Navn*</label>-->
+                    <label for="liveagent.prechat:Kundenavn" class="form-label">{!$Label.cs_Name}*</label>
+                    <input id="cName" type="text" name='liveagent.prechat:Kundenavn'   class="w-input input-field-box" />
+                    <!--<div class="errorMsg" id="nameError">! Feltet  må fylles ut</div>-->
+                    <div class="errorMsg" id="nameError">! {!$Label.cs_errorchat}</div>
+                    </div>
+                    
+                    <!--CSphase2, Akash, 19122016-->
+                    <div class="fieldItem" id="custPhone"> 
+                    <!--<label for="liveagent.prechat:Telefon" class="form-label">Telefon*</label>-->
+                    <label for="liveagent.prechat:Telefon" class="form-label">{!$Label.cs_Telephone}*</label>
+                    <input id="cTele" type="text" name='liveagent.prechat:Telefon' class="w-input input-field-box"/>
+                    <!--<div class="errorMsg" id="phoneError">! Feltet  må fylles ut</div>
+                    <div class="errorMsg" id="formatError">! Ugyldig telefonnummer</div>-->
+                    <div class="errorMsg" id="phoneError">! {!$Label.cs_errorchat}</div>
+                    <div class="errorMsg" id="formatError">! {!$Label.cs_telephoneError}</div>
+                    </div>
+                    
+                   <!--CSphase2, Akash, 19122016-->
+                    <div class="fieldItem" id="custEmail"> 
+                    <!--<label for="liveagent.prechat:Epost" class="form-label">E-post</label>-->
+                    <label for="liveagent.prechat:Epost" class="form-label">{!$Label.cs_email}</label>
+                    <input id="cEmail" type="text" name='liveagent.prechat:Epost' class="w-input input-field-box"/>
+                     <!--<div class="errorMsg" id="emailError">! Ugyldig mailadresse</div>-->
+                     <div class="errorMsg" id="emailError">! {!$Label.cs_InvalidMail}</div>
+                     </div>
+                
+                    <div class="fieldItem" id="custKollinr"> 
+                    <!--<label for="liveagent.prechat:Epost" class="form-label">E-post</label>-->
+                    <label for="liveagent.prechat:Kollinum" class="form-label">Sporings- eller kollinummer </label>
+                    <input id="Kollinr" type="text" name='liveagent.prechat:Kollinum' class="w-input input-field-box"/>
+                     </div>
+                
+                     <!--CSphase2, Akash, 19122016-->
+                     <div class="fieldItem" id="custDesc">   
+                    <!--<label for="liveagent.prechat:Beskrivelse" class="form-label">Hva gjelder din henvendelse*</label>-->
+                    <label for="liveagent.prechat:Beskrivelse" class="form-label">{!$Label.cs_chatQuery}*</label>
+                    <textarea id="cDesc" name='liveagent.prechat:Beskrivelse' class="w-input input-field-box" ></textarea>
+                    <div class="errorMsg" id="descError">! {!$Label.cs_errorchat}</div>
+                    <!--<div class="errorMsg" id="descError">! Feltet  må fylles ut</div>-->
+                    </div>
+                    
+                    <input type="hidden" name="liveagent.prechat:Saksopphav" value="Chat Posten" />
+            
+                    
+                    
+                    <input id='prechat_submit' type="submit" value="Start Chat" class="w-button button submit" style="background-image: none;" onclick ="SetCookietest()"/>
+                    
+                    
+                    
+                  
+            </div>
+        </div>
+    </div>
+</div>
+                    <!-- The following steps will assign data to a NEW Case and link it with the ongoing conversation -->
+
+    <!-- The following will map the pre-chat fields to various Case Fields -->
+    <!-- SuppliedName field will have the value of Kundenavn            -->
+    <!-- SuppliedPhone field will have the value of Telefon          -->
+    <!-- SuppliedEmail field will have the value of Epost          -->
+    <!-- Description field will have the value of Beskrivelse              -->
+                    <input type="hidden" name="liveagent.prechat.findorcreate.map:Case" value="SuppliedName,Kundenavn;SuppliedPhone,Telefon;SuppliedEmail,Epost;Shipment_identification__c,Kollinum;Description,Beskrivelse;Origin,Saksopphav;" />
+            
+                    <!-- Creates a new Contact record with the mapped values above -->
+                    <input type="hidden" name="liveagent.prechat.findorcreate.map.doCreate:Case"
+                    value="SuppliedName,true;SuppliedPhone,true;SuppliedEmail,true;Description,true;Origin,true;Shipment_identification__c,true;" />
+                
+                    <!-- If a new Case record has been created, open it as a subtab -->
+                    
+                    <input type="hidden" name="liveagent.prechat.findorcreate.showOnCreate:Case" value="true" />
+                
+                    <!-- Save the Case id to transcript's field ContactId -->
+                    <input type="hidden" name="liveagent.prechat.findorcreate.saveToTranscript:Case" value="Case" />
+                    <input type="hidden" name="liveagent.prechat.name" id='windowName' />
+
+</form>
+
+
+<script type="text/javascript">
+
+function validateForm()
+{
+    var name = document.forms["prechatForm"]["cName"].value;
+    var tel = document.forms["prechatForm"]["cTele"].value;
+    var desc = document.forms["prechatForm"]["cDesc"].value;
+    var email = document.forms["prechatForm"]["cEmail"].value;
+    
+ 
+  var check = true;   
+
+    if(name == null || name == '')
+    {
+        document.getElementById("cName").style.border ="3px solid #fdbb2f";
+        document.getElementById("nameError").style.display = "block";
+        check = false;
+    }
+    else
+    {
+        document.getElementById("cName").style.border = "3px solid #c1c1c1";
+        document.getElementById("nameError").style.display = "none";   
+    }
+
+
+
+    if (tel == null || tel == '') 
+    {
+        document.getElementById("cTele").style.border ="3px solid #fdbb2f";
+        document.getElementById("phoneError").style.display = "block";
+        document.getElementById("formatError").style.display = "none";
+        check = false;
+    }
+    else if(isNaN(tel))
+    {
+        document.getElementById("cTele").style.border ="3px solid #fdbb2f";
+        document.getElementById("formatError").style.display = "block";
+        document.getElementById("phoneError").style.display = "none";
+        check = false;
+    }
+    else
+    {
+        document.getElementById("cTele").style.border = "3px solid #c1c1c1";
+        document.getElementById("phoneError").style.display = "none";  
+        document.getElementById("formatError").style.display = "none"; 
+    }
+    
+  
+
+    if (desc == null || desc == '') 
+    {
+        document.getElementById("cDesc").style.border ="3px solid #fdbb2f";
+        document.getElementById("descError").style.display = "block";
+        check = false;
+    }
+    else
+    {
+        document.getElementById("cDesc").style.border = "3px solid #c1c1c1";
+        document.getElementById("descError").style.display = "none";   
+    }    
+
+
+    if(email != null && email.replace(/\s/g, '') != '')
+    {
+        var filter = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+        if (!filter.test(email))
+        {
+            document.getElementById("cEmail").style.border ="3px solid #fdbb2f";
+            document.getElementById("emailError").style.display = "block";
+            check = false;
+        }
+        else
+        {
+            document.getElementById("cEmail").style.border = "3px solid #c1c1c1";
+            document.getElementById("emailError").style.display = "none";
+        }
+    }
+    return check;
+}
+</script>
+
+
+
+
+    <script type="text/javascript">    
+    function SetCookieDescription(cookieName,cookieValue,nDays) {
+        var a = cookieName;
+        var b = cookieValue;
+        //alert(cookieName); 
+        //alert(cookieValue);
+        var today = new Date();
+        var expire = new Date();
+        if (nDays==null || nDays==0) nDays=1;
+        expire.setTime(today.getTime() + 3600000*24*nDays);
+        document.cookie = cookieName+"="+escape(cookieValue)
+        + ";expires="+expire.toGMTString();
+
+    }
+    function SetCookieName(cookieName,cookieValue,nDays) {
+        
+        var a = cookieName;
+        var b = cookieValue;
+        var today = new Date();
+        var expire = new Date();
+        if (nDays==null || nDays==0) nDays=1;
+        expire.setTime(today.getTime() + 3600000*24*nDays);
+        document.cookie = cookieName+"="+escape(cookieValue)
+        + ";expires="+expire.toGMTString();
+    }
+
+    function SetCookietest() {
+        var desc = document.getElementById("cDesc").value;
+        var name = document.getElementById("cName").value;   
+        SetCookieDescription('description',desc,1);
+    }
+    function setName(){
+        document.getElementById("windowName").value = document.getElementById("name").value;
+        return true;
+    }    
+    </script> 
+ 
+
+</apex:page>

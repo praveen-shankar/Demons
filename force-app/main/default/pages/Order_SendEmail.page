@@ -1,0 +1,281 @@
+<apex:page StandardController="Order" extensions="Order_SendEmailController" action="{!validateData}" id="order1" >
+<!---// CS-Phase2- 03/01/2017- Akshata Asukar-Replaced all occurances of Account.party_number__c with Account.crm_customer_number__c--->
+<apex:sectionHeader id="order" title="{!$Label.cs_Order}" subtitle="{!order.OrderNumber}"  />
+
+    <apex:form id="Adhoc">
+
+    <!-- 
+    PAGE BLOCK FOR GENERAL PAGE MESSAGE SECTION
+    -->
+    <apex:pageBlock mode="maindetail">
+        <apex:pageBlockButtons location="top">
+            <apex:commandButton value="{!$Label.cs_Back}" action="{!cancel}" rendered="{!NOT(unit_Flag)}"/>
+        </apex:pageBlockButtons>
+
+        <apex:pageMessages />
+    </apex:pageBlock>
+        
+    <apex:pageBlock id="transportation_unit_details" title="{!$Label.cs_TransportUnitDetails}" rendered="{!unit_Flag}">
+    <apex:pageBlockButtons location="top" >
+
+    <apex:commandButton value="{!$Label.cs_Mailorder}" action="{!sendEmailToTransportUnit}"/>
+    <apex:commandButton value="{!$Label.cs_Back}" action="{!cancel}"/>
+
+    </apex:pageBlockButtons>
+
+      <apex:pageBlockSection id="transportation_details" columns="1" collapsible="false" >
+
+         <apex:pageBlockSectionItem >
+         <apex:outputLabel value="{!$Label.cs_TransportUnitName}" /> 
+         <apex:outputtext value="{!transportUnitName}"/> 
+         </apex:pageBlockSectionItem>
+
+         <apex:pageBlockSectionItem >
+         <apex:outputLabel value="{!$Label.cs_TransportUnite_mail}" /> 
+         <apex:outputtext value="{!email}"/> 
+         </apex:pageBlockSectionItem>
+
+         
+         <apex:pageBlockSectionItem >
+         <apex:outputLabel value="{!$Label.cs_Sendconfirmationtocustomer}" /> 
+          <apex:inputCheckbox label="{!$Label.cs_Sendorderconfirmationemailtocustomer}" 
+          value="{!o.Send_email_to_customer__c}" disabled="{!IF(order.customer_email__c='',true,false)}"/>
+         </apex:pageBlockSectionItem>
+
+    </apex:pageBlockSection>           
+    </apex:pageBlock>
+            
+    <br></br> <br></br> 
+
+    <apex:pageBlock id="order_summary" title="{!$Label.cs_ORDERSUMMARY}" rendered="{!AND(unit_Flag,isAdhocOrder)}">
+
+        <apex:pageBlockButtons location="bottom" >
+
+        <apex:commandButton value="{!$Label.cs_Mailorder}" action="{!sendEmailToTransportUnit}" />
+        <apex:commandButton value="{!$Label.cs_Back}" action="{!cancel}"/>
+
+        </apex:pageBlockButtons>
+
+    <apex:pageBlockSection id="account_info" title="{!$Label.cs_Customer} {!$Label.cs_Information}" collapsible="false" columns="1">
+
+
+         <apex:pageBlockSectionItem > 
+         <apex:outputLabel value="{!$Label.cs_CustomernumberB}" /> 
+         <apex:outputField value="{!order.Account.crm_Customer_Number__c}" id="business_name"/>   
+         </apex:pageBlockSectionItem> 
+         
+         <apex:pageBlockSectionItem >
+         <apex:outputLabel value="{!$Label.cs_cmpnyName}" /> 
+         <apex:outputField value="{!order.Account.name}"/> 
+         </apex:pageBlockSectionItem> 
+         
+         <apex:pageBlockSectionItem >
+         <apex:outputLabel value="{!$Label.cs_RefNoOrderInv}" /> 
+         <apex:outputField value="{!order.Reference_person__c}"/> 
+         </apex:pageBlockSectionItem>
+         
+            <apex:pageBlockSectionItem >
+            <apex:outputLabel value="{!$Label.cs_PostalBillingaddress}" /> 
+            <apex:outputPanel >
+                <apex:outputField value="{!order.BillingStreet}"/><br /> 
+                <apex:outputField value="{!order.BillingCity}"/><br/>
+                <apex:outputField value="{!order.BillingState}"/><br/> 
+                <apex:outputField value="{!order.BillingPostalCode}"/><br/> 
+                <apex:outputField value="{!order.BillingCountry}"/>
+            </apex:outputPanel>
+            </apex:pageBlockSectionItem> 
+
+    </apex:pageBlockSection> 
+
+
+    <apex:pageBlockSection id="order_info" title="{!$Label.cs_Order} {!$Label.cs_Information}" collapsible="false" columns="1" >
+
+
+         <apex:pageBlockSectionItem >
+         <apex:outputLabel value="{!$Label.cs_Dateofpickup}" /> 
+         <apex:outputField value="{!order.EffectiveDate}"/> 
+         </apex:pageBlockSectionItem> 
+
+         <apex:pageBlockSectionItem > 
+         <apex:outputLabel value="{!$Label.cs_CompanyCollPoint}" /> 
+         <apex:outputField value="{!order.business_name_for_pickup__c}" id="business_name"/>   
+         </apex:pageBlockSectionItem>
+
+        <apex:pageBlockSectionItem >
+            <apex:outputLabel value="{!$Label.cs_retrieveAddress}" /> 
+            <apex:outputPanel >
+                <apex:outputField value="{!order.ShippingStreet}"/><br/> 
+                <apex:outputField value="{!order.ShippingCity}"/><br/>
+                <apex:outputField value="{!order.ShippingState}"/><br/> 
+                <apex:outputField value="{!order.ShippingPostalCode}"/><br/> 
+                <apex:outputField value="{!order.ShippingCountry}"/>
+            </apex:outputPanel>
+        </apex:pageBlockSectionItem> 
+         
+         <apex:pageBlockSectionItem >
+         <apex:outputLabel value="{!$Label.cs_Contact}" /> 
+         <apex:outputField value="{!order.contact_person__c}"/> 
+         </apex:pageBlockSectionItem>
+         
+         <apex:pageBlockSectionItem >
+         <apex:outputLabel value="{!$Label.cs_phone}" /> 
+         <apex:outputField value="{!order.phone_number__c}"/> 
+         </apex:pageBlockSectionItem>
+         
+
+      </apex:pageBlockSection>   
+
+    <apex:pageBlockSection id="order_desc" title="{!$Label.cs_ordersDescription}" collapsible="false" columns="1">  
+     
+         <apex:pageBlockSectionItem >
+         <apex:outputLabel value="{!$Label.cs_Description}" /> 
+         <apex:outputField value="{!order.Description}"/> 
+         </apex:pageBlockSectionItem> 
+         
+         
+           <apex:pageBlockSectionItem >
+         <apex:outputLabel value="{!$Label.cs_numberofpackages}" /> 
+         <apex:outputField value="{!order.number_of_packages__c}"/> 
+         </apex:pageBlockSectionItem>
+         
+           <apex:pageBlockSectionItem >
+         <apex:outputLabel value="{!$Label.cs_Weight_volume_size}" /> 
+         <apex:outputField value="{!order.Vekt_volum_str__c}"/> 
+         </apex:pageBlockSectionItem>
+    </apex:pageBlockSection>
+
+
+
+
+
+    <apex:pageBlockSection id="other_info" title="{!$Label.cs_Other} {!$Label.cs_Information}" columns="1" collapsible="false" >
+        <apex:outputPanel >
+        <table width="100%"> 
+            <tr>
+                <td width="30%"><apex:outputText value="{!$Label.cs_Ispackage}"/></td>   
+                <td width="20%">
+                    <apex:outputLabel for="confirm" value="{!$Label.cs_confirm}:" style="font-weight:bold;font-size:11px;color:#484848"/>
+                    <apex:outputText value="{!order.confirm__c}" id="confirm" />            
+                </td>
+                <td width="50%"><apex:outputText value="{!$Label.cs_Ispackage2}" style="color:grey;font-style:italic;" /></td>
+            </tr>
+        </table>
+        </apex:outputPanel>
+
+        <apex:outputPanel >
+        <table width="100%"> 
+            <tr>
+              <td width="30%"><apex:outputLabel value="{!$Label.cs_Collision}"/>  
+              </td>
+              <td width="20%">
+                 <apex:outputLabel value="{!$Label.cs_PalletOrNumber}:" for="antall" style="font-weight:bold;font-size:11px;color:#484848" /> 
+                 <apex:outputtext value="{!order.Pall_antall__c}" id="antall"/> 
+              </td>
+
+         <td width="50%">
+            <apex:outputLabel value="{!$Label.cs_ContainerMail}" style="font-weight:bold;font-size:11px;color:#484848"/> 
+            <apex:outputtext value="{!order.Container_post__c}"/> 
+         </td>
+         </tr>
+         </table> 
+           </apex:outputPanel>
+
+         <apex:pageBlockSectionItem >
+         <apex:outputLabel value="{!$Label.cs_Other}" Style="float: left;width:50px;"/> 
+         <apex:outputField value="{!order.Other__c}" /> 
+         </apex:pageBlockSectionItem>
+        
+
+    </apex:pageBlockSection>
+    </apex:pageBlock>
+
+
+
+    <apex:pageBlock id="BDX_Order_Summary" title="{!$Label.cs_ORDERSUMMARY}" rendered="{!AND(unit_Flag,isMBHOrder) }">
+
+        <apex:pageBlockButtons location="bottom" >
+
+        <apex:commandButton value="{!$Label.cs_Mailorder}" action="{!sendEmailToTransportUnit}"  />
+        <apex:commandButton value="{!$Label.cs_Back}" action="{!cancel}"/>
+
+        </apex:pageBlockButtons>
+
+        <apex:pageBlockSection id="MBH_order_info" title="{!$Label.cs_Order} {!$Label.cs_Information}" collapsible="false" columns="1"  >
+
+         <apex:pageBlockSectionItem > 
+         <apex:outputLabel value="{!$Label.cs_Cause}" /> 
+         <apex:outputField value="{!order.reason__c}" id="business_name"/>   
+         </apex:pageBlockSectionItem> 
+
+         <apex:pageBlockSectionItem >
+         <apex:outputLabel value="{!$Label.cs_Dateofpickup}" /> 
+         <apex:outputField value="{!order.EffectiveDate}"/> 
+         </apex:pageBlockSectionItem>
+
+         <apex:pageBlockSectionItem > 
+         <apex:outputLabel value="{!$Label.cs_delivery_date}" /> 
+         <apex:outputField value="{!order.EndDate}" id="business_name"/>   
+         </apex:pageBlockSectionItem> 
+
+         <apex:pageBlockSectionItem > 
+         <apex:outputLabel value="{!$Label.cs_Transmissionnumber}" /> 
+         <apex:outputField value="{!order.Sendingsnummer__c}" id="business_name"/>   
+         </apex:pageBlockSectionItem> 
+
+         <apex:pageBlockSectionItem > 
+         <apex:outputLabel value="{!$Label.cs_order_number}" /> 
+         <apex:outputField value="{!order.OrderNumber__c}" id="business_name"/>   
+         </apex:pageBlockSectionItem> 
+
+         <apex:pageBlockSectionItem >
+         <apex:outputLabel value="{!$Label.cs_PostalUnitName}" /> 
+         <apex:outputField value="{!order.postalUnit__c}"/> 
+         </apex:pageBlockSectionItem>
+
+         <apex:pageBlockSectionItem >
+             <apex:outputLabel value="{!$Label.cs_deviceAddress}" />
+             <apex:outputPanel > 
+                <apex:outputField value="{!order.Enhet_address__c}"/><br/>
+                <apex:outputField value="{!order.Enhentsnummer__c}"/> &nbsp; <apex:outputField value="{!order.EnhetPostalCity__c}"/>
+             </apex:outputPanel>
+         </apex:pageBlockSectionItem>
+
+         <apex:pageBlockSectionItem > 
+         <apex:outputLabel value="{!$Label.cs_Recipientsname}" /> 
+         <apex:outputField value="{!order.Account.name}" id="business_name"/>   
+         </apex:pageBlockSectionItem> 
+
+
+         <apex:pageBlockSectionItem >
+            <apex:outputLabel value="{!$Label.cs_Recipient_Address}" /> 
+            <apex:outputPanel >
+                <apex:outputField value="{!order.ShippingStreet}"/><br/> 
+                <apex:outputField value="{!order.ShippingPostalCode}"/> &nbsp; <apex:outputField value="{!order.ShippingCity}"/><br/> 
+                <apex:outputField value="{!order.ShippingCountry}"/>
+            </apex:outputPanel>
+        </apex:pageBlockSectionItem>
+
+         <apex:pageBlockSectionItem >
+         <apex:outputLabel value="{!$Label.cs_PhoneNumber}" /> 
+         <apex:outputField value="{!order.phone_number__c}"/> 
+         </apex:pageBlockSectionItem>
+         
+         <apex:pageBlockSectionItem >
+         <apex:outputLabel value="{!$Label.cs_emailAdd}" /> 
+         <apex:outputField value="{!order.phone_number__c}"/> 
+         </apex:pageBlockSectionItem>
+
+         <apex:pageBlockSectionItem >
+         <apex:outputLabel value="{!$Label.cs_Note}" /> 
+         <apex:outputField value="{!order.Description}"/> 
+         </apex:pageBlockSectionItem> 
+
+        </apex:pageBlockSection>
+
+        
+
+    </apex:pageBlock>
+    
+    </apex:form>
+
+</apex:page>

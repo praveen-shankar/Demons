@@ -1,0 +1,48 @@
+<apex:page standardController="Account" extensions="CustomerDetailExtension" rendered="{!hasEConnectData}"> 
+    
+    <div style="overflow:auto; height:350px;">
+        <apex:form >
+            <table>
+                <tr>
+                <!----CS Phase 2 14122016, Akshata -Added the labels-->
+                    <th width="100">{!$Label.cs_First_Name}</th>
+                    <th width="100">{!$Label.cs_Middle_name}</th>
+                    <th width="100">{!$Label.cs_Surname}</th>
+                    <th width="100">{!$Label.cs_Department}</th>
+                    <th width="100">{!$Label.cs_Title}</th>
+                    <th width="70">{!$Label.cs_Telephone}</th>
+                    <th width="150">{!$Label.cs_Email}</th>
+                    <!----CS Phase 2 14122016, Akshata -Added the labels-->
+                    <td></td>
+                </tr>
+            
+                <apex:variable var="rowNum" value="0" />
+                <apex:repeat value="{!contactsElements.contactElements}" var="type" >
+                    <tr>
+                        <td>{!type.contactName.FirstName}</td>
+                        <td>{!type.contactName.MiddleName}</td>
+                        <td>{!type.contactName.LastName}</td>
+                        <td>{!type.Department}</td>
+                        <td>{!type.Title}</td>
+                        
+                        <apex:repeat value="{!type.communicationType}" var="com">
+                            <td>{!com.PhoneNumber}</td>
+                            <td>{!com.EMailAddress}</td>
+                        </apex:repeat>
+                        <td>
+                           <!-- <apex:commandLink action="{!persistContact}" target="_top" value="Hent til KATS">
+                             <!----CS Phase 2 19122016, Supriya -Added the labels -->
+                             <apex:commandLink action="{!persistContact}" target="_top" value="{!$Label.cs_Download_to_KATS}">
+                           
+                                <apex:param value="{!rowNum}" assignTo="{!selectedContactsElementsIndex}" name="selectedContactsElementsIndex" />
+                            </apex:commandLink>
+                        </td>
+                    </tr>
+
+                    <apex:variable var="rowNum" value="{!VALUE(rowNum) + 1}" />
+                </apex:repeat>
+
+            </table> 
+        </apex:form>
+    </div>
+</apex:page>

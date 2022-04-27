@@ -1,0 +1,7 @@
+<apex:page >
+  <apex:form >
+  <h1>Cannot process the segment change request as it is not Approved. <br/> Kindly contact your manager for record approval </h1>
+  <br/><br/>
+  <apex:commandButton action="/{!$Currentpage.parameters.reqobjid}" value="Back To Request Record"/>
+  </apex:form>
+</apex:page>

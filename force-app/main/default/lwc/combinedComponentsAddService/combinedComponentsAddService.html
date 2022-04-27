@@ -1,0 +1,556 @@
+<template>
+
+        <lightning-accordion allow-multiple-sections-open
+                             onsectiontoggle={toggleSectionHandleW3web}
+                             active-section-name={activeSections}>
+            <lightning-accordion-section name="ServiceOverview Combined" label="Service Overview Combined ">
+
+                 <div class="slds-grid slds-gutters">
+                    <div class="slds-col slds-size_1-of-3" > 
+                      <!-- slds-scrollable" style="height:30rem" -->
+                      
+                      <!--Add Service cmponent Starts-->
+                      <!-- <h3 class="slds-text-heading_medium"><lightning-icon icon-name="custom:custom20" size="small"></lightning-icon> <strong style="color:#270086; font-size:13px;"> Add Services </strong></h3> -->
+                        <!-- <c-add-services onprogressvaluechange={hanldeProgressValueChange} onserviceidchange={handleserviceidchange} onactivesectionhandle={handleactivesection} onactivesectionsurcharge={handleactiveSectionSurcharge} onarrayhandle={handleMaximizeCounter} onmakearrayempty={handleMakeArrayEmpty}></c-add-services>                -->
+                      
+                       <!-- New Code starts -->
+                       <lightning-card class="slds-card__body" style="padding-block-start: 0%;padding-block-start: 0%;">   
+                        <h1 slot="title" ><lightning-icon icon-name="custom:custom20" size="small"></lightning-icon><strong style="color:#270086; font-size:13px;"> Add Services </strong></h1>        
+                        <lightning-input  style="margin-top: 0%;padding-top: 0%;margin-left: 3%;margin-right: 3%;" type = "search" value={searchKey} onchange={handleKeywordChange} onkeyup={startSearchTimer}>
+                        </lightning-input>
+                        <div style="height:250px; ">
+                          <!-- overflow:auto !important; -->
+                          
+                       <lightning-tabset  >
+                        <template for:each={picklistDatamodified} for:item="picklistValue" >
+                          <lightning-tab key={picklistValue.Id} label={picklistValue.Tab}  onactive={handleTabData} value={picklistValue.Tab} title={picklistValue.value}>
+                            <div style="height: 210px">
+                           
+                               
+                            
+                              <lightning-datatable max-row-selection=1 data={ActualProductsData} key-field="Id"  enable-infinite-loading="true"
+                              onloadmore={loadMoreData} load-more-offset="20"  columns={columns}  onrowaction={handlerowaction} onrowselection={handleRowSelection}  > </lightning-datatable>
+                            </div>
+                          </lightning-tab>
+                      </template>
+                      </lightning-tabset>
+                    </div>
+                  </lightning-card> 
+                       <!-- New Code ends -->
+                       
+                       
+                        <!-- Old code starts -->
+                        <!-- <lightning-card>               
+                                <div style="height:250px; overflow:auto !important;">
+                                    <lightning-tabset>
+                                        <lightning-tab label="All"  onactive={handleTabData} value="All" title="All Services">
+                                          <div style="height:250px; overflow:auto !important;">
+                                            <lightning-datatable max-row-selection=1 data={wireProduct2.data}  columns={columns} key-field="Id"  onrowaction={handlerowaction} onrowselection={handleRowSelection}  > </lightning-datatable> -->
+                                            <!-- <lightning-datatable enable-infinite-loading onloadmore={loadMoreData}  data={wireProduct2.data}  columns={columns} key-field="Id"  onrowselection={handleRowSelection}  > </lightning-datatable> -->
+                                        <!-- </div>
+                                          </lightning-tab>
+                                        <lightning-tab label="B2B"  onactive={handleTabData} value="B2B" title="B2B Services">
+                                          <div style="height:250px; overflow:auto !important;">
+                                            <lightning-datatable max-row-selection=1 data={wireProduct2.data}  columns={columns} key-field="Id"  onrowaction={handlerowaction} onrowselection={handleRowSelection}  > </lightning-datatable>
+                                       </div>
+                                          </lightning-tab>
+                                        <lightning-tab  label="B2C" onactive={handleTabData} value="B2C" title="B2C Services">
+                                          <div style="height:250px; overflow:auto !important;">
+                                            <lightning-datatable max-row-selection=1 data={wireProduct2.data}  columns={columns} key-field="Id"  onrowaction={handlerowaction} onrowselection={handleRowSelection}  > </lightning-datatable>
+                                        </div>
+                                          </lightning-tab>
+                                        <lightning-tab label="Post" onactive={handleTabData} value="Product" title="Product Services">
+                                          <div style="height:250px; overflow:auto !important;">
+                                            <lightning-datatable max-row-selection=1 data={wireProduct2.data}  columns={columns} key-field="Id"  onrowaction={handlerowaction} onrowselection={handleRowSelection}  > </lightning-datatable>
+                                       </div>
+                                          </lightning-tab>
+                                    </lightning-tabset>
+                                  </div>
+                                </lightning-card> -->
+                                <!-- Old code ends -->
+                       <!--Add Service cmponent Ends-->
+                    
+                    </div>
+                             
+                    <div class="slds-col slds-size_1-of-3" >
+                     
+                      <!-- <h3  class="slds-text-heading_medium"><lightning-icon icon-name="custom:custom20" size="small"></lightning-icon> <strong style="color:#270086; font-size:13px;"> Configure Services </strong></h3> -->
+                     
+                      <lightning-card >
+                        <h1 slot="title" ><lightning-icon icon-name="custom:custom20" size="small"></lightning-icon><strong style="color:#270086; font-size:13px;"> Configure Services </strong></h1>        
+
+                        <div style="height:290px; overflow:auto !important; overflow-x: hidden;">
+                        <!-- Configure Service Starts -->
+                      <!-- <c-configure-service service-name={serviceName} record-id={recordId} actual-service-id={actualServiceId}></c-configure-service> -->
+                      <div>
+                        <!-- <button onclick={testActualServiceId}>test actual service id</button> -->
+                            <h1 style="text-align:center;font-size:30px;background-color:powderblue;"><b>{serviceName}</b></h1>
+                            <!-- <lightning-datatable max-row-selection=1 data={progressValue}  columns={columns} key-field="Id"  onrowaction={handlerowaction} onrowselection={handleRowSelection} hide-checkbox-column > </lightning-datatable> -->
+                          </div>
+                          
+                          <!-- <div class="slds-grid slds-gutters slds-m-left_medium" >
+                            <div class="slds-col slds-size_1-of-3">
+                        <lightning-input type="checkbox" label="Norway" onchange={handleNorway}></lightning-input>
+                            </div>
+                            <div class="slds-col slds-size_1-of-3">
+                        <lightning-input type="checkbox" label="Sweden" onchange={handleSweden}></lightning-input>
+                        </div>
+                        <div class="slds-col slds-size_1-of-3">
+                          <lightning-input type="checkbox" label="Other" onchange={handleOther}></lightning-input>
+                          </div>
+                        </div> -->
+                          
+                            
+                            <div class="slds-var-m-around_medium">
+                              <div class="slds-grid slds-gutters">
+                                <div class="slds-col slds-size_1-of-2">
+                               <lightning-input
+                               
+                        
+                                  label="Discount %"
+                        
+                                    type="number"
+                        
+                                    value={stringValue}
+                        
+                                    name="Discount"
+
+                                    min="0"
+                        
+                                    max="100"
+
+                                    step="0.01"
+                        
+                                    class="number-input"
+                        
+                                    onchange={discountChangedHandler}
+                        
+                                ></lightning-input>
+                                </div>
+                        
+                                <div class="slds-col slds-size_1-of-2">
+                                <lightning-input
+                        
+                                    label="Annual Service Value"
+                        
+                                    type="number"
+
+                                    step="0.1"
+                        
+                                    name="AnnualServiceValue"
+                        
+                                    min="0"
+                        
+                                    max="1000000000"
+                        
+                                    value={numberValue}
+                        
+                                    class="number-input"
+                        
+                                    onchange={asvChangedHandler}
+                        
+                                ></lightning-input>
+                                </div>
+                                </div>
+                                <lightning-input
+                        if:true={Minimum_Price_check}
+                                    label="Minimum Price"
+                        
+                                    type="number"
+                        
+                                    name="MinimumPrice"
+                        
+                                    min="0"
+                        
+                                    max="1000000000"
+                        
+                                    value={numberValue}
+                        
+                                    class="number-input"
+                        
+                                    onchange={priceChangeHandler}
+                        
+                                ></lightning-input>
+                                <!-- <template if:true={isNorwaySelected}> -->
+                               <div class="slds-grid slds-gutters">
+                                <div class="slds-col slds-size_1-of-2">
+                                <lightning-input 
+                        if:true={Weight_Interval_From_Check}
+                                    label="Weight from"
+                        
+                                    type="number"
+                        
+                                    name="crm_Min_Weight__c"
+                        
+                                    min="0"
+                        
+                                    max="1000000000"
+                        
+                                    value={numberValue}
+                        
+                                    class="number-input"
+                        
+                                    onchange={minWeightChangedHandler}
+                        
+                                ></lightning-input>
+                                </div>
+                               <div class="slds-col slds-size_1-of-2">
+                                <lightning-input
+                        if:true={Weight_Interval_To_Check}
+                                    label="Weight to"
+                        
+                                    type="number"
+                        
+                                    name="crm_Max_Weight__c"
+                        
+                                    min="0"
+                        
+                                    max="1000000000"
+                        
+                                    value={numberValue}
+                        
+                                    class="number-input"
+                        
+                                    onchange={maxWeightChangedHandler}
+                                ></lightning-input>
+                                </div>
+                               </div>
+                               <!-- </template> -->
+                        
+                              <!-- <template if:true={isSwedenSelected}> -->
+                              <lightning-combobox
+                              if:true={Terminals_Check}
+                              name="Terminals"
+                              label="Terminals"
+                              value={value}
+                              placeholder="All"
+                              options={options}
+                              onchange={handleChange} >
+                            </lightning-combobox>
+                          
+                        
+                          <lightning-combobox
+                          if:true={Local_Domestic_Check}
+                          name="crm_Local__c"
+                          label="Local/Domestic"
+                          value={value2}
+                          placeholder="Local"
+                          options={options2}
+                          onchange={handleChange2} >
+                        </lightning-combobox>
+                        
+                        <!-- if:true={Free_PickUp_Check__c} -->
+                        <lightning-input 
+                        if:true={Free_PickUp_Check}
+                        type="checkbox"
+                        name="crm_Free_Pickup__c" 
+                        label="Free PickUp" 
+                        onchange={handleChange7}></lightning-input>
+                        <!-- </template> -->
+                        
+                        <!-- <template if:true={isOtherSelected}> -->
+                        <lightning-combobox
+                        if:true={Conversion_Factor_Check}
+                          name="crm_Conversion_Factor__c"
+                          label="Conversion Factor"
+                          value={value4}
+                          placeholder="Standard"
+                          options={options4}
+                          onchange={handleChange4} >
+                        </lightning-combobox>
+                        
+                        <lightning-combobox
+                        if:true={Direction_Terminals_Check}
+                          name="Direction"
+                          label="Direction"
+                          value={value5}
+                          placeholder="Inbound"
+                          options={options5}
+                          onchange={handleChange5} >
+                        </lightning-combobox>
+
+                        <lightning-combobox
+                        if:true={Passive_Return_Check}
+                          name="Passive_Return_Check"
+                          label="Passive Return"
+                          value={value8}
+                          placeholder="Ordinary Service"
+                          options={options8}
+                          onchange={handleChange8} >
+                        </lightning-combobox>
+
+                        <!-- if:true={Is_Payer_Receiver_or_Sender_Check__c} -->
+                        <lightning-combobox
+                        if:true={Is_Payer_Receiver_or_Sender_Check}
+                          name="IsPayerReceiverorSender__c"
+                          label="Is Payer Receiver or Sender"
+                          value={value6}
+                          placeholder="Both"
+                          options={options6}
+                          onchange={handleChange6} >
+                        </lightning-combobox>
+
+                        
+                        <!-- </template> -->
+                        
+                        
+                        
+                                <br/>
+                                
+                                <!-- <lightning-button class="slds-m-left_x-small" label="Reset" variant="brand" 
+                                            onclick={resetFields}></lightning-button> -->
+                                <!-- <lightning-button class="slds-m-left_x-small" label="Add service" variant="brand" 
+                                            onclick={addServices}></lightning-button> -->
+                        
+                                <!-- <c-contact-tile contact={contact}></c-contact-tile> -->
+                        
+                                <!-- <c-add-services></c-add-services> -->
+                        
+                            </div>
+                    
+                    
+                    </div>
+                      </lightning-card >
+                        <!-- Configure Service Ends -->
+                    </div>
+      
+                    <div class="slds-col slds-size_1-of-3" > 
+                      
+                      <!-- <h3 class="slds-text-heading_medium"><lightning-icon icon-name="custom:custom20" size="small"></lightning-icon> <strong style="color:#270086; font-size:13px;"> Additional Services </strong></h3>             -->
+                      <lightning-card>
+                        <h1 slot="title" ><lightning-icon icon-name="custom:custom20" size="small"></lightning-icon><strong style="color:#270086; font-size:13px;"> Additional Services </strong></h1> 
+                        <!-- Additional Service Code Starts -->
+                        <div style="height:290px; overflow:auto !important;">
+                        <lightning-accordion onsectiontoggle={toggleSectionHandleVAS}  
+              
+    active-section-name={activeSectionName}
+    allow-multiple-sections-open>
+      <lightning-accordion-section name="VAS" label="VAS" >
+          <template if:true={additionalServiceList} for:each={additionalServiceList} for:item="addser">            
+         
+              <div class="slds-m-around_medium" key ={addser.Additional_Service__r.Id}> 
+                 <div class="slds-var-m-around_medium">
+                  <div class="slds-grid slds-gutters"> 
+                    <div class="slds-col">
+                      <lightning-input
+                                      
+                      style="padding : 0px;font: size 15px;font-weight : bold;"
+                      data-checkbox-id={addser.Additional_Service__r.Id} 
+                      name ="checkbox"
+                      class="slds-p-left_large" 
+                      type="checkbox" 
+                      key={addser.Id} 
+                      label={addser.ProductNameERP__c}                  
+                      value={addser.Additional_Service__r.Id} 
+                      onchange={handleCheckboxChange}                      
+                      ></lightning-input>
+                      
+                    </div>
+                    <!-- label={addser.Additional_Service__r.Name}    -->
+                    <!-- <div class="slds-col" style="margin-left: 0px;padding-left: 0px;"
+                    ><b>[{addser.Add_Service_ERP_ID__c}]</b></div> -->
+                    <!-- border-left-width: 0px; -->
+                    <!-- padding-left:0;     -->
+
+                      
+
+                   
+                        <!-- <h3><b> {addser.Additional_Service__r.Name}-{addser.Add_Service_ERP_ID__c}
+                     </b></h3> -->
+                  </div>
+                     <!-- Add.S.Id-: {addser.Add_Service_ERP_ID__c}-Ac.S.Id-: {addser.Actual_Service_ERP_ID__c} -->
+                     <div class="slds-grid slds-gutters">
+                         <div class="slds-col">
+                     <lightning-input
+                         value=""
+                         name="DiscountVAS"
+                         data-id={addser.Additional_Service__r.Id} 
+                         type="number" 
+                         step="0.01"                       
+                         class="number-input"                         
+                         placeholder="Discount %"
+                         onchange={Handlefieldvisibility}
+                         onemptied={Handlefieldvisibility}
+                         key={addser.Additional_Service__r.Id} 
+                     ></lightning-input>
+                     </div>
+                     <!-- field-level-help="Only one field can have value either Discount or Unit"  -->
+                     <div class="slds-col">
+                 <lightning-input        
+                         data-unit-id={addser.Additional_Service__r.Id}  
+                         name="UnitVAS"                
+                         type="number"
+                         step="0.01"
+                         min="0"
+                         max="100"
+                         key={addser.Additional_Service__r.Id}                         
+                         class="number-input"                        
+                         placeholder="Unit"
+                         value=""
+                         onchange={Handlefieldvisibility}
+                         onemptied={Handlefieldvisibility}
+                         
+                      ></lightning-input>
+                     </div>
+                 </div>
+                 </div>
+              </div>
+             </template>
+      </lightning-accordion-section>
+    </lightning-accordion>
+
+
+
+    <lightning-accordion onsectiontoggle={toggleSectionHandleSurcharge}  
+              
+    active-section-name={activeSectionSurcharge}
+    allow-multiple-sections-open>
+      <lightning-accordion-section name="Surcharge" label="Surcharge" >
+          <template if:true={additionalServiceSurchage} for:each={additionalServiceSurchage} for:item="addser">            
+         
+              <div class="slds-m-around_medium" key ={addser.Id}> 
+                 <div class="slds-var-m-around_medium">
+                     <div class="slds-grid slds-gutters"> 
+                      <lightning-input data-id="checkbox" 
+                                      
+                      style="padding : 10px;font: size 15px;font-weight : bold;"
+                      data-surcharge-id="checkbox" 
+                      class="slds-p-left_large" 
+                      type="checkbox" 
+                      key={addser.Id} 
+                      label={addser.ProductNameERP__c} 
+                      value={addser.Additional_Service__r.Id} 
+                      onchange={handleCheckboxChangeSurcharge}
+                      
+                      ></lightning-input>
+                        <!-- <h3><b> {addser.Additional_Service__r.Name}-{addser.Add_Service_ERP_ID__c}
+                     </b></h3> -->
+                  </div>
+                     <!-- Add.S.Id-: {addser.Add_Service_ERP_ID__c}-Ac.S.Id-: {addser.Actual_Service_ERP_ID__c} -->
+                     <div class="slds-grid slds-gutters">
+                         <div class="slds-col">
+                     <lightning-input
+                     data-surchargediscount-id={addser.Additional_Service__r.Id} 
+                         type="string"
+                         value={stringValue}
+                         class="string-input"
+                         onchange={HandlefieldvisibilitySurcharge}
+                         placeholder="Discount %"
+                         key={addser.Additional_Service__r.Id}
+                  
+                     ></lightning-input>
+                     </div>
+                     <div class="slds-col">
+                 <lightning-input      
+                 data-surchargeunit-id={addser.Additional_Service__r.Id}         
+                         type="number"
+                         min="0"
+                         max="100"
+                         value={numberValue}
+                         class="number-input"
+                         onchange={HandlefieldvisibilitySurcharge}
+                         placeholder="Unit"
+                         key={addser.Additional_Service__r.Id}
+                      ></lightning-input>
+                     </div>
+                 </div>
+                 </div>
+              </div>
+             </template>
+      </lightning-accordion-section>
+    </lightning-accordion>
+<!-- </div>  -->
+<!-- <footer> -->
+<!-- <lightning-button class="slds-m-left_x-small" label="Save Additional services" variant="brand" 
+onclick={saveAddServices}></lightning-button> -->
+<!-- </footer> -->
+
+
+
+</div>
+                        <!-- Additional Service Code Ends -->
+                        <!-- <c-additional-services service-name={serviceName} record-id={recordId} actual-service-id={actualServiceId} active-section-name={activeSectionName} onarrayhandle={handleArray} active-section-surcharge={activeSectionSurcharge} current-active-section-name={currentactiveSectionName} ></c-additional-services>     -->
+                      </lightning-card>
+                      </div>
+                  </div>
+           
+
+                <lightning-button class="submit-button-all slds-align_absolute-center slds-button_stretch"  label="Save All services" variant="brand" 
+                   onclick={addServices}></lightning-button>
+
+                  
+                  <div class="slds-col" > 
+                    
+                    <h3 class="slds-text-heading_medium"><lightning-icon icon-name="custom:custom20" size="small"></lightning-icon> <strong style="color:#270086; font-size:13px;"> View Services </strong></h3>            
+                    <lightning-card>
+                      <div style="height:450px; overflow:auto !important;">
+                      <!-- View Services starts here -->
+
+                      <!-- <div class="container" style>
+                        <lightning-layout vertical-align="stretch" multiple-rows="true" class="x-large">
+                            <lightning-layout-item flexibility="auto" padding="around-small" class="custom-box">
+                                <lightning-datatable max-row-selection=1
+                                data={tableData}
+                                columns={colums2}
+                                key-field="Id"  
+                                onrowaction={handlerowaction2} 
+                                onrowselection={handleRowSelection2}
+                                ></lightning-datatable>
+                            </lightning-layout-item>
+                            <lightning-layout-item flexibility="auto" padding="around-small" class="custom-box">
+                                <lightning-datatable max-row-selection=1
+                                data={wiredOppLine.data}
+                                columns={columns3}
+                                key-field="Id"  
+                                onrowaction={handlerowaction3} 
+                                onrowselection={handleRowSelection3}
+                                ></lightning-datatable>
+                            </lightning-layout-item>
+                            <lightning-layout-item flexibility="auto" padding="around-small" class="custom-box">
+                                <lightning-datatable max-row-selection=1
+                                data={wiredOppLine.data}
+                                columns={columns4}
+                                key-field="Id"  
+                                onrowaction={handlerowaction4} 
+                                onrowselection={handleRowSelection4}
+                                ></lightning-datatable>
+                            </lightning-layout-item>
+                            
+                        </lightning-layout>
+                    </div> -->
+                
+                    <!-- <div class='grid-container'>
+                        <div class='grid-left'></div>
+                        <div class='grid-center'></div>
+                        <div class='grid-right'></div>
+                      </div> -->
+                
+                    <!-- <lightning-card title="View Services" icon-name="action:new_note" size="small">
+                    </lightning-card> -->
+                
+                    <!-- <lightning-datatable
+                        columns={columns}
+                        
+                    ></lightning-datatable> -->
+                    <!-- data={wiredOppLine.data}   -->
+                    <!-- <lightning-datatable max-row-selection=1 
+                    data={wiredOppLine.data}  
+                    columns={columns1} 
+                    key-field="Id"  
+                    onrowaction={handlerowaction} 
+                    onrowselection={handleRowSelection}  > </lightning-datatable> -->
+                    <!-- <button onclick={showrecordId}>showrecordId</button> -->
+
+
+                      <!-- View Service Ends Here -->
+                    <c-view-services record-id={recordId}></c-view-services>   
+                   </div>
+                    </lightning-card> 
+                  </div>
+      
+                </lightning-accordion-section>
+      
+              </lightning-accordion>
+         
+          
+</template>

@@ -1,0 +1,5 @@
+<apex:page >
+
+    <!--<h1>DETTE ER POSTENS LIGHTBRUKER SYSTEM. DU MÅ VÆRE AUTHENTIFICERT FOR AT SE DENNE BESKJED</h1>-->
+    <h1>{!$Label.cs_LightUser}</h1>
+</apex:page>

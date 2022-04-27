@@ -1,0 +1,38 @@
+<apex:page sidebar="false" showHeader="false">
+    <apex:pageBlock title="{!$Label.cs_Status}">
+        <apex:pageBlockSection >
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value=""/><apex:outputText value=""/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="{!$Label.cs_searchingTime}"/><apex:outputText value="12.02.2011"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="{!$Label.cs_Case_number}"/><apex:outputText value="12391401"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="{!$Label.cs_Enquiriesreceived}"/><apex:outputText value="10.02.2011"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="{!$Label.cs_Status}"/><apex:outputText value="Under behandling"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="{!$Label.cs_lastupdated}"/><apex:outputText value="12.02.2011"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="{!$Label.cs_Case_Type}"/><apex:outputText value="Rådgivning/Informasjon"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="{!$Label.cs_inquiryby}"/><apex:outputText value="telefon"/>
+            </apex:pageBlockSectionItem>
+        </apex:pageBlockSection>
+        <apex:pageBlockSection title="{!$Label.cs_ContactCustomerService}">
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="{!$Label.cs_email}"/><apex:outputText value="kundeservice@posten.no"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="{!$Label.cs_Telephone}"/><apex:outputText value="08 33 23 23"/>
+            </apex:pageBlockSectionItem>
+        </apex:pageBlockSection>
+    </apex:pageBlock>
+</apex:page>

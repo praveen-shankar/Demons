@@ -1,0 +1,58 @@
+<template>
+    <lightning-button variant="brand" label={clickedButtonLabel} title="Show Service Overview" onclick={handleClick} class="slds-m-left_x-small"></lightning-button>  
+   
+    <template if:true={boolVisible}>  
+        
+        <div>
+        <lightning-card>
+            <h3 slot="title">
+                <lightning-icon icon-name="utility:connected_apps" size="small"></lightning-icon>
+                Service Overview
+            </h3>
+            <div class="c-container">
+                <lightning-layout horizontal-align="spread" multiple-rows>
+                    <lightning-layout-item padding="around-small">
+                        Add Service
+                    </lightning-layout-item>
+                    <div class="slds-grid slds-gutters">
+                        <div class="slds-col slds-size_1-of-2">
+                            <lightning-input-field
+                                field-name={productField}
+                            ></lightning-input-field>
+                            <lightning-input-field
+                                field-name={priorityField}
+                            ></lightning-input-field>
+                        </div>
+                        <div class="slds-col slds-size_1-of-2">
+                            <lightning-input-field
+                                field-name={categoryField}
+                            ></lightning-input-field>
+                            <lightning-input-field
+                                field-name={reasonField}
+                            ></lightning-input-field>
+                        </div>
+                    </div>
+
+           <!--         <lightning-layout-item padding="around-small" >
+                        Configure Service
+                    </lightning-layout-item>
+                    <lightning-layout-item padding="around-small">
+                        Additional Services
+                    </lightning-layout-item>
+                -->
+                </lightning-layout>
+            
+            </div>
+          <!--  <div slot="footer">
+                    <lightning-badge label="Add Service"></lightning-badge>
+                    <lightning-badge label="Configure Service"></lightning-badge>
+                    <lightning-badge label="View Service"></lightning-badge>
+            </div>
+       
+            <p class="slds-p-horizontal_small">Card Body (custom component)</p>
+
+             -->
+        </lightning-card>
+    </div>
+    </template>  
+</template>

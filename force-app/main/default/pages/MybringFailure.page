@@ -1,0 +1,9 @@
+<apex:page >
+    <apex:form >
+        <h1><br/><br/><br/>
+            The request cannot be processed as the mandatory fields on the contact might be missing, please re-check and attempt. <br/> 
+            </h1>
+        <br/>
+        <apex:commandButton action="/{!$Currentpage.parameters.conid}" value="Back To Contact"/>
+    </apex:form>
+</apex:page>

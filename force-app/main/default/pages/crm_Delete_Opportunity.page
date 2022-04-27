@@ -1,0 +1,2 @@
+<apex:page standardController="Opportunity" action="{!deleteOpportunity}" extensions="crm_deleteOpportunity">
+</apex:page>

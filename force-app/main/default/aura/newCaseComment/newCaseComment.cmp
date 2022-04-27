@@ -1,0 +1,44 @@
+<aura:component controller="CS_CaseComments" access="global" implements="force:hasRecordId">
+   <aura:attribute name='CaseId' type='String'/>
+    <aura:attribute name='CasecommentId' type='String'/>
+    <aura:attribute name='Casecommentobj' type='Object'/>
+       <aura:attribute name='Caseobj' type='Object'/>
+    
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doinit}"/>
+    <lightning:notificationsLibrary aura:id="notifLib" />
+    <!--aura:attribute name='Body' type='String'/>/-->
+    <aura:attribute name='Public' type='Boolean' default='false'/>
+     <h3 class="slds-section__title slds-theme_shade">
+        <span class="slds-truncate slds-p-horizontal_small" title="Case Details">{!$Label.c.Case_Details}</span>
+         </h3>
+         <div class="slds-form-element">
+             <lightning:input type="text" name="Subject" label="{!$Label.c.Subject}" readonly="true" value="{!v.Caseobj.Subject}" />
+              <lightning:input type="text" name="Description" label="{!$Label.c.Description}" readonly="true" value="{!v.Caseobj.Description}" />
+         </div>
+     <lightning:card >
+        <h3 class="slds-section__title slds-theme_shade">
+         <span class="slds-truncate slds-p-horizontal_small" title="Information">{!$Label.c.Information}</span>
+         </h3>
+         <aura:set attribute="footer">
+             <lightning:button label="{!$Label.c.Cancel}" title="Cancel" onclick="{!c.cancel}"/>
+              <lightning:button variant="brand" label="{!$Label.c.Save_Button}" title="Save" onclick="{!c.save}"  />
+         </aura:set>
+         <div class="slds-form-element">
+             <lightning:textarea name="Body" aura:id="Body" label="{!$Label.c.Body}" required="true" value="{!v.Casecommentobj.CommentBody}"></lightning:textarea><br/>
+          </div>
+         
+         <div class="slds-form-element">
+             <lightning:input type="checkbox" aura:id="Public" label="{!$Label.c.Public}" name="Public"  checked="{!v.Casecommentobj.IsPublished}"/>
+          </div> 
+          </lightning:card>
+    <h3 class="slds-section__title slds-theme_shade">
+        <span class="slds-truncate slds-p-horizontal_small" title="Case Comment History">{!$Label.c.Case_Comment_History}</span>
+         </h3>
+         <div class="slds-form-element">
+             <c:CS_CaseComments recordId="{!v.CaseId}" 
+                                showheader="false"/>
+         </div>
+     
+  
+</aura:component>

@@ -1,0 +1,73 @@
+<apex:page controller="MainSearchController">
+    <apex:form >
+                    <apex:pageblock tabstyle="QueueDetails__c" mode="edit">
+                            <apex:pageblockbuttons >
+                                <apex:image value="{!$Resource.spinner_icon}" styleClass="KATS_spinner" style="visibility: hidden;" />
+                                <apex:commandbutton value="Søk kunde" onclick="doSearch(); return false;" />
+                                <apex:outputLink onclick="clearAllInputs(getForm(this)); return false;" >Nullstill felter</apex:outputLink>
+                            </apex:pageblockbuttons>
+                            <apex:actionFunction status="general_load_status" name="searchBusinessAccounts" action="{!searchBusinessAccounts}" rerender="contacts_search_results,account_search_results,shipment_search_results,messages">
+                                <apex:param value="" assignTo="{!currentSearchModus}" name="currentSearchModus" />
+                                <apex:param value="tabBusiness" assignTo="{!activeSearchTab}" name="activeSearchTab" />                         
+                            </apex:actionFunction>
+                        
+                            <apex:pageblocksection columns="1" >
+                                <apex:pageblockSectionItem labelStyleClass="KATS_even" dataStyleClass="KATS_even" helptext="Bedriftsnavn"><apex:outputLabel value="Bedrift" />
+                                <apex:inputText value="{!org_name}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" styleClass="searchParam_CAESAR" />
+                                </apex:pageblockSectionItem>
+                                <apex:pageblockSectionItem labelStyleClass="KATS_even" dataStyleClass="KATS_even" helptext="Organisasjonsnummer"><apex:outputLabel value="Org.nr." />
+                                <apex:inputText value="{!org_fiscal_reference}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" styleClass="searchParam_CAESAR" />
+                                </apex:pageblockSectionItem>
+                                <apex:pageblockSectionItem labelStyleClass="KATS_even" dataStyleClass="KATS_even"><apex:outputLabel value="Aktørnr." />
+                                <apex:inputText value="{!party_number}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" styleClass="searchParam_CAESAR" />
+                                </apex:pageblockSectionItem>
+                                <apex:pageblockSectionItem labelStyleClass="KATS_odd" dataStyleClass="KATS_odd" helptext="Telefonnummer"><apex:outputLabel value="Tlf." />
+                                <apex:inputText value="{!phone}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" styleClass="searchParam_CAESAR" />
+                                </apex:pageblockSectionItem>
+                                <apex:pageblockSectionItem labelStyleClass="KATS_odd" dataStyleClass="KATS_odd"><apex:outputLabel value="Email" />
+                                <apex:inputText value="{!email}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" styleClass="searchParam_CAESAR" />
+                                </apex:pageblockSectionItem>
+                                <apex:pageblockSectionItem labelStyleClass="KATS_even" dataStyleClass="KATS_even" helptext="Gate eller postboksadresse"><apex:outputLabel value="Postadr." />
+                                <apex:inputText value="{!address_street_name}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" styleClass="searchParam_CAESAR" />
+                                </apex:pageblockSectionItem>
+                                <apex:pageblockSectionItem labelStyleClass="KATS_even" dataStyleClass="KATS_even"><apex:outputLabel value="Husnr." />
+                                <apex:inputText value="{!address_house_number}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" styleClass="searchParam_CAESAR" />
+                                </apex:pageblockSectionItem>
+                                <apex:pageblockSectionItem labelStyleClass="KATS_even" dataStyleClass="KATS_even" helptext="Husbokstav"><apex:outputLabel value="Husbkst." />
+                                <apex:inputText value="{!address_house_letter}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" styleClass="searchParam_CAESAR" />
+                                </apex:pageblockSectionItem>
+                                <apex:pageblockSectionItem labelStyleClass="KATS_even" dataStyleClass="KATS_even"><apex:outputLabel value="Postnr" />
+                                <apex:inputText value="{!address_postal_code}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" styleClass="searchParam_CAESAR" />
+                                </apex:pageblockSectionItem>
+                                <apex:pageblockSectionItem labelStyleClass="KATS_even" dataStyleClass="KATS_even"><apex:outputLabel value="Poststed" />
+                                <apex:inputText value="{!address_city}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" styleClass="searchParam_CAESAR" />
+                                </apex:pageblockSectionItem>
+                                <apex:pageblockSectionItem labelStyleClass="KATS_odd" dataStyleClass="KATS_odd" helptext="Ordrenummer"><apex:outputLabel value="Ordre nr." />
+                                <apex:inputText value="{!order_number}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" styleClass="searchParam_OM" />
+                                </apex:pageblockSectionItem>
+                                <apex:pageblockSectionItem labelStyleClass="KATS_odd" dataStyleClass="KATS_odd"><apex:outputLabel value="Kundenr." />
+                                <apex:inputText value="{!account_number}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" styleClass="searchParam_CAESAR" />
+                                </apex:pageblockSectionItem>
+                                <apex:pageblockSectionItem labelStyleClass="KATS_odd" dataStyleClass="KATS_odd" helptext="Adresseendringsnummer"><apex:outputLabel value="Adr.endr.nr." />
+                                <apex:inputText value="{!forwardingnumber}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" styleClass="searchParam_FW" />
+                                </apex:pageblockSectionItem>
+                                <apex:pageblockSectionItem labelStyleClass="KATS_odd" dataStyleClass="KATS_odd" helptext="Fakturanummer"><apex:outputLabel value="Fakturanr." />
+                                <apex:inputText value="{!receivable_number}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" styleClass="searchParam_AR" />
+                                </apex:pageblockSectionItem>
+                                <apex:pageblockSectionItem labelStyleClass="KATS_even" dataStyleClass="KATS_even" helptext="Kontaktperson - fornavn"><apex:outputLabel value="Kontakt f.n." />
+                                <apex:inputText value="{!org_contactFirstName}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" styleClass="searchParam_CAESAR" />
+                                </apex:pageblockSectionItem>
+                                <apex:pageblockSectionItem labelStyleClass="KATS_even" dataStyleClass="KATS_even" helptext="Kontaktperson - etternavn"><apex:outputLabel value="Kontakt e.n." />
+                                <apex:inputText value="{!org_contactLastName}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" styleClass="searchParam_CAESAR" />
+                                </apex:pageblockSectionItem>
+                                
+                            </apex:pageblocksection>
+                    </apex:pageblock>
+                
+
+    
+                    <script language="JavaScript">
+                        currentSearchTab = '{!activeSearchTab}';
+                    </script>
+    </apex:form> 
+</apex:page>

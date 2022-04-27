@@ -1,0 +1,77 @@
+<aura:component access="public">
+   <aura:attribute name="picklistoptions" type="Object"/>
+   <aura:attribute name="picklistoptionsfiltered" type="Object"/> 
+   <aura:attribute name="actualServiceFields" type="crm_Dynamic_Columns_Add_Opp_Services__c[]"/>
+   <aura:attribute name="nameLabelMap" type="Map" default="{crm_Local__c : 'Local/Domestic', crm_Conversion_Factor__c : 'Conversion Factor', 
+                                                            crm_Direction__c : 'Direction', crm_Item_Type__c : 'Item Type', 
+                                                            crm_Price_Unit__c : 'Price Unit', crm_Terminals__c : 'Terminals'}"/> 
+   
+   <aura:registerEvent name="lightningDataTableEventAS" type="c:lightningDataTableEventAS"/> 
+   <aura:method name="captureASdataAuraMethodPicklist" action="{!c.captureInputDataPicklist}" description="Method to be called from parent component"> 
+   		<aura:attribute name="capturedAsFromParent" type="Object"/> 
+   </aura:method>
+   <aura:method name="captureASdataAuraMethodPicklistAddServ" action="{!c.captureInputDataPicklistAdditionalServices}" description="Method to be called from parent component"> 
+   		<aura:attribute name="capturedAsFromParentAddServ" type="Object"/> 
+   </aura:method>  
+    
+   <aura:attribute name="crm_Local__c" type="String" default="Local and Domestic"/>
+   <aura:attribute name="crm_Conversion_Factor__c" type="String" default="Standard"/>
+   <aura:attribute name="crm_Direction__c" type="String"/>  
+   <aura:attribute name="crm_Price_Unit__c" type="String"/> 
+   <aura:attribute name="crm_Terminals__c" type="String"/>  
+    <aura:attribute name="IsPayerReceiverorSender__c" type="String"/>  
+    
+   <aura:handler name="init" value="{!this}" action="{!c.lightningPicklistInit}"/> 
+   <aura:attribute name="localdomestic" type="String[]"/>
+   
+    
+   <aura:if isTrue="{!!empty(v.picklistoptionsfiltered.crm_Local__c)}">
+   <lightning:select name="Local/Domestic" label="{!$Label.c.Local_Domestic}" aura:id="picklistfield1" value="{!v.crm_Local__c}">       
+      <aura:iteration items="{!v.picklistoptionsfiltered.crm_Local__c}" var="item">
+         <option text="{!item}" value="{!item}" selected="{!item}"/>
+      </aura:iteration>
+   </lightning:select>
+   </aura:if>
+   
+   <aura:if isTrue="{!!empty(v.picklistoptionsfiltered.crm_Conversion_Factor__c)}"> 
+   <lightning:select name="Conversion Factor" label="{!$Label.c.Conversion_Factor}" aura:id="picklistfield2" value="{!v.crm_Conversion_Factor__c}">       
+      <aura:iteration items="{!v.picklistoptionsfiltered.crm_Conversion_Factor__c}" var="item">
+         <option text="{!item}" value="{!item}" selected="{!item}"/>
+      </aura:iteration>
+   </lightning:select>
+   </aura:if>
+   <aura:if isTrue="{!$Label.c.isPayerReceiverorSenderSwitch == 'True'}">
+
+    <aura:if isTrue="{!!empty(v.picklistoptionsfiltered.IsPayerReceiverorSender__c)}">
+   <ui:inputSelect label="{!$Label.c.IsPayerReceiverorSender}" aura:id="picklistfield7" value="{!v.IsPayerReceiverorSender__c}">       
+      <aura:iteration items="{!v.picklistoptionsfiltered.IsPayerReceiverorSender__c}" var="item">
+         <ui:inputSelectOption text="{!item}" label="{!item}"/>
+      </aura:iteration>
+   </ui:inputSelect>
+   </aura:if>
+   </aura:if>
+   
+   <aura:if isTrue="{!!empty(v.picklistoptionsfiltered.crm_Price_Unit__c)}"> 
+   <lightning:select name="Price Unit" label="{!$Label.c.PriceUnit}" aura:id="picklistfield5" value="{!v.crm_Price_Unit__c}">       
+      <aura:iteration items="{!v.picklistoptionsfiltered.crm_Price_Unit__c}" var="item">
+         <option text="{!item}" value="{!item}" selected="{!item}"/>
+      </aura:iteration>
+   </lightning:select>
+   </aura:if>
+   
+   <aura:if isTrue="{!!empty(v.picklistoptionsfiltered.crm_Terminals__c)}">
+   <ui:inputSelect label="{!$Label.c.Terminals}" aura:id="picklistfield6" value="{!v.crm_Terminals__c}" multiple="true" change="{!c.terminalChange}">       
+      <aura:iteration items="{!v.picklistoptionsfiltered.crm_Terminals__c}" var="item">
+         <ui:inputSelectOption text="{!item}" label="{!item}"/>
+      </aura:iteration>
+   </ui:inputSelect>
+   </aura:if> 
+   <aura:if isTrue="{!!empty(v.picklistoptionsfiltered.crm_Direction__c)}"> 
+   <lightning:select name="Direction" label="{!$Label.c.Direction_Terminals}" aura:id="picklistfield3" value="{!v.crm_Direction__c}">       
+      <aura:iteration items="{!v.picklistoptionsfiltered.crm_Direction__c}" var="item">
+         <option text="{!item}" value="{!item}" selected="{!item}"/>
+      </aura:iteration>
+   </lightning:select>
+   </aura:if> 
+    
+</aura:component>

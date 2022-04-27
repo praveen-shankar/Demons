@@ -1,0 +1,204 @@
+<aura:component implements="force:lightningQuickAction,force:hasRecordId" access="global" controller="CS_CloseCase">
+    <aura:attribute name="recordId" type="String" />
+    <aura:attribute name="caseId" type="Id" />
+    <aura:attribute name="caseToBeClosed" type="Case" />
+    <aura:attribute name="caseclosed" type="Boolean" />
+    <aura:attribute name="Status" type="CaseStatus[]"/>
+    <aura:attribute Name="selItem" type="object"  access="public" /> 
+    <aura:attribute Name="expectedResume" type="case"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <lightning:notificationsLibrary aura:id="notifLib" />
+     <div class="slds-text-title_caps slds-align_absolute-center slds-border_bottom">
+            <lightning:icon iconName="action:edit" size="small" alternativeText="{!$Label.c.cs_Close_case}" /> &nbsp;
+            <strong>{!$Label.c.cs_Close_case}   </strong></div>
+   
+    <div class="slds-grid slds-grid_vertical">
+        <div>
+       <aura:if isTrue="{!v.caseclosed}">
+        <ui:message title="Information" severity="info" closable="false">
+       {!$Label.c.cs_Case_already_closed} 
+        </ui:message>
+      
+       </aura:if>  
+        <aura:if isTrue="{!!v.caseclosed}">     
+        <h3 class="slds-section__title slds-theme_offline">
+    <span class="slds-truncate slds-p-horizontal_small" title="{!$Label.c.cs_Case_Close_Information}">{!$Label.c.cs_Case_Close_Information}</span>
+  </h3>
+ 
+    <div class="slds-p-top_large"></div>    
+    <div class="slds-form__row">
+        <div class="slds-form__item" role="listitem">
+         <!--   <label class="slds-form-element__label" for="select-01">
+                <abbr class="slds-required" title="required">* </abbr>Status</label>-->
+            
+
+                    <lightning:select label="Status" aura:id="select-01" required="true" value="">
+                        <option text="" value="">{!$Label.c.cs_Please_select}</option>
+                        <aura:iteration items="{!v.Status}" var="cus" indexVar="key">
+							<option value="{!cus.key}" text="{!cus.value}"></option>
+						</aura:iteration>
+                    </lightning:select>
+               
+            
+        </div>
+        
+         <div class="slds-form__item" role="listitem">
+            <!--<label class="slds-form-element__label" for="form-element-help-02">Time Consumption</label>-->
+            <div class="slds-form-element__icon">
+                <button class="slds-button slds-button_icon">
+                    <div class="slds-button__icon" aria-hidden="true">
+                        <lightning:icon src="/assets/icons/utility-sprite/svg/symbols.svg#info"/>
+                    </div>
+                </button>
+                <!-- <div class="slds-popover slds-popover_tooltip slds-nubbin_bottom-left" role="tooltip" id="help" style="position:absolute;top:-45px;left:-15px;width:170px">-->
+                <lightning:helptext content="Field shows the number of hours spent on the Case" /></div>
+            <div class="slds-form-element__control">
+                <lightning:input type="text" aura:id="timeConsumption"  label="{!$Label.c.cs_Time_Consumption}" value="{!v.caseToBeClosed.Timeforbruk__c}"/>
+            </div>
+          
+
+        </div>
+       
+    </div>
+              
+            <div style="padding-top:20px"></div>
+          <div class="slds-grid slds-gutters">
+      <div class="slds-col">
+         <!--   <div class="slds-form-element__control slds-form-element__label"> -->
+            
+                <div class="slds-form-element__icon">
+                <button class="slds-button slds-button_icon">
+                    <div class="slds-button__icon" aria-hidden="true">
+                        <lightning:icon src="/assets/icons/utility-sprite/svg/symbols.svg#info"/>
+                    </div>
+                </button>
+                <!-- <div class="slds-popover slds-popover_tooltip slds-nubbin_bottom-left" role="tooltip" id="help" style="position:absolute;top:-45px;left:-15px;width:170px">-->
+                <lightning:helptext content="The unit in which the error occurred.Division Post - 034,000 Logistics - 032000" /></div>
+                {!$Label.c.cs_Case_related_to_unit} 
+                <br/>
+                
+              <!--  <div class="slds-form-element__control"> -->
+                 <c:CS_CaseRelatedToUnit 
+                          objectName="PostalUnit__c "
+                          field_API_text="Name"
+                          field_API_val="Id"
+                          limit="100"
+                          field_API_search="Name"
+                          lookupIcon="standard:PostalUnit__c " 
+                          selItem ="{!v.selItem}" 
+                          placeholder="{!v.caseToBeClosed.unit_to_blame__r.Name}" 
+                        
+            		 /> 
+             <!--   </div> -->
+                
+              </div>
+              
+            <div style="padding-left:80px"></div> 
+              
+       <!--Expected Resume field Code Starts-->
+            <div class="slds-col">
+           <!--     <label class="slds-form-element__label" for="expectedResumed">Expected Resumed</label>-->
+          <!--    <lightning:recordEditForm recordId="{!v.recordId}" objectApiName="Case"> -->
+     <!--       <lightning:messages /> -->
+              <!--    value="{!v.caseToBeClosed.Timeforbruk__c}" -->
+         <!--      <div style="padding-bottom:-40px" class="slds-form-element__icon">
+                <button class="slds-button slds-button_icon">
+                    <div class="slds-button__icon" aria-hidden="true">
+                        <lightning:icon src="/assets/icons/utility-sprite/svg/symbols.svg#info"/>
+                    </div>
+                </button> -->
+                <!-- <div class="slds-popover slds-popover_tooltip slds-nubbin_bottom-left" role="tooltip" id="help" style="position:absolute;top:-45px;left:-15px;width:170px">-->
+          <!--      <lightning:helptext content="Date when case are expected to be resumed" />                                 
+                </div>   -->    
+             <!--   <div style="padding-top:-10px"></div> -->
+                    <div class="slds-form-element__control"> 
+         <lightning:input type="date" aura:id="expectedResumed" label="Expected Resumed" value="{!v.caseToBeClosed.date_to_be_resumed__c}"></lightning:input>     
+           </div> 
+                    
+      <!--   <lightning:input type="date" name="expected_resume" label="Expected Resume" value="{!v.expectedResume.date_to_be_resumed__c}"></lightning:input> -->       
+               <!--   <lightning:inputField type="date" fieldName="date_to_be_resumed__c" /> -->
+      <!--  <lightning:outputField name="input2" label="Date Time field with a predefined value" value="2020-09-12T18:13:41Z" fieldName="date_to_be_resumed__c"></lightning:outputField> -->
+        
+        <!--   </lightning:recordEditForm> -->
+           </div>             
+       <!--Expected Resume field Code Ends-->     
+    </div>
+   
+    <div style="padding-bottom:20px">
+    
+    </div>
+    <div class="slds-form__row">
+        <div class="slds-form__item">
+            <fieldset class="slds-form-element">
+                <div class="slds-form-element__control">
+                    <div class="slds-checkbox">
+                        <lightning:input type="checkbox" name="options" label="{!$Label.c.cs_Send_email_update_myBring_internal}" aura:id="chk1" checked="" value="{!v.caseToBeClosed.send_email_of_case_update_myBring__c}"/>
+                      
+                    </div>
+                     <!-- <div class="slds-checkbox">
+                        <lightning:input type="checkbox" name="options" label="First time created" aura:id="chk2" value="{!v.caseToBeClosed.First_time_created__c}"/>
+                      <label class="slds-checkbox__label" for="chk2">
+                            <span class="slds-checkbox_faux"></span>
+                            <span class="slds-form-element__label">First time created</span>
+                        </label>
+                    </div>-->
+                </div>
+            </fieldset>
+        </div>
+        <div class="slds-form__item">
+            <fieldset class="slds-form-element">
+                <div class="slds-form-element__control">
+                    <div class="slds-checkbox">
+                        <lightning:input type="checkbox" name="options" label="{!$Label.c.cs_Notify_unit_where_error_has_occurred}" aura:id="chk3" value="{!v.caseToBeClosed.Notify_unit_to_blame__c}" checked="" />
+                       <!-- <label class="slds-checkbox__label" for="chk3">
+                            <span class="slds-checkbox_faux"></span>
+                            <span class="slds-form-element__label">Notify unit where error has occurred</span>
+                        </label>-->
+                    </div>
+                    <div class="slds-checkbox">
+                        <lightning:input type="checkbox" name="options" label="{!$Label.c.cs_VIP_customer}" aura:id="chk4" value="{!v.caseToBeClosed.hidden_vip_customer_bring__c}" />
+                     <!--   <label class="slds-checkbox__label" for="chk4">
+                            <span class="slds-checkbox_faux"></span>
+                            <span class="slds-form-element__label">VIP customer</span>
+                        </label>-->
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+    </div>
+    <div class="slds-section slds-is-open">
+    <h3 class="slds-section__title slds-theme_offline">
+    <span class="slds-truncate slds-p-horizontal_small" title="{!$Label.c.cs_Case_information}">{!$Label.c.cs_Case_information}</span>
+  </h3>
+  <div aria-hidden="false" class="slds-section__content">
+     <!-- <label class="slds-form-element__label" for="subject">Subject</label>-->
+       <div class="slds-form-element__control">
+                <lightning:input type="text" aura:id="subj" label="{!$Label.c.cs_Subject}" value="{!v.caseToBeClosed.Subject}"/>
+            </div>
+    <div class="slds-form-element" >
+<!--  <label class="slds-form-element__label" for="desc">
+    <abbr class="slds-required" title="required">* </abbr>Description</label>
+  <div class="slds-form-element__control">-->
+    <lightning:textarea aura:id="desc" required="true" label="{!$Label.c.cs_Description}"  value="{!v.caseToBeClosed.Description}" ></lightning:textarea>
+  
+</div>
+   
+  <!--<label class="slds-form-element__label" for="commnt">Internal Comments</label>-->
+  <div class="slds-form-element">
+    <lightning:textarea aura:id="commnt" label="{!$Label.c.cs_Internal_comments}"  value="{!v.caseToBeClosed.Comments}"></lightning:textarea>
+      </div>
+</div>
+    </div>
+    
+    <br/>
+    <footer class="slds-modal__footer slds-modal__footer_directional slds-align_absolute-center"> 
+               <lightning:buttonGroup  aura:id="btngroup">
+                    <lightning:button variant="neutral" label="{!$Label.c.cs_Cancel}" iconName="utility:close" onclick="{!c.closeQuickAction}"/>   <!--     iconName="utility:close" iconPosition="left"-->
+                    <lightning:button variant="neutral" label="{!$Label.c.cs_Close_case}" iconName="utility:save"  aura:id="closecase" onclick="{!c.Save}"/>
+                </lightning:buttonGroup> 
+            </footer>
+      
+            </aura:if>
+    </div>
+    </div>  
+</aura:component>

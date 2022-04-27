@@ -1,0 +1,119 @@
+<aura:component access="public"	implements="flexipage:availableForRecordHome,force:hasRecordId,force:hasSObjectName,force:lightningQuickActionWithoutHeader" controller="CreateContactController">
+	<aura:attribute name="account" type="Account" />
+	<aura:attribute name="showSpinner" type="Boolean" default="false"/>
+	<aura:attribute name="contactrecord" type="Contact" default="{'sObjectType':'Contact','FirstName':'','LastName':'','Email':''}"/>
+	<aura:attribute name="hasDuplicateContact" type="Boolean" default="false"/>
+	<aura:attribute name="DuplicateRecords" type="Contact[]" />
+	<aura:attribute name="hasDuplicateRecords" type="Boolean" default="False" />
+	<!-- All picklist-->
+	<aura:attribute name="accountOptions" type="list" />
+	<aura:attribute name="statusOptions" type="List"/>
+	<aura:attribute name="functionalareaOptions" type="List"/>
+	<aura:attribute name="functionaldecisionlevelOptions" type="List"/>
+	<aura:handler name="init" value="{!this}" action="{!c.doinit}" />
+	<div class="slds-box">
+		<aura:if isTrue="{!v.showSpinner}">
+			<lightning:spinner variant="brand" size="large" title="Please wait.." aura:id="mySpinner"/>
+		</aura:if>
+		<div class="slds-text-title_caps slds-align_absolute-center slds-border_bottom" style="font-size:14px;">
+			<strong>NEW CONTACT</strong>
+		</div>
+		<form>
+			<div class="sldsslds-scrollable_y">
+				<aura:if isTrue="{!v.DuplicateRecords.length>0}">
+					<div class="slds-box">
+						<div class="slds-page-header noborderbottom" role="banner">
+							<div class="slds-grid">
+								<div class="slds-col slds-has-flexi-truncate">
+									<div class="slds-grid">
+										<div class="slds-grid slds-type-focus slds-no-space" >
+											<p style="font-weight:bold; color:red;">{!v.DuplicateRecords.length} Possible Duplicate Record found. You're creating a duplicate record. We recommend you use an existing record instead.</p>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<br></br>
+						<div class="slds">
+							<table class="slds-table slds-table--cell-buffer slds-table_fixed-layout slds-max-medium-table--stacked">
+								<thead>
+									<tr class="slds-text-heading--label">
+										<th scope="col" class="nobordertop slds-is-resizable" aria-label="Contact Name" title="Name">
+											<div >Name</div>
+										</th>
+										<th scope="col" class="nobordertop slds-is-resizable" title="Email">
+											<div>
+                    Email
+                  </div>
+										</th>
+									</tr>
+								</thead>
+								<tbody>
+									<aura:iteration items="{!v.DuplicateRecords}" var="item">
+										<tr>
+											<td  title="Name" class="nobordertop">
+												<div class="slds-truncate">
+													<aura:if isTrue="{!$Browser.isDesktop}">
+														<a href="{!'/'+ item.Id}" target="_blank">{!item.Name}</a>
+														<aura:set attribute="else">
+															<a target="_blank" data-record="{!item.Id}" onclick="{!c.redirectToSobject}">{!item.Name}</a>
+														</aura:set>
+													</aura:if>
+												</div>
+											</td>
+											<td  title="Organization No" class="nobordertop">
+												<div class="slds-truncate">{!item.Email}</div>
+											</td>
+										</tr>
+									</aura:iteration>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</aura:if>
+			</div>
+			<br/>
+			<div class="slds">
+				<lightning:input aura:id="firstname" label="First Name"  value="{!v.contactrecord.FirstName}"/>
+				<lightning:input aura:id="lastname" label="Last Name" required="true" messageWhenValueMissing="Required Attribute" value="{!v.contactrecord.LastName}"/>
+				<lightning:input type="email" aura:id="email" required="true" messageWhenValueMissing="Required Attribute" label="Email"  value="{!v.contactrecord.Email}"/>
+				<lightning:select class="slds-m-bottom--medium"  label="Customer Department" aura:id="AccountId" 
+              required="true" messageWhenValueMissing="Required Attribute" onchange="{!c.onAccountchange}" value="{!v.contactrecord.AccountId}" >
+					<option value="None" text="None"></option>
+					<aura:iteration items="{!v.accountOptions}" var="cus" indexVar="key">
+						<option value="{!cus.key}" text="{!cus.value}" selected="{!cus.selected}"></option>
+					</aura:iteration>
+				</lightning:select>
+				<lightning:input aura:id="Phone" label="Phone"  value="{!v.contactrecord.Phone}"/>
+				<lightning:input aura:id="MobilePhone" label="Mobile"  value="{!v.contactrecord.MobilePhone}"/>
+				<div>
+					<lightning:select name="Functional decision level"  aura:id="crm_functional_decision_level__c" label="Functional decision level" value="{!v.contactrecord.crm_functional_decision_level__c}">
+						<ui:inputSelectOption label="" text=""/>
+						<aura:iteration items="{!v.functionaldecisionlevelOptions}" var="cus" indexVar="key">
+							<option value="{!cus.key}" text="{!cus.value}"></option>
+						</aura:iteration>
+					</lightning:select>
+				</div>
+				<div>
+					<ui:inputSelect aura:id="crm_function_working_area__c" label="Function / Working Area"  value="{!v.contactrecord.crm_function_working_area__c}">
+						<aura:iteration items="{!v.functionalareaOptions}" var="cus" indexVar="key">
+							<ui:inputSelectOption label="{!cus.key}" text="{!cus.value}"/>
+						</aura:iteration>
+					</ui:inputSelect>
+				</div>
+				<div>
+					<lightning:textarea name="Description" aura:id="Description" value="{!v.contactrecord.Description}" 
+                label="Description" maxlength="300" />
+				</div>
+				<br/>
+				<div style="padding-left:350px;">
+					<lightning:button variant="brand" label="Cancel" onclick="{!c.cancel}" />
+					<aura:if isTrue="{!v.DuplicateRecords.length==0}">
+						<lightning:button variant="brand" label="Save" onclick="{!c.createcontact}" />
+					</aura:if>
+					<br/>
+				</div>
+			</div>
+		</form>
+	</div>
+</aura:component>

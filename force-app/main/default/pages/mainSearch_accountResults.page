@@ -1,0 +1,171 @@
+<apex:page controller="MainSearchController" cache="true" expires="600">
+    <apex:form id="account_search_results">
+        
+        <apex:actionFunction name="createNewCase" status="general_load_status" action="{!goDo}" rerender="account_search_result,contacts_search_results,messages">
+            <apex:param value="" assignTo="{!selected_account_search_result}" name="selected_account_search_result" />
+            <apex:param value="" assignTo="{!new_case_data.recordTypeId}" name="new_case_data_recordTypeId" />                         
+            <apex:param value="" assignTo="{!go_to_type}" name="go_to_type" />                         
+        </apex:actionFunction>
+        <!--CSphase2, Akash, 23122016-->
+        <!--<apex:pageblock id="pageblock" title="Kunde søk" rendered="{!AND(has_account_search_results, NOT(has_shipment_search_results))}">-->
+        <apex:pageblock id="pageblock" title="{!$Label.cs_Customer} {!$Label.cs_Search}" rendered="{!AND(has_account_search_results, NOT(has_shipment_search_results))}">
+            <apex:outputPanel id="private_account_search_results" rendered="{!activeSearchTab = 'tabPrivate'}">
+                
+
+                <table class="KATS_table"><!--CSphase2, Akash, 23122016-->
+                    <!--<tr>
+                        <th>Navn</th>
+                        <th>Aktørnummer</th>
+                        <th>Fødselsnr.</th>
+                        <th>Adresse</th>
+                        <th></th>
+                    </tr>-->
+                    <tr>
+                        <th>{!$Label.cs_Name}</th>
+                        <th>{!$Label.cs_Actor_number}</th>
+                        <th>{!$Label.cs_Id_no}</th>
+                        <th>{!$Label.cs_Address}</th>
+                        <th></th>
+                    </tr>
+    
+                    <apex:variable var="rowNum" value="0" />
+                 
+                    <apex:repeat value="{!account_search_results}" var="account_search_result">
+                        <tr class="{!IF(selected_account_search_result=VALUE(rowNum), 'KATS_selected', '')}">
+                            <td>
+                                <apex:commandLink status="general_load_status" action="{!goDo}" rerender="messages,contacts_search_results" ondblclick="return confirm('Åbn account uden at spørge efter kontaktperson.');">
+                                    <apex:image url="{!$Resource.icon_person_account}" />
+                                    <apex:outputText value="{!account_search_result.name}" />
+                                    
+                                    <apex:param value="{!rowNum}" assignTo="{!selected_account_search_result}" name="selected_account_search_result" />
+                                    <apex:param value="-2" assignTo="{!selected_contact_search_result}" name="selected_contact_search_result" />
+                                </apex:commandLink>
+                                
+                                <apex:outputLabel rendered="{!NOT(ISBLANK(account_search_result.salesforceId))}" value="*" />
+                            </td><!--CSphase2, Akash, 23122016-->
+                            <!--
+                            <td><apex:outputText title="Party Nummer" value="{!account_search_result.partyNumber}" /></td>
+                            <td><apex:outputText title="Fiscal Reference" value="{!account_search_result.fiscalReference}" /></td>
+                            <td><apex:outputText title="Adresse" value="{!account_search_result.address}" /></td>
+                            -->
+                            <td><apex:outputText title="{!$Label.cs_PartyNumber}" value="{!account_search_result.partyNumber}" /></td>
+                            <td><apex:outputText title="{!$Label.cs_FiscalReference}" value="{!account_search_result.fiscalReference}" /></td>
+                            <td><apex:outputText title="{!$Label.cs_Address}" value="{!account_search_result.address}" /></td>
+                            <td>
+                                <input type="hidden" value="{!rowNum}" /><!--Work around for VF bug - see getPreviousElement() in mainSearch_js.resource -->
+                                <apex:inputField ondblclick="createNewCase(getPreviousElement(this).value, this.value, 'NEW_CASE');" onchange="createNewCase(getPreviousElement(this).value, this.value, 'NEW_CASE');" value="{!new_case_data.recordTypeId}" />
+                            </td>
+                        </tr>
+    
+                        <apex:variable var="rowNum" value="{!VALUE(rowNum) + 1}" />
+                    </apex:repeat>
+    
+                    <tr>
+                        <td><apex:inputField value="{!new_account.name}" onclick="this.select();" /></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>
+                            <apex:commandButton value="{!$Label.cs_Created} {!$Label.cs_Customer}" action="{!goDo}" status="general_load_status" onclick="this.disabled=true;" rerender="contacts_search_results">
+                                <apex:param value="-1" assignTo="{!selected_account_search_result}" name="selected_account_search_result" />
+                                <apex:param value="ACCOUNT" assignTo="{!go_to_type}" name="go_to_type" />
+                            </apex:commandButton>
+                        </td>
+                    </tr>
+                </table>
+
+
+
+
+
+            
+            </apex:outputPanel>         
+            
+            <apex:outputPanel id="business_account_search_results" rendered="{!NOT(activeSearchTab = 'tabPrivate')}">
+                <table class="KATS_table">
+                   <!--CSphase2, Akash, 23122016--><!-- <tr>
+                        <th>Aktørnavn</th>
+                        <th>Aktørnummer</th>
+                        <th>Status</th>
+                        <th>Org. nr.</th>
+                        <th>Adresse</th>
+                        <th>Forretningsområde</th>
+                        <th>Oms. i år</th>
+                        <th></th>
+                    </tr>
+                    -->
+                    <tr>
+                        <th>{!$Label.cs_performerName}</th>
+                        <th>{!$Label.cs_Actor_number}</th>
+                        <th>{!$Label.cs_Status}</th>
+                        <th>{!$Label.cs_org_no}</th>
+                        <th>{!$Label.cs_Address}</th>
+                        <th>{!$Label.cs_business}</th>
+                        <th>{!$Label.cs_Omsthisyear}</th>
+                        <th></th>
+                    </tr>
+                    <apex:variable var="rowNum" value="0" />
+                 
+                    <apex:repeat value="{!account_search_results}" var="account_search_result">
+                        <tr class="{!IF(selected_account_search_result=VALUE(rowNum), 'KATS_selected', '')}">
+                            <td>
+                                <apex:commandLink status="general_load_status" action="{!goDo}" rerender="messages,contacts_search_results" ondblclick="return confirm('Åbn account uden at spørge efter kontaktperson.');">
+                                    <apex:image url="{!$Resource.icon_person_account}" rendered="{!account_search_result.isPersonAccount}" />
+                                    <apex:image url="{!$Resource.icon_organization_account}" rendered="{!NOT(account_search_result.isPersonAccount)}" />
+                                    <apex:outputText value="{!account_search_result.name}" />
+                                    
+                                    <apex:param value="{!rowNum}" assignTo="{!selected_account_search_result}" name="selected_account_search_result" />
+                                    <apex:param value="-2" assignTo="{!selected_contact_search_result}" name="selected_contact_search_result" />
+                                </apex:commandLink>
+                                
+                                <apex:outputLabel rendered="{!NOT(ISBLANK(account_search_result.salesforceId))}" value="*" />
+                                
+                            </td>
+                            <td><apex:outputText title="{!$Label.cs_PartyNumber}" value="{!account_search_result.partyNumber}" /></td>
+                            <td><apex:outputText title="{!$Label.cs_Status}" value="{!account_search_result.status}" /></td>
+                            <td><apex:outputText title="" value="{!account_search_result.fiscalReference}" /></td>
+                            <td><apex:outputText title="{!$Label.cs_Address}" value="{!account_search_result.address}" /></td>
+                            <td title="{!account_search_result.divisions}"><apex:outputText value="{!account_search_result.divisionShort}" /></td>
+                            <td><apex:outputText Title="{!$Label.cs_haveturnover}" value="{!account_search_result.hasTurnover}" /></td>
+                            <td>
+                            <!--
+                                </td>
+                            <td><apex:outputText title="Party Nummer" value="{!account_search_result.partyNumber}" /></td>
+                            <td><apex:outputText title="Status" value="{!account_search_result.status}" /></td>
+                            <td><apex:outputText title="" value="{!account_search_result.fiscalReference}" /></td>
+                            <td><apex:outputText title="Adresse" value="{!account_search_result.address}" /></td>
+                            <td title="{!account_search_result.divisions}"><apex:outputText value="{!account_search_result.divisionShort}" /></td>
+                                --><!--CSphase2, Akash, 23122016-->
+                                <input type="hidden" value="{!rowNum}" /><!--Work around for VF bug - see getPreviousElement() in mainSearch_js.resource -->
+                                <apex:inputField ondblclick="createNewCase(getPreviousElement(this).value, this.value, 'NEW_CASE');" onchange="createNewCase(getPreviousElement(this).value, this.value, 'NEW_CASE');" value="{!new_case_data.recordTypeId}" />
+
+                            </td>
+                        </tr>
+    
+                        <apex:variable var="rowNum" value="{!VALUE(rowNum) + 1}" />
+                    </apex:repeat>
+    
+                    <tr>
+                        <td><apex:inputField value="{!new_account.name}" onclick="this.select();" /></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td><!--CSphase2, Akash, 23122016-->
+                            <!--<apex:commandButton value="Opprett kunde" action="{!goDo}" status="general_load_status" onclick="this.disabled=true;" rerender="contacts_search_results">-->
+                            <apex:commandButton value="{!$Label.cs_Customer} {!$Label.cs_Search}" action="{!goDo}" status="general_load_status" onclick="this.disabled=true;" rerender="contacts_search_results">
+                                
+                                <apex:param value="-1" assignTo="{!selected_account_search_result}" name="selected_account_search_result" />
+                                <apex:param value="ACCOUNT" assignTo="{!go_to_type}" name="go_to_type" />
+                            </apex:commandButton>
+                        </td>
+                    </tr>
+                </table>
+            </apex:outputPanel>
+        </apex:pageblock>
+    </apex:form>
+    
+    
+</apex:page>

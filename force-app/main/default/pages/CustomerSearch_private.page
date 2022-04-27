@@ -1,0 +1,127 @@
+<apex:page controller="CustomerSearch_private_controller" sidebar="false" cache="true" expires="300">
+	<apex:form >
+		<table width="100%" border="0">
+			<tr>
+				<td width="200" valign="top"> <div class="actionRegion">
+					<apex:actionRegion >
+					<apex:pageBlock mode="edit" id="search_param" >
+                       	<apex:pageblockbuttons >
+							<apex:actionStatus id="search_status">
+							    <apex:facet name="start"><apex:image value="{!$Resource.spinner_icon}" /></apex:facet>
+							    <apex:facet name="stop"></apex:facet>
+							</apex:actionStatus>
+							<apex:commandButton value="Søk kunde" onclick="searchAccount(currentSearchModus); return true;" rerender="searchPanel"/>
+							<apex:pageBlock id="hiddenBlock" rendered="false"></apex:pageBlock>
+							<apex:outputLink onclick="clearAllInputs(getActionRegion(this)); return false;" >Nullstill felter</apex:outputLink>
+						</apex:pageblockbuttons>
+						<apex:pageblocksection columns="1" >
+							<apex:pageblockSectionItem >
+								<apex:outputLabel value="Fornavn" />
+                            	<apex:inputText value="{!person_first_name}"  onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, 'FOT');" onchange="return searchFieldKeyUp(event, 'FOT');"/>
+                            </apex:pageblockSectionItem>
+                            <apex:pageblockSectionItem >
+                            	<apex:outputLabel value="Etternavn" />
+                            	<apex:inputText value="{!person_last_name}" onclick="return searchFieldKeyUp(event, 'FOT');" onkeypress="return searchFieldKeyUp(event, 'FOT');" onchange="return searchFieldKeyUp(event, 'FOT');"/>
+                            </apex:pageblockSectionItem>
+							<apex:pageblockSectionItem >
+								<apex:outputLabel value="Aktørnr." />
+								<apex:inputText value="{!party_number}" onclick="searchParameterEvent(event, 'FOT');" onkeypress="searchParameterEvent(event, 'FOT');" onchange="searchParameterEvent(event, 'FOT');"/>
+							</apex:pageblockSectionItem>
+							<apex:pageblockSectionItem rendered="{!allowFullPrivateSearch}">
+								<apex:outputLabel value="Fødselsnr." />
+                            	<apex:inputText value="{!person_national_identification_number}" onclick="return searchFieldKeyUp(event, 'FOT');" onkeypress="return searchFieldKeyUp(event, 'FOT');" onchange="return searchFieldKeyUp(event, 'FOT');"/>
+                            </apex:pageblockSectionItem>
+							<apex:pageblockSectionItem >
+								<apex:outputLabel value="Postadr." />
+								<apex:inputText value="{!address_street_name}" onclick="searchParameterEvent(event, 'FOT');" onkeypress="searchParameterEvent(event, 'FOT');" onchange="searchParameterEvent(event, 'FOT');" />
+							</apex:pageblockSectionItem>
+							<apex:pageblockSectionItem >
+								<apex:outputLabel value="Husnr." />
+								<apex:inputText value="{!address_house_number}" onclick="searchParameterEvent(event, 'FOT');" onkeypress="searchParameterEvent(event, 'FOT');" onchange="searchParameterEvent(event, 'FOT');" />
+							</apex:pageblockSectionItem>
+							<apex:pageblockSectionItem >
+								<apex:outputLabel value="Husbkst." />
+								<apex:inputText value="{!address_house_letter}" onclick="searchParameterEvent(event, 'FOT');" onkeypress="searchParameterEvent(event, 'FOT');" onchange="searchParameterEvent(event, 'FOT');" />
+							</apex:pageblockSectionItem>
+							<apex:pageblockSectionItem >
+								<apex:outputLabel value="Postboks" />
+								<apex:inputText value="{!address_po_box_number}" onclick="searchParameterEvent(event, 'FOT');" onkeypress="searchParameterEvent(event, 'FOT');" onchange="searchParameterEvent(event, 'FOT');" />
+							</apex:pageblockSectionItem>
+							<apex:pageblockSectionItem >
+								<apex:outputLabel value="Postnr." />
+								<apex:inputText value="{!address_postal_code}" onclick="searchParameterEvent(event, 'FOT');" onkeypress="searchParameterEvent(event, 'FOT');" onchange="searchParameterEvent(event, 'FOT');" />
+							</apex:pageblockSectionItem>
+							<apex:pageblockSectionItem >
+								<apex:outputLabel value="Poststed" />
+								<apex:inputText value="{!address_city}" onclick="searchParameterEvent(event, 'FOT');" onkeypress="searchParameterEvent(event, 'FOT');" onchange="searchParameterEvent(event, 'FOT');" />
+							</apex:pageblockSectionItem>
+							<apex:pageblockSectionItem >
+								<apex:outputLabel value="Ordre nr." />
+								<apex:inputText value="{!order_number}" onclick="searchParameterEvent(event, 'OM');" onkeypress="searchParameterEvent(event, 'OM');" onchange="searchParameterEvent(event, 'OM');"/>
+							</apex:pageblockSectionItem>
+							<apex:pageblockSectionItem >
+								<apex:outputLabel value="Kundenr." />
+								<apex:inputText value="{!account_number}" onclick="searchParameterEvent(event, 'FOT');" onkeypress="searchParameterEvent(event, 'FOT');" onchange="searchParameterEvent(event, 'FOT');" />
+							</apex:pageblockSectionItem>
+							<apex:pageblockSectionItem >
+								<apex:outputLabel value="Ref.adr.endring" />
+								<apex:inputText value="{!forwardingnumber}" onclick="searchParameterEvent(event, 'FW');" onkeypress="searchParameterEvent(event, 'FW');" onchange="searchParameterEvent(event, 'FW');"/>
+							</apex:pageblockSectionItem>
+							<apex:pageblockSectionItem >
+								<apex:outputLabel value="Fakturanr." />
+								<apex:inputText value="{!receivable_number}" onclick="searchParameterEvent(event, 'AR');" onkeypress="searchParameterEvent(event, 'AR');" onchange="searchParameterEvent(event, 'AR');"/>
+							</apex:pageblockSectionItem>
+						</apex:pageblocksection>
+					</apex:pageBlock>
+					</apex:actionRegion>
+					</div>
+				</td>
+				<td valign="top">
+					<apex:outputpanel id="searchPanel">
+					<apex:pageBlock mode="edit" title="Kundesøk {! IF(theCase != null, 'sak ' + theCase.caseNumber, '')}">
+						<!-- ACCOUNT SEARCH RESULT START -->
+						<apex:pageBlockTable value="{!accountSearchResultList}" var="accountSearchResult" >
+							<apex:column headerValue="Navn">
+                				<apex:commandLink action="{!goDo}" status="search_status" rerender="searchPanel">
+                					<apex:outputText value="{!accountSearchResult.name}"/>
+                					<apex:param value="{!accountSearchResult.partyNumber}" assignTo="{!selectedAccountPartyNumber}" name="selectedAccountPartyNumber" />
+                					<apex:param value="{!accountSearchResult.salesforceId}" assignTo="{!selectedAccountId}" name="selectedAccountId" />
+                				</apex:commandLink>
+                			</apex:column>
+                			<apex:column headerValue="Aktørnummer">
+                				<apex:outputText value="{!accountSearchResult.partyNumber}"/>
+                			</apex:column>
+                			<apex:column headerValue="Adresse">
+                				<apex:outputText value="{!accountSearchResult.address}"/>
+                			</apex:column>
+							<apex:column headerValue="Opprett ny sak" rendered="{!(!isExistingCase)}">
+                				<apex:selectList value="{!caseRecordType}" onDblClick="createNewCase('{!accountSearchResult.partyNumber}','{!accountSearchResult.salesforceId}'); return true;" onChange="createNewCase('{!accountSearchResult.partyNumber}','{!accountSearchResult.salesforceId}'); return true;" size="1">
+									<apex:selectOptions value="{!RecordTypeList}"/>
+								</apex:selectList>
+                			</apex:column>
+						</apex:pageBlockTable>
+					</apex:pageBlock>
+					<!-- ACCOUNT SEARCH RESULT STOP -->
+					<!-- MESSAGES -->
+					<apex:outputpanel id="messages">
+						<apex:pagemessages />   
+					</apex:outputpanel>
+					</apex:outputpanel>
+				</td>
+			</tr>
+		</table>
+		
+		<apex:actionFunction status="search_status" name="searchAccount" action="{!searchPrivateAccount}" rerender="searchPanel">
+			<apex:param value="" assignTo="{!currentSearchModus}" name="currentSearchModus" />
+		</apex:actionFunction>
+		
+		<apex:actionFunction name="createNewCase" status="search_status" action="{!goDo}" rerender="searchPanel">
+			<apex:param value="" assignTo="{!selectedAccountPartyNumber}" name="selectedAccountPartyNumber" />
+			<apex:param value="" assignTo="{!selectedAccountId}" name="selectedAccountId" />
+			<apex:param value="true" assignTo="{!isCreateNewCase}" name="createCase" />
+		</apex:actionFunction>
+	</apex:form>
+	
+	<!-- JavaScript is moved to the bottom of the page as this will result in the page loading faster. -->
+    <apex:includeScript value="{!$Resource.CustomerSearch_business}"/>
+</apex:page>

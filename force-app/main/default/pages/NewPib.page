@@ -1,0 +1,51 @@
+<apex:page standardController="cs_case_pib_messages__c" extensions="NewPibController" >
+    <apex:sectionHeader subtitle="new PIB Message" title="PIB Message Edit"/>
+    
+    <style type="text/css">
+        .description { width: 150px; height:100px}
+    </style>
+    <apex:form > 
+    
+        <apex:actionFunction name="TemplateList" action="{!TemplateLists}" >
+        </apex:actionFunction>  
+        
+        <apex:actionRegion >
+            <apex:outputPanel id="pibpanel" >
+                <apex:pageBlock id="commandButtons">
+                    <apex:pageMessages />
+                    
+                    <apex:pageBlockButtons >
+                        <apex:commandButton value="Save" action="{!save1}" />
+                        <apex:commandButton value="Save & New" action="{!SaveandNew}"/>
+                        <apex:commandButton value="Cancel" action="{!cancel}"/>
+                    </apex:pageBlockButtons>
+                    
+                    <apex:pageBlockSection > 
+                        
+                        <apex:selectList value="{!TemplateName}" label="Please select the template" multiselect="false" size="1"> <!--onchange="TemplateList();" readonly="{!readonly}" disabled="{!readonly}" >﻿-->
+                            <apex:selectOptions value="{!Items}" />
+                            <apex:actionSupport event="onchange" action="{!TemplateLists}" rerender="pibpanel"/>
+                        </apex:selectList>
+                        <br/>
+                        <apex:inputField label="Subject"  value="{!pibobj.cs_subject__c}" id="pibsubject"/> <!--rendered="{!NOT(isSaved)}" required="true"/> -->                       
+                        
+                        <apex:inputField label="Case"  value="{!pibobj.cs_pib_case__c}" /> 
+                        <apex:inputField label="Description"  value="{!pibobj.cs_description__c}" styleClass="description"/> 
+                        
+                        <apex:selectList id="countries" value="{!pibobj.category__c}"
+                                         size="1" required="true">
+                            <apex:selectOptions value="{!Status}"/>
+                        </apex:selectList>
+                        
+                        <apex:OutputField label="Postal Unit"  value="{!pibobj.cs_related_to_postal_unit_c__c}"/> 
+                        <apex:inputCheckbox label="Notify District Manager" value="{!pibobj.Notify_District_Manager__c}"/>
+                        
+                    </apex:pageBlockSection>
+                    
+                </apex:pageBlock>
+            </apex:outputPanel>
+        </apex:actionRegion>
+        
+    </apex:form>
+    
+</apex:page>

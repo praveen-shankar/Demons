@@ -1,0 +1,193 @@
+<aura:component controller="OpportunitywithContractManagement" implements="force:lightningQuickAction,force:hasRecordId,flexipage:availableForRecordHome" >
+    <aura:attribute name="recordId" type="id" />
+    <aura:attribute name="Opp" type="Opportunity"/>  
+    <aura:attribute name="EnrichedInPriceEngine" type="Boolean" default="False" />
+    <aura:attribute name="VerifiedbyContractManagement" type="Boolean" default="False"/>
+    <aura:attribute name="DateofBidVerification" type="Date" />    
+    <aura:attribute name="BidVerifiedBy" type="List" />
+    <aura:attribute name="BidTeamComments" type="String" /> 
+    <aura:attribute name="message" type="String" /> 
+    <aura:attribute name="Error" type="Boolean" default="false" /> 
+    <aura:attribute name="UserD" type="User[]"/>
+   <aura:attribute name="XYZ" type="String"/>
+   <aura:attribute name="Check" type="boolean" default="true"/>
+   <aura:attribute name="selItem" type="object"/>
+   <!--aura:attribute name="visibleForRenegotiate" type="boolean" default="false"/-->
+   <aura:attribute name="profileflag" type="Boolean" default="false" />
+   <aura:handler name="init" value="{!this}" action="{!c.doInit}"/> 
+     <lightning:notificationsLibrary aura:id="notifLib" />    
+
+  <!-- <aura:if isTrue="{!v.Error}">
+         <ui:message title="Information" severity="info" closable="false">
+       {!v.message}
+        </ui:message>
+
+       
+    </aura:if> -->
+    <div class="slds" aura:id="container">                
+                <table class="slds-table" style="width:800px;">                     
+                    <tr class="slds-text-heading--label">
+                        <td colspan="2">                            
+                            <div class="slds-page-header">
+                                <div class="slds-text-heading_large slds-text-align_center slds-text-title_caps " >
+                                    <strong class="txtsize">{!$Label.c.crm_Contract_section_header} </strong></div>
+                            </div>                            
+                        </td>
+                    </tr>                   
+                    
+                    <!--tr>
+                        <td class="left-align ">{!$Label.c.crm_Enriched_In_Price_Engine} </td>
+                        <td class ="left-align"><div  style="width:500px">  
+                             <aura:if isTrue="{!v.profileflag}"> 
+                              <lightning:input  type="checkbox" name="Enrich" checked="{!v.Opp.crm_Enriched_In_PriceEngine__c}" default ="true"/>  
+                                  <aura:set attribute="else">
+                                       <lightning:input  type="checkbox" name="Enrich" checked="{!v.Opp.crm_Enriched_In_PriceEngine__c}" default ="true" disabled="true"/> 
+                                 </aura:set>
+                            </aura:if-->
+                    <!--      <ui:inputCheckbox aura:id="epeCheckBox" label="Enriched in Price Engine"  value="true"/> -->
+                                                      
+                        <!--/div>
+                        </td>
+                    </tr--> 
+                    <!--tr>
+                        
+                            <aura:if isTrue="{!v.visibleForRenegotiate}">  
+                                <td class="left-align ">{!$Label.c.Copy_Existing_Agreement_in_PE}</td>
+                                <td class ="left-align"><div  style="width:500px">  
+                                     <aura:if isTrue="{!v.profileflag}">  
+                                  <lightning:input type="checkbox"  name="VB" checked="{!v.Opp.Copy_Existing_Agreement_in_PE__c}" /> 
+                                         
+                                          <aura:set attribute="else">
+                                               <lightning:input type="checkbox"  name="VB" checked="{!v.Opp.Copy_Existing_Agreement_in_PE__c}" disabled="true"/>
+                                         </aura:set>
+                                    </aura:if>
+                                                              
+                                  </div>
+                                </td>
+                            
+                        </aura:if>
+                    </tr--> 
+                      <tr>
+                        <td class="left-align ">{!$Label.c.crm_Verified_By_Contract_Management}</td>
+                        <td class ="left-align"><div  style="width:500px">  
+                             <aura:if isTrue="{!v.profileflag}">  
+                          <lightning:input type="checkbox"  name="VB" checked="{!v.Opp.crm_Verified_by_Contract_Management__c}" /> 
+                                 
+                                  <aura:set attribute="else">
+                                       <lightning:input type="checkbox"  name="VB" checked="{!v.Opp.crm_Verified_by_Contract_Management__c}" disabled="true"/>
+                                 </aura:set>
+                            </aura:if>
+                                                      
+                          </div>
+                        </td>
+                    </tr> 
+                      <tr>
+                        <td class="left-align ">{!$Label.c.crm_Date_of_Bid_Verification}</td>
+                        <td class ="left-align"><div  style="width:500px">  
+                             <aura:if isTrue="{!v.profileflag}"> 
+                                <lightning:input type="date" name="DoBV" value= "{!v.Opp.Date_of_Bid_Verification__c}"/>  
+                                   <aura:set attribute="else">                                     
+                                 <lightning:input type="date" name="DoBV" value= "{!v.Opp.Date_of_Bid_Verification__c}" disabled="true"/>                          
+                                 </aura:set>
+                            </aura:if>
+                          </div>
+                        </td>
+                    </tr> 
+                    <tr>
+                        <td class="left-align ">{!$Label.c.crm_Bid_Verified_By}</td>
+                         <aura:if isTrue="{!v.profileflag}">
+                        <td class ="left-align">
+                          <c:CS_SalesUser objectName="User"
+                          field_API_text="Id"
+                          field_API_val="Name"
+                          limit="4"
+                          field_API_search="Name"
+                          lookupIcon="standard:User" 
+                          selItem="{!v.selItem}" 
+                          placeholder="{!v.Opp.Bid_Verified_By__r.Name}" />
+                            
+                        </td>
+                               <aura:set attribute="else">
+                                   <td class ="left-align">                   
+                          {!v.Opp.Bid_Verified_By__r.Name}
+                            
+                        </td>
+                             </aura:set>
+                        </aura:if>
+                             
+                    </tr>
+                    
+                    
+                     <tr>
+                        <td class="left-align ">{!$Label.c.crm_Bid_Team_Comments}</td>
+                        <td class ="left-align"><div  style="width:500px">  
+                             <aura:if isTrue="{!v.profileflag}">
+                                <lightning:textarea  type="String" name="BTC" value="{!v.Opp.Bid_Team_Comments__c}" maxlength="500"/>  
+                                 <aura:set attribute="else">  
+                                   <lightning:textarea  type="String" name="BTC" value="{!v.Opp.Bid_Team_Comments__c}" maxlength="500" disabled="true"/>
+                                 </aura:set>
+                            </aura:if>
+                                                                                 
+                        </div>
+                        </td>
+                    </tr> 
+                    
+                    <!-- linked agreements--> 
+                    
+                     <tr>
+                        <td class="left-align ">{!$Label.c.Linked_agreements} </td>
+                        <td class ="left-align"><div  style="width:500px">  
+                             <aura:if isTrue="{!v.profileflag}"> 
+                              <lightning:input  type="checkbox" name="linkedagreements" checked="{!v.Opp.Linked_agreements__c}" default ="true"/>  
+                                  <aura:set attribute="else">
+                                       <lightning:input  type="checkbox" name="linkedagreements" checked="{!v.Opp.Linked_agreements__c}" default ="true" disabled="true"/> 
+                                 </aura:set>
+                            </aura:if>
+                                                                         
+                        </div>
+                        </td>
+                    </tr> 
+                    <!--  customer numbers linked to agreements-->
+                    <tr>
+                        <td class="left-align ">{!$Label.c.Customer_Numbers_for_linked_agreements}</td>
+                        <td class ="left-align"><div  style="width:500px">  
+                             <aura:if isTrue="{!v.profileflag}">
+                                <lightning:textarea  type="String" name="cnumbers" value="{!v.Opp.Customer_Numbers_for_linked_agreements__c}" maxlength="32768"/>  
+                                 <aura:set attribute="else">  
+                                   <lightning:textarea  type="String" name="cnumbers" value="{!v.Opp.Customer_Numbers_for_linked_agreements__c}" maxlength="32768" disabled="true"/>
+                                 </aura:set>
+                            </aura:if>
+                                                                                 
+                        </div>
+                        </td>
+                    </tr> 
+                    
+                    <!--  Addition of new Send Shell Agreement field-->
+                    <tr>
+                        <td class="left-align ">{!$Label.c.Send_Shell_Agreement}</td>
+                        <td class ="left-align"><div  style="width:500px">  
+                             <aura:if isTrue="{!v.profileflag}"> 
+                              <lightning:input  type="checkbox" name="sendShellAgreement" checked="{!v.Opp.Send_Shell_Agreement__c}" default ="false"/>  
+                                  <aura:set attribute="else">
+                                       <lightning:input  type="checkbox" name="sendShellAgreement" checked="{!v.Opp.Send_Shell_Agreement__c}" default ="false" disabled="true"/> 
+                                 </aura:set>
+                            </aura:if>
+                                                                         
+                        </div>
+                        </td>
+                    </tr> 
+
+        </table>
+        <br/>
+         <footer class="slds-modal__footer slds-modal__footer_directional slds-align_absolute-center"> 
+              <lightning:buttonGroup  aura:id="btngroup">
+                     <aura:if isTrue="{!!v.profileflag}">
+                        <button class="slds-button slds-button_destructive" disabled="true">{!$Label.c.cs_Save}</button>
+                        <aura:set attribute="else">
+                            <button class="slds-button slds-button--brand" onclick="{!c.UpdateOpportunity}">{!$Label.c.cs_Save}</button> 
+                        </aura:set>
+                    </aura:if>   
+                  </lightning:buttonGroup> 
+              </footer>
+    </div>	
+</aura:component>

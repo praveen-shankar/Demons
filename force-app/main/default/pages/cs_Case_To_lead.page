@@ -1,0 +1,52 @@
+<apex:page standardController="Case" extensions="cs_Case_to_lead" tabStyle="case" >
+<apex:form >
+<apex:outputPanel id="leadcreationdiv" > 
+<apex:PageBlock mode="edit" rendered="{!if(and(leadalreadycreated==false,leadcreated==false, casecannotconverted=false),true, false)}">
+<apex:pagemessages id="showmsg" ></apex:pagemessages>
+
+
+            <apex:PageBlockButtons > 
+             
+                 <apex:commandButton action="{!saveLead}" value="{!$Label.cs_Save}"  rerender="showmsg, leadcreateddiv,leadalreadycreateddiv, leadcreationdiv, casecannotconverted"/>
+                 <apex:commandButton action="{!Cancel}" value="{!$Label.cs_Cancel}"/>
+                
+               </apex:PageBlockButtons>
+        
+       <apex:PageBlockSection title="{!$Label.cs_case_to_lead_title}" >
+         <apex:PageBlockSectionItem >
+          
+            <apex:outputLabel value="{!$Label.cs_Description}" />
+            <apex:inputTextarea value="{!caseObjpage.Description}" title="{$Label.cs_Description}" rows="10" cols="60"/>
+             </apex:PageBlockSectionItem>
+             
+              
+   </apex:PageBlockSection>    
+   
+  </apex:PageBlock>   
+   </apex:outputPanel>   
+  
+  <apex:outputPanel id="leadcreateddiv" > 
+  <apex:PageBlock rendered="{!if(leadalreadycreated,true, false)}" >
+  <h1>{!$Label.cs_Lead_Already_created}</h1>
+  <apex:commandButton action="{!Cancel}" value="{!$Label.cs_BackToCase}"/>
+     </apex:PageBlock>       
+   </apex:outputPanel>  
+          <apex:outputPanel id="leadalreadycreateddiv" > 
+      <apex:PageBlock rendered="{!if(leadcreated,true, false)}" >
+ <h1>{!$Label.cs_Lead_Created}</h1> 
+  <apex:commandButton action="{!Cancel}" value="{!$Label.cs_BackToCase}"/>
+     </apex:PageBlock>
+    </apex:outputPanel>    
+   
+    
+    <apex:outputPanel id="casecannotconverted" > 
+      <apex:PageBlock rendered="{!if(casecannotconverted,true, false)}" >
+ <h1>{!$Label.cs_Case_cannot_be_converted}</h1> 
+  <apex:commandButton action="{!Cancel}" value="{!$Label.cs_BackToCase}"/>
+     </apex:PageBlock>
+    </apex:outputPanel> 
+  
+   
+
+ </apex:form>
+</apex:page>

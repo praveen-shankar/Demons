@@ -1,0 +1,2 @@
+<apex:page standardController="Segment_Change_Request__c"  action="{!updateobjects}" extensions="crm_responsiblesellerController">
+</apex:page>

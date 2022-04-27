@@ -1,0 +1,6 @@
+<apex:page standardcontroller="Case" extensions="CS_duplicateShipmetParcel" showHeader="false" sidebar="true" action="{!validate}" >
+<apex:form >
+  <apex:pagemessages escape="false" />
+ <apex:commandButton onclick="window.close()"  value="{!$Label.cs_Cancel}" />
+ </apex:form>
+  </apex:page>

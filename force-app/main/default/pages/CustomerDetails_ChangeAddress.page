@@ -1,0 +1,145 @@
+<apex:page standardController="Account" extensions="CustomerDetailExtension">
+    <div style="overflow:auto; height:350px;">
+    <apex:pageBlock >
+    <apex:pageBlockTable value="{!forwardingElements.forwardingTypes}" var="type">
+    
+    <apex:column >
+    <!----CS Phase 2 15122016, Akshata -Changes the layout of Address tab to display list of address,added the labels-->
+    <apex:facet name="header">{!$Label.cs_Type}
+    
+    </apex:facet>
+    <apex:outputlabel value="o" style="font-weight: bolder" rendered="{!If(type.Type_x=='Oppbevaring',true,false)}"/>
+    <apex:outputlabel value="v" style="font-weight: bolder" rendered="{!If(type.Type_x=='Varig',true,false)}"/>
+    <apex:outputlabel value="m" style="font-weight: bolder" rendered="{!If(type.Type_x=='Midlertidig',true,false)}"/>
+    </apex:column>
+    <apex:column >
+    <apex:facet name="header">{!$Label.cs_Reference_Number}
+    </apex:facet>
+    <apex:outputlabel value="{!type.Number_x}" / >
+    </apex:column>
+    <apex:column >
+    <apex:facet name="header">{!$Label.cs_Reference_Number} OMA
+    </apex:facet>
+    <apex:outputlabel value="{!type.ReferenceOMA }" / >
+    </apex:column>
+    <apex:column >
+    <apex:facet name="header">{!$Label.cs_From_Address}
+    </apex:facet>
+      <apex:outputlabel value="{!type.FromAddress.StreetName}" />
+      <apex:outputlabel value=" {!type.FromAddress.BuildingNumber}" rendered="{! type.FromAddress.BuildingNumber != null && type.FromAddress.BuildingNumber != '-' }"/ >
+      <apex:outputlabel value=",{!type.FromAddress.BuildingName}" rendered="{! type.FromAddress.BuildingName != null && type.FromAddress.BuildingName != '-' }"/>
+        <apex:outputlabel value=",{!type.FromAddress.PostOfficeBox}" rendered="{! type.FromAddress.PostOfficeBox != null && type.FromAddress.PostOfficeBox != '-' }"/>
+        <apex:outputlabel value=",{!type.FromAddress.PostalCode}" rendered="{! type.FromAddress.PostalCode != null && type.FromAddress.PostalCode != '-' }" />
+        <apex:outputlabel value=",{!type.FromAddress.CityName}" rendered="{! type.FromAddress.CityName != null && type.FromAddress.CityName != '-' }" />
+  
+    </apex:column>
+    
+    <apex:column >
+    <apex:facet name="header">{!$Label.cs_To_Address}
+    </apex:facet>
+     <apex:outputlabel value="{!type.ToAddress.StreetName}" />
+     <apex:outputlabel value=" {!type.ToAddress.BuildingNumber}" rendered="{! type.ToAddress.BuildingNumber != null && type.ToAddress.BuildingNumber != '-' }"  />
+     <apex:outputlabel value="," rendered="{!type.ToAddress.StreetName!=''}"/>
+     <apex:outputlabel value="{!type.ToAddress.BuildingName}" rendered="{! type.ToAddress.BuildingName != null  && type.ToAddress.BuildingName != '-' }" />
+        <apex:outputlabel value=",{!type.ToAddress.PostOfficeBox}" rendered="{! type.ToAddress.PostOfficeBox != null  && type.ToAddress.PostOfficeBox != '-' }" />
+        <apex:outputlabel value=",{!type.ToAddress.PostalCode}" rendered="{! type.ToAddress.PostalCode != null && type.ToAddress.PostalCode != '-'}"/ >
+        <apex:outputlabel value=",{!type.ToAddress.CityName}" rendered="{! type.ToAddress.CityName != null && type.ToAddress.CityName != '-' }"/ >
+    </apex:column>
+    
+    <apex:column >
+    <apex:facet name="header">{!$Label.cs_valid_from_date}
+    </apex:facet>
+    <apex:outputText value="{0,date,dd'/'MM'/'yyyy}"><apex:param value="{!type.StartDate}"/></apex:outputText>
+    </apex:column>
+    
+    <apex:column >
+    <apex:facet name="header">{!$Label.cs_Valid_To_Date}
+    </apex:facet>
+    <apex:outputText value="{0,date,dd'/'MM'/'yyyy}"><apex:param value="{!type.EndDate}"/></apex:outputText>
+    </apex:column>
+    <apex:column >
+    <apex:facet name="header">{!$Label.cs_Status}
+    </apex:facet>
+    <apex:outputlabel value="{!type.Status}" / >
+    </apex:column>
+        <apex:column >
+    <apex:facet name="header">{!$Label.cs_Source}
+    </apex:facet>
+    <apex:outputlabel value="{!type.Source}" / >
+    </apex:column>
+    </apex:pageBlockTable>
+    <!----CS Phase 2 15122016, Akshata -Changes the layout of Address tab to display list of address,added the labels-->
+    <!----
+    <apex:repeat value="{!forwardingElements.forwardingTypes}" var="type" >
+        <apex:pageBlock >
+            <apex:pageBlockSection title="{!type.Number_x} - {!type.Type_x}" columns="1" collapsible="true">
+                <apex:pageBlockSection columns="3">
+                    <apex:pageBlockSectionItem ><apex:outputLabel value="Referansenummer"/><apex:outputText value="{!type.Number_x}" /></apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem ><apex:outputLabel value="OMA Referansenummer"/><apex:outputText value="{!type.ReferenceOMA}"/></apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem ><apex:outputText rendered="NOT({!type.OEBSURI}=='')" escape="true" ><a href="{!type.OEBSURI}" target="_blank">Link FAR</a></apex:outputText></apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem ><apex:outputLabel value="Type"/><apex:outputText value="{!type.Type_x}"/></apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem ><apex:outputLabel value="Kilde"/><apex:outputText value="{!type.Source}"/></apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem ></apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem ><apex:outputLabel value="Dato start"/><apex:outputText value="{0,date,dd'/'MM'/'yyyy}"><apex:param value="{!type.StartDate}"/></apex:outputText></apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem ><apex:outputLabel value="Dato slutt"/><apex:outputText value="{0,date,dd'/'MM'/'yyyy}"><apex:param value="{!type.EndDate}"/></apex:outputText></apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem ><apex:outputLabel value="Oppbevaringsdato"/><apex:outputText value="{0,date,dd'/'MM'/'yyyy}"><apex:param value="{!type.HoldDate}"/></apex:outputText></apex:pageBlockSectionItem>
+                </apex:pageBlockSection>        
+        
+        
+                <table style="padding-bottom:10px">
+                    <tr>
+                        <th width="200">Fornavn</th>
+                        <th width="200">Mellomnavn</th>
+                        <th width="200">Etternavn</th>
+                    </tr>
+                    <apex:repeat value="{!type.OtherParties.party}" var="otherParty">
+                        <tr>
+                            <td>{!otherParty.FirstName}</td>
+                            <td>{!otherParty.MiddleName}</td>
+                            <td>{!otherParty.LastName}</td>
+                        </tr>
+                    </apex:repeat>
+                </table>
+            
+                <table style="padding-bottom:10px">
+                    <tr>
+                        <th>Fra addresse</th>
+                    </tr>
+                    <tr>
+                        <th width="200">Gateadresse</th>
+                        <th width="200">Poststed</th>
+                        <th width="200">Postnummer</th>
+                    </tr>
+                    <apex:repeat value="{!type.FromAddress}" var="toAddress" >
+                        <tr>
+                            <td>{!toAddress.Street}</td>
+                            <td>{!toAddress.City}</td>
+                            <td>{!toAddress.PostalCode}</td>
+                        </tr>
+                    </apex:repeat>
+                </table>
+            
+                <table style="padding-bottom:10px">
+                    <tr>
+                        <th>Ny/Midlertidig adresse</th>
+                    </tr>
+                    <tr>
+                        <th width="200">Gateadresse</th>
+                        <th width="200">Poststed</th>
+                        <th width="200">Postnummer</th>
+                    </tr>
+                    <apex:repeat value="{!type.ToAddress}" var="newAddress" >
+                        <tr>
+                            <td>{!newAddress.Street}</td>
+                            <td>{!newAddress.City}</td>
+                            <td>{!newAddress.PostalCode}</td>
+                        </tr>
+                    </apex:repeat>
+                </table>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:repeat>
+    --->
+    </apex:pageBlock>
+    </div>
+</apex:page>

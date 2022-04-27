@@ -1,0 +1,70 @@
+<apex:page controller="Case_ShipmentImportWizardController" wizard="true" showHeader="false" sidebar="false">
+
+<!--<apex:sectionHeader title="Last opp sendingsinformasjon" subtitle="Steg 1 av 3"/>
+ CSphase2, Supriya, 13122016 =>Added custom labels-->
+ <apex:includeScript value="{!$Resource.jQuery}"/>
+<script src="/soap/ajax/45.0/connection.js" type="text/javascript"></script>
+<script src="/soap/ajax/45.0/apex.js" type="text/javascript"></script>
+    <script>
+        function confirmCancel() {
+    <!--        var isCancel = confirm("Sikker på at du vil avbryte?"); Commented by Rajesh Singh as part of Object Translation -->
+         var Caseid= '{!caseId}';// document.getElementById('Caseid');
+           var isCancel = confirm("{!$Label.cs_isCancel}");
+        
+            if (isCancel) 
+            {
+             if (sforce.one != undefined) {
+                                    // Lightning
+                                    sforce.one.navigateToSObject(Caseid);
+                                } else {
+                                    // Classic
+                                     window.close();
+                                }
+            }
+            
+              
+            return false;
+        }
+    </script>
+<apex:sectionHeader title="{!$Label.crm_Upload_sending_information}" subtitle="{!$Label.cs_Step1of3}"/>
+    <apex:form >
+        
+        <!--<apex:pageBlock title="Legg inn CSV fil" mode="edit">-->
+             <apex:pageBlock title="{!$Label.cs_Add_CSV_File}" mode="edit">
+            <apex:pageBlockButtons >
+               <!-- <apex:commandButton action="{!step1}" value="Forrige" disabled="true"/>
+                <apex:commandButton value="Avbryt" onclick="return confirmCancel()" immediate="true"/>
+                <apex:commandButton action="{!step2}" status="load" value="Neste"/>
+                
+                CSphase2, Supriya, 13122016 =>Added custom labels-->
+                
+                <apex:commandButton action="{!step1}" value="{!$Label.cs_Previous}" disabled="true"/>
+                <apex:commandButton value="{!$Label.cs_Cancel}" onclick="return confirmCancel()" immediate="true"/>
+                <apex:commandButton action="{!step2}" status="load" value="{!$Label.cs_Next}"/>
+                 
+                <apex:actionStatus id="load">
+                    <apex:facet name="start"><apex:image value="{!$Resource.spinner_icon}" /></apex:facet>
+                    <apex:facet name="stop"></apex:facet>
+                </apex:actionStatus>
+            </apex:pageBlockButtons>
+            
+            <apex:messages style="color:red"/>
+            <apex:PageBlockSection >
+            <!-- 
+                <apex:selectRadio value="{!product}">
+                    <apex:selectOptions value="{!items}"/>
+                </apex:selectRadio><p/>
+             -->
+            
+                <apex:PageBlockSectionItem >
+                    <!--<apex:outputLabel value="Legg inn CSV fil:"/>
+                    CSphase2, Supriya, 13122016 =>Added custom labels   cs_Add_CSV_File-->
+                    
+                    <apex:outputLabel value="{!$Label.cs_Add_CSV_File}:"/>
+                    <apex:inputFile value="{!csvFile.body}" filename="{!csvFile.name}" lang="NO" contentType="{!csvFile.contentType}" fileSize="{!fileSize}" />
+                </apex:PageBlockSectionItem>
+            </apex:PageBlockSection>
+            
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

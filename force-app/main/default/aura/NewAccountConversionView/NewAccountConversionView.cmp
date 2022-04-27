@@ -1,0 +1,408 @@
+<!-- Misc additions to Salesforce for NPB P11 (C-08938): Sakshi --> 
+
+<aura:component controller="AccountConversionCustomViewCltr" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome" >
+    
+   <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+   <aura:attribute name="AllAccounts" type="Account[]"/>
+    
+   <!-- Pagination Attributes Starts Here -->
+   <aura:attribute name="data" type="Object"/>
+   <aura:attribute name="columns" type="List"/>
+   <aura:attribute name="recordId" type="String"/>
+   <aura:attribute name="allData" type="List"/>
+   <aura:attribute name="currentPageNumber" type="Integer" default="1"/>
+   <aura:attribute name="pageSize" type="Integer" default="10"/>
+   <aura:attribute name="totalPages" type="Integer" default="0"/>
+   <aura:attribute name="pageList" type="List"/>
+   <!-- Pagination Attributes Ends Here -->
+    
+   <!--Search Attributes Starts Here-->
+   <aura:attribute name="SearchKeyWord" type="string"/>
+   <aura:attribute name="SelectKeyWord" type="string"/>
+   <aura:attribute name="DateSearchKey" type="Date"/>
+   <aura:attribute name="ConversionHeatSearchKey" type="string"/>
+   <aura:attribute name="ConvertedSearchKey" type="string"/>
+   <aura:attribute name="CustomerPriceSearchKey" type="Boolean" default=""/>
+   <aura:attribute name="AgreementPropositionSearchKey" type="Boolean" default=""/>
+   <aura:attribute name="ConversionReadySearchKey" type="Boolean" default=""/>
+   <!--Search Attributes Ends Here-->
+    
+   <!--Picklist Attributes Starts Here -->
+   <aura:attribute name="accountRecord" type="Account" default="{'sObjectType':'Account','FirstName':'','LastName':'','Email':''}"/>
+   <!--Picklist Attributes Ends Here -->
+    
+   <!--Calculate Total Record Attribute Starts Here-->
+   <aura:attribute name="totalRecords" type="Integer" default="0"/>
+   <!--Calculate Total Record Attribute Ends Here-->
+    
+   <!--Spinner Attributes Starts Here-->
+   <!-- create 2 aura handler with waiting and donewaiting events--> 
+   <aura:handler event="aura:waiting" action="{!c.showSpinner}"/>
+   <aura:handler event="aura:doneWaiting" action="{!c.hideSpinner}"/>
+   <aura:attribute name="Spinner" type="boolean" default="false"/>
+   <!--Spinner Attributes Ends Here-->
+    
+   <!--Sorting Attributes Starts Here -->
+   <aura:attribute type="boolean" name="sortAsc" />
+   <aura:attribute type="String" name="sortField" />
+   <!--Sorting Attributes Ends Here -->
+    
+   <!--Register Event -->
+   <!--<aura:registerEvent name="oSelectedAccountEvent" type="c:selectedAccountEvent"/>-->
+    
+   <!--loading spinner start... style=Brand Medium (blue dots)-->
+   <aura:if isTrue="{!v.Spinner}">
+      <div aura:id="spinnerId" class="slds-spinner_container">
+         <div class="slds-spinner--brand  slds-spinner slds-spinner--large slds-is-relative" role="alert">
+            <span class="slds-assistive-text">Loading</span>
+            <div class="slds-spinner__dot-a"></div>
+            <div class="slds-spinner__dot-b"></div>
+         </div>
+      </div>
+   </aura:if>
+   <!-- Loading spinner end--> 
+    
+   <!--Page Container Starts Here -->
+   <div class="container">
+      <div class="new-container">
+         <!--Header Starts Here -->
+         <div class="header-container">
+            <div class="header slds-clearfix">
+               <div class="slds-float_left">
+                  <span>
+                     <lightning:icon iconName="action:new_account" size="medium" alternativeText="Shows My Customers" />
+                  </span>
+                  <span class="converted-customer"><b> {!$Label.c.crm_myconvertedCust} </b></span>
+               </div>
+            </div>
+         </div>
+         <!--Header Ends Here -->
+         <!--Top Pagination Starts Here -->
+         <div class="top-pagination-container slds-clearfix">
+            <div class="slds-float_left total-records">
+               <div><b>Total Records: {!v.totalRecords}</b></div>
+            </div>
+            <div class="slds-float_right pagination-block">
+               <lightning:button label="Reset" iconName="utility:clear" iconPosition="left"
+                  onclick="{!c.reset}"/>
+               
+               <lightning:button label="First" iconName="utility:left" iconPosition="left"
+                  onclick="{!c.onFirst}" disabled="{! v.currentPageNumber == 1}"/>
+               <lightning:button iconName="utility:chevronleft" iconPosition="left"
+                  onclick="{!c.onPrev}" disabled="{! v.currentPageNumber == 1}"/>
+                
+                 <aura:if isTrue="{!v.totalPages>0}">
+               <span class="slds-p-horizontal_x-small">
+               <a onclick="{!c.processMe}" name="1" 
+                  class="{! (v.currentPageNumber == 1 )  ? 'selected' : ''}">1</a>
+               </span>
+               
+               <span class="slds-p-horizontal_xxx-small">
+               <a>...</a>
+               </span>
+                </aura:if>  
+               <aura:iteration items="{!v.pageList}" var="item">
+                  <span class="slds-p-horizontal_x-small">
+                  <a onclick="{!c.processMe}" name="{!item}"
+                     class="{! (v.currentPageNumber == item ) ? 'selected' : ''}">{!item}</a>
+                  </span>
+               </aura:iteration>
+                <aura:if isTrue="{!v.totalPages>0}">
+               <span class="slds-p-horizontal_xxx-small">
+               <a>...</a>
+               </span>
+                 
+               <span class="slds-p-horizontal_x-small">
+               <a onclick="{!c.processMe}" name="{!v.totalPages}"
+                  class="{! (v.currentPageNumber == v.totalPages ) ? 'selected' : ''}">{!v.totalPages}</a>
+               </span>
+                </aura:if>
+               <lightning:button iconName="utility:chevronright" iconPosition="right" 
+                  disabled="{!( v.currentPageNumber == v.totalPages || v.totalPages ==0 )}" onclick="{!c.onNext}"/>
+               <lightning:button label="Last" iconName="utility:right" iconPosition="right" 
+                  disabled="{!( v.currentPageNumber == v.totalPages || v.totalPages ==0 )}" onclick="{!c.onLast}"/>
+            </div>
+         </div>
+         <!--Top Pagination Ends Here -->
+          
+         <!--Table Starts Here -->
+         <div class="table-container">
+            <table class="slds-table slds-table_cell-buffer slds-table_bordered record-table">
+               <thead>
+                  <tr class="slds-line-height_reset">
+                      <th class="slds-text-title_caps" scope="col">  
+                    
+                         <label class="slds-form-element__label" >Sales Reponsible</label>
+                      </th>
+                     <th class="slds-text-title_caps" scope="col">
+                        <div class="slds-form-element">
+                           <div onclick="{!c.sortByName}">
+                              <label class="slds-form-element__label input-label" for="input-name">Name</label>
+                              <aura:if isTrue="{!v.sortField=='Name'}">
+                                 <span class="arrow">
+                                    <aura:if isTrue="{!v.sortAsc}">
+                                        <span class="name-up-arrow">&#8593;</span>
+                                       <aura:set attribute="else">
+                                           <span class="name-down-arrow">&#8595;</span>
+                                       </aura:set>
+                                    </aura:if>
+                                 </span>
+                              </aura:if>                          
+                              <div class="slds-form-element__control">                              
+                              		<lightning:input  onchange="{!c.keyPressController}" class="input-search" aura:id="AccountNameId" value="{!v.SearchKeyWord}" placeholder="Enter a name..."/>
+                              </div>
+                           </div>
+                        </div>
+                     </th>
+                     <th class="slds-text-title_caps" scope="col">                       
+                         <div class="input-class" onclick="{!c.sortByConversionProcess}">
+							<lightning:select name="select-conversion-process" class="conversion-process-select" label="Conversion Process" aura:id="AccountConversionProcessId" value="{!v.accountRecord.AccountConversionProcessId}" onchange="{!c.keyPressController}" >
+                              <option value="">ALL</option>
+                              <aura:iteration items="{!v.SelectKeyWord}" var="conversion" indexVar="key">
+                                 <option value="{!conversion.key}" text="{!conversion.value}" selected="{!conversion.selected}"></option>
+                              </aura:iteration>
+							</lightning:select>
+							<aura:if isTrue="{!v.sortField=='crm_Conv_Conversion_Process__c'}">
+                                  <div class="arrow">
+                                     <aura:if isTrue="{!v.sortAsc}">
+                                         <span class="conversion-process-uparrow">&#8593;</span>
+                                        <aura:set attribute="else">
+                                            <span class="conversion-process-downarrow">&#8595;</span>
+                                        </aura:set>
+                                     </aura:if>
+                                  </div>
+                            </aura:if>
+						</div>
+                     </th>
+                     <th class="slds-text-title_caps" scope="col">
+                        <div class="input-class" onclick="{!c.sortByStartDate}">
+                           	<lightning:input type="date" name="input-date" class="lightning-datepicker" aura:id = "dateSearch" label="Start Date" value="{!v.DateSearchKey}" onchange="{!c.keyPressController}"/>
+                            <!--<ui:inputDate aura:id="dateSearch" label="Start Date"  value="{!v.DateSearchKey}" change="{!c.keyPressController}"  displayDatePicker="true" />-->
+                           <aura:if isTrue="{!v.sortField=='crm_Conv_Start_Date__c'}">
+                              <span class="arrow">
+                                 <aura:if isTrue="{!v.sortAsc}">
+                                     <span class="date-process-uparrow">&#8593;</span>
+                                    <aura:set attribute="else">
+                                        <span class="date-process-uparrow">&#8595;</span>
+                                    </aura:set>
+                                 </aura:if>
+                              </span>
+                           </aura:if>
+                        </div>
+                     </th>
+                     <th class="slds-text-title_caps" scope="col">
+                        <div class="input-select" onclick="{!c.sortByConversionHeat}">
+                           <lightning:select name="select-conversion-heat" label="Conversion Heat" aura:id="AccountConversionHeatId" value="{!v.accountRecord.AccountConversionHeatId}"  onchange="{!c.keyPressController}" >
+                              <option value="">ALL</option>
+                              <aura:iteration items="{!v.ConversionHeatSearchKey}" var="conversionHeat" indexVar="key">
+                                 <option value="{!conversionHeat.key}" text="{!conversionHeat.value}" selected="{!conversionHeat.selected}"></option>
+                              </aura:iteration>
+                           </lightning:select>
+                           <aura:if isTrue="{!v.sortField=='crm_Conv_Converison_Heat__c'}">
+                              <div class="arrow">
+                                 <aura:if isTrue="{!v.sortAsc}">
+                                     <span class="conversionHeat-process-uparrow">&#8593;</span>
+                                    <aura:set attribute="else">
+                                        <span class="conversionHeat-process-uparrow">&#8595;</span>
+                                    </aura:set>
+                                 </aura:if>
+                              </div>
+                           </aura:if>
+                        </div>
+                     </th>
+                     <th class="slds-text-title_caps" scope="col">
+                        <div class="input-select" onclick="{!c.sortByConvertedCustomer}">
+                           <lightning:select name="select-converted-customer" label="Converted" aura:id="AccountConvertedCustomerId" value="{!v.accountRecord.AccountConvertedCustomerId}" onchange="{!c.keyPressController}" >
+                              <option value="">ALL</option>
+                              <aura:iteration items="{!v.ConvertedSearchKey}" var="conversion" indexVar="key">
+                                 <option value="{!conversion.key}" text="{!conversion.value}" selected="{!conversion.selected}"></option>
+                              </aura:iteration>
+                           </lightning:select>
+                           <aura:if isTrue="{!v.sortField=='Customer_Converted__c'}">
+                              <div class="arrow">
+                                 <aura:if isTrue="{!v.sortAsc}">
+                                     <span class="customerConverted-process-uparrow">&#8593;</span>
+                                    <aura:set attribute="else">
+                                        <span class="customerConverted-process-uparrow">&#8595;</span>
+                                    </aura:set>
+                                 </aura:if>
+                               </div>
+                           </aura:if>
+                        </div>
+                     </th>
+                     <th class="slds-text-title_caps" scope="col">
+                        <div class="input-class">
+                           <div class="slds-form-element slds-clearfix">
+                              <div class="slds-form-element__control slds-clearfix" onclick="{!c.sortByCustomerPriceReady}">
+                                 <div class="slds-checkbox">
+                                    <lightning:input type="checkbox" class="input-checkbox" name="check-customer-price" aura:id="checkCustomerPrice" value="{!v.CustomerPriceSearchKey}" checked="{!v.CustomerPriceSearchKey}" onchange="{!c.keyPressController}"/>
+                                    <label class="slds-checkbox__label checkbox-label" for="checkbox-customer-price">
+                                       <!--<span class="slds-checkbox_faux"></span>-->
+                                       <span class="slds-form-element__label">Customer Price Ready</span>
+                                    </label>
+                                    <aura:if isTrue="{!v.sortField=='Customer_Price_Ready__c'}">
+                                       <span class="arrow">
+                                          <aura:if isTrue="{!v.sortAsc}">
+                                             &#8593;
+                                             <aura:set attribute="else">
+                                                &#8595;
+                                             </aura:set>
+                                          </aura:if>
+                                       </span>
+                                    </aura:if>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                     </th>
+                     <th class="slds-text-title_caps" scope="col">
+                        <div class="input-class">
+                           <div class="slds-form-element slds-clearfix">
+                              <div class="slds-form-element__control slds-clearfix" onclick="{!c.sortByAgreementProposition}">
+                                 <div class="slds-checkbox">
+                                    <lightning:input type="checkbox" class="agreement-input-checkbox" name="check-agreement-proposition" aura:id="checkAgreementProposition" value="{!v.AgreementPropositionSearchKey}" checked="{!v.AgreementPropositionSearchKey}" onchange="{!c.keyPressController}"/>
+                                    <label class="slds-checkbox__label agreement-checkbox-label" for="checkbox-agreement-proposition">
+                                       <!--<span class="slds-checkbox_faux"></span>-->
+                                       <span class="agreement slds-form-element__label">Agreement Proposition Ready</span>
+                                    </label>
+                                    <aura:if isTrue="{!v.sortField=='Agreement_Proposition_Ready__c'}">
+                                       <span class="arrow agreement-sort">
+                                          <aura:if isTrue="{!v.sortAsc}">
+                                             &#8593;
+                                             <aura:set attribute="else">
+                                                &#8595;
+                                             </aura:set>
+                                          </aura:if>
+                                       </span>
+                                    </aura:if>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                     </th>
+                     <th class="slds-text-title_caps" scope="col">
+                        <div class="input-class">
+                           <div class="slds-form-element slds-clearfix">
+                              <div class="slds-form-element__control slds-clearfix" onclick="{!c.sortByConversionReady}">
+                                 <div class="slds-checkbox">
+                                    <lightning:input type="checkbox" name="check-conversion-ready" class="input-checkbox" aura:id="checkConversionReady" value="{!v.ConversionReadySearchKey}"  checked="{!v.ConversionReadySearchKey}" onchange="{!c.keyPressController}"/>
+                                    <label class="slds-checkbox__label checkbox-label" for="checkbox-conversion-ready">
+                                       <!--<span class="slds-checkbox_faux"></span>-->
+                                       <span class="slds-form-element__label">Conversion Ready</span>
+                                    </label>
+                                    <aura:if isTrue="{!v.sortField=='Conversion_Ready__c'}">
+                                       <span class="arrow conversion-sort">
+                                          <aura:if isTrue="{!v.sortAsc}">
+                                             &#8593;
+                                             <aura:set attribute="else">
+                                                &#8595;
+                                             </aura:set>
+                                          </aura:if>
+                                       </span>
+                                    </aura:if>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                     </th>
+                  </tr>
+               </thead>
+               <tbody>
+                  <aura:iteration items="{!v.data}" var="item">
+                     <tr>
+                          <td title="Sales Responsible" class="nobordertop">
+                              <aura:iteration items="{!item.Divisions3__r}" var="divi" indexVar="index">
+                         
+                           <div class="slds-truncate">{!divi.crm_Sales_Responsible__r.Name}</div>
+                       
+                            </aura:iteration>
+                         </td>
+                        <td  title="{!item.Name}" class="nobordertop">
+                           <div class="slds-truncate">
+                              <a href="{!'/'+ item.Id}" target="_blank">{!item.Name}</a>
+                              <aura:set attribute="else">
+                                 <a target="_blank" data-record="{!item.Id}">{!item.Name}</a>   
+                              </aura:set>
+                           </div>
+                        </td>
+                        <td title="Conversion Process" class="nobordertop">
+                           <div class="slds-truncate">{!item.crm_Conv_Conversion_Process__c}</div>
+                        </td>
+                        <td title="Start Date" class="nobordertop">
+                           <div class="slds-truncate"><lightning:formattedDateTime value="{!item.crm_Conv_Start_Date__c}"></lightning:formattedDateTime></div>
+                        </td>
+                        <td title="Conversion Heat" class="nobordertop">
+                           <div class="slds-truncate">{!item.crm_Conv_Converison_Heat__c}</div>
+                        </td>
+                        <td title="Customer Converted" class="nobordertop">
+                           <div class="slds-truncate">{!item.Customer_Converted__c}</div>
+                        </td>
+                        <td title="Customer Price Ready" class="nobordertop">
+                           <div class="slds-truncate">
+                              <ui:outputCheckbox aura:id="Customer_Price_Ready__c" value="{!item.Customer_Price_Ready__c}"/>
+                           </div>
+                        </td>
+                        <td title="Agreement Proposition Ready" class="nobordertop">
+                           <div class="slds-truncate">
+                              <ui:outputCheckbox aura:id="Agreement_Proposition_Ready__c" value="{!item.Agreement_Proposition_Ready__c}"/>
+                           </div>
+                        </td>
+                        <td title="Conversion Ready" class="nobordertop">
+                           <div class="slds-truncate">
+                              <ui:outputCheckbox aura:id="Conversion_Ready__c" value="{!item.Conversion_Ready__c}"/>
+                           </div>
+                        </td>
+                     </tr>
+                  </aura:iteration>
+               </tbody>
+            </table>
+         </div>
+         <!--Table Ends Here -->
+          
+         <!--Bottom Pagination Starts Here -->
+         <div class="bottom-pagination-container slds-clearfix">
+            <div class="slds-float_right bottom-pagination-block">
+               <!--<lightning:card title="" class="custom-lightning-card">
+                  <lightning:layout multipleRows="true" horizontalAlign="center">
+                     <lightning:layoutItem padding="around-small" flexibility="auto">-->
+               <lightning:button label="First" iconName="utility:left" iconPosition="left"
+                  onclick="{!c.onFirst}" disabled="{! v.currentPageNumber == 1}"/>
+               <lightning:button iconName="utility:chevronleft" iconPosition="left"
+                  onclick="{!c.onPrev}" disabled="{! v.currentPageNumber == 1}"/>
+                 <aura:if isTrue="{!v.totalPages>0}"> 
+               <span class="slds-p-horizontal_x-small">
+               <a onclick="{!c.processMe}" name="1" 
+                  class="{! (v.currentPageNumber == 1 ) ? 'selected' : ''}">1</a>
+               </span>
+               <span class="slds-p-horizontal_xxx-small">
+               <a>...</a>
+               </span>
+                </aura:if>
+                 
+               <aura:iteration items="{!v.pageList}" var="item">
+                  <span class="slds-p-horizontal_x-small">
+                  <a onclick="{!c.processMe}" name="{!item}"
+                     class="{! (v.currentPageNumber == item) ? 'selected' : ''}">{!item}</a>
+                  </span>
+               </aura:iteration>
+                <aura:if isTrue="{!v.totalPages>0}"> 
+               <span class="slds-p-horizontal_xxx-small">
+               <a>...</a>
+               </span>
+               <span class="slds-p-horizontal_x-small">
+               <a onclick="{!c.processMe}" name="{!v.totalPages}"
+                  class="{! (v.currentPageNumber == v.totalPages ) ? 'selected' : ''}">{!v.totalPages}</a>
+               </span>
+                </aura:if>
+               <lightning:button iconName="utility:chevronright" iconPosition="right" 
+                  disabled="{!( v.currentPageNumber == v.totalPages || v.totalPages ==0) }" onclick="{!c.onNext}"/>
+               <lightning:button label="Last" iconName="utility:right" iconPosition="right" 
+                  disabled="{!( v.currentPageNumber == v.totalPages || v.totalPages ==0 )}" onclick="{!c.onLast}"/>
+               <!--</lightning:layoutItem>
+                  </lightning:layout>
+                  </lightning:card>-->
+            </div>
+         </div><!--Bottom Pagination Ends Here -->           
+      </div><!--New Container Ends Here -->
+   </div><!--Page Container Ends Here -->   
+</aura:component>

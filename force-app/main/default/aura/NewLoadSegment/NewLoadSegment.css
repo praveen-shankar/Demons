@@ -1,0 +1,24 @@
+/*.THIS .slds-col.slds-size_1-of-12.service-group-checkbox 
+{
+	width: 4.333333% !important;
+}*/
+
+.THIS .slds-form-element__control.slds-grow
+{
+    width: 70% !important;
+}
+
+.THIS table.record-table
+{
+    background-color: #ccc !important;
+}
+
+.THIS .slds-grid.slds-wrap.service-group-grid
+{
+    padding-top: 23px;
+}
+
+.THIS .slds-table_bordered
+{
+    border-bottom: 0 !important;
+}

@@ -1,0 +1,38 @@
+<aura:component controller="crm_addServicesControllerLightning" access="public">
+   <aura:attribute name="actualServiceFields" type="crm_Dynamic_Columns_Add_Opp_Services__c[]"/>
+   <aura:attribute name="productId" type="String"/> 
+   <aura:attribute name="picklistFieldOptions" type="Object" access="public"/>
+   <aura:attribute name="displayPicklistComponent" type="Boolean" default="false"/>
+   <aura:attribute name="crm_Unit_Price__c" type="String"/>
+   <aura:attribute name="showUnitprice" type="Boolean" default="false"/> 
+   <aura:attribute name="crm_Discount__c" type="String"/>
+   <aura:attribute name="showDiscount" type="Boolean" default="false"/>  
+   <aura:handler name="init" value="{!this}" action="{!c.actionOnLoad}"/>
+    
+   <aura:method name="captureAddSerdataAuraMethod" action="{!c.captureInputValuesAdditionalServices}" description="Method to be called from parent component">  
+   </aura:method> 
+    
+   <div class="c-container">
+      <div class="slds-scrollable--x">
+         <lightning:layout verticalAlign="center">
+            <table class="slds-table slds-table--bordered slds-table--striped" >
+               <tr>
+                  <lightning:layoutItem flexibility="auto" padding="around-small">
+                        <aura:if isTrue="{!v.showDiscount}">
+                           <lightning:input type="number" label="{!$Label.c.Discount_percentage}" name="Discount %" aura:id="discount" value="{!v.crm_Discount__c}" min="0" max="100" step="0.01" onchange="{!c.trackInput}"/>
+                        </aura:if>
+                        <aura:if isTrue="{!v.showUnitprice}">
+                           <lightning:input type="number" label="{!$Label.c.Unit_Price}" name="Unit Price" aura:id="unitprice" value="{!v.crm_Unit_Price__c}" min="0" step="0.01" onchange="{!c.trackInput}"/>
+                        </aura:if>
+                      	<!--Uncomment if picklist fields are needed on Additional Services
+                     	<aura:if isTrue="{!v.displayPicklistComponent}">
+                        	<c:lightningPicklistComponent picklistoptions="{#v.picklistFieldOptions}" actualServiceFields="{#v.actualServiceFields}" aura:id="lightningPicklistComponentId"/>
+                     	</aura:if>
+						--> 
+                  </lightning:layoutItem>
+               </tr>
+            </table>
+         </lightning:layout>
+      </div>
+   </div>
+</aura:component>

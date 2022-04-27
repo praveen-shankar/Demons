@@ -1,0 +1,244 @@
+<aura:component controller="CS_MonetaryTransactionLineNPBOEBS" implements="force:hasRecordId,force:lightningQuickActionwithoutHeader" access="global">
+	<aura:attribute name="transactionlineitems" type="Monetary_Transaction_Line_Item__c[]"/>
+    <aura:attribute name="transaction" type="Monetary_Transaction__c"/>
+    <aura:attribute name="transcase" type="Case"/>
+    <aura:attribute name="allowedarticles" type="Map" default=""/>
+    <aura:attribute name="MTRecordTypeName" type="String" />
+    <aura:attribute name="nocase" type="Boolean" default="false"/>
+    <aura:attribute name="errors" type="String" default=""/>
+      
+     <aura:attribute Name="selItem" type="object"  access="public" /> 
+    
+     <aura:attribute name="selectedArticle" type="String"/>
+    <aura:attribute name="type" type="String"/>
+    <aura:attribute name="RegressType" type="List"/>
+     <aura:attribute name="OperatingUnit" type="List"/>
+    <aura:attribute name="lineitemrecord" type="Monetary_Transaction_Line_Item__c" default="{'sObjectType':'Monetary_Transaction_Line_Item__c','Type__c':'', 'Description__c':'AUTO'}"/>
+      <lightning:notificationsLibrary aura:id="notifLib" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <div class="slds-grid slds-grid_vertical">
+  <div class="slds-p-top_large"></div>
+      <form>
+         <div class="slds-text-title_caps slds-align_absolute-center slds-border_bottom">
+            <lightning:icon iconName="standard:product_item_transaction" size="small" alternativeText="{!$Label.c.cs_AddNew}" /> &nbsp;
+            <strong>{!$Label.c.cs_transactionLine}</strong></div>
+      <h3 class="slds-section__title slds-theme_offline">
+    <span class="slds-truncate slds-p-horizontal_small" title="{!$Label.c.Add_New_Line}">{!$Label.c.Add_New_Line}</span>
+  </h3>
+     
+     <div class="slds-card ">
+          <table class="slds-table slds-table_bordered slds-table_striped slds-table_cell-buffer slds-table_fixed-layout">
+ <tr>
+     <td>
+           <div class="" title="Transaction Number">{!$Label.c.cs_Transaction_Number}</div>
+     </td>
+     <td>
+         <ui:outputText title="{!$Label.c.cs_transactionnumber}" value="{!v.transaction.Name}"></ui:outputText>
+     </td>
+              </tr>
+    <tr> 
+        <td>  
+    <div class="" title="Product">{!$Label.c.cs_Product}</div>
+        </td>
+        <td><ui:outputText title="{!$Label.c.cs_Product}" value="{!v.transaction.Service_Product__c}"></ui:outputText> </td>
+      </tr>  
+              <tr>
+                  <td> <ui:outputText title="{!$Label.c.cs_Paymenttype}"  value="{!$Label.c.cs_Paymenttype}"/></td>
+                  <td>  <lightning:select  aura:id="paymenttype" required ="true" value="{!v.selectedArticle}" onchange="{!c.onChangearticle}" >
+                        <aura:iteration items="{!v.allowedarticles}"  var="cus" indexVar="key">
+                       <option value="{!cus.key}" text="{!cus.value}"></option>
+                        </aura:iteration>
+                    </lightning:select></td>
+              </tr>
+         </table>
+     </div>
+        
+        <div class="slds-card ">
+          <table class="slds-table slds-table_bordered slds-table_striped slds-table_cell-buffer slds-table_fixed-layout">
+         <aura:if isTrue="{!v.lineitemrecord.Type__c=='Regress'}"> 
+              <tr>
+             <td> <ui:outputText title="{!$Label.c.cs_recourse + $Label.c.cs_Type}" value="{!$Label.c.cs_recourse + $Label.c.cs_Type}"></ui:outputText> </td>
+              <td>
+					<lightning:select aura:id="Regress_type__c"  value="{!v.lineitemrecord.Regress_type__c}">
+						<ui:inputSelectOption label="" text=""/>
+						<aura:iteration items="{!v.RegressType}" var="cus" indexVar="key">
+							<option value="{!cus.key}" text="{!cus.value}"></option>
+						</aura:iteration>
+					</lightning:select>
+              </td>
+              </tr>
+             
+                <tr><td> <ui:outputText title="{!$Label.c.cs_Forwarder}" value="{!$Label.c.cs_Forwarder}"></ui:outputText> </td>
+                  <td>
+      <ui:inputText value="{!v.transcase.transporter__c}" aura:id="transporter__c"/>
+                  </td></tr>
+             
+             <tr><td> <ui:outputText title="{!$Label.c.cs_Carnumbering}" value="{!$Label.c.cs_Carnumbering}"></ui:outputText> </td>
+                  <td>
+      <ui:inputText value="{!v.transcase.car_number__c}" aura:id="car_number__c"/>
+                  </td></tr>
+             
+             <tr>
+             <td> <ui:outputText title="{!$Label.c.cs_Accounting_Unit}" value="{!$Label.c.cs_Accounting_Unit}"></ui:outputText> </td>
+              <td>
+					<lightning:select required="true" aura:id="cs_Accounting_Unit__c"  value="{!v.lineitemrecord.cs_Accounting_Unit__c}">
+                        <ui:inputSelectOption label="" text=""/>
+						<aura:iteration items="{!v.OperatingUnit}" var="cus" indexVar="key">
+							<option value="{!cus.key}" text="{!cus.value}"></option>
+						</aura:iteration>
+					</lightning:select>
+              </td>
+              </tr>
+                <tr><td> <ui:outputText title="{!$Label.c.cs_Customer + $Label.c.cs_recourse}" value="{!$Label.c.cs_Customer + $Label.c.cs_recourse}"></ui:outputText> </td>
+                  <td>
+                      <ui:outputText title="{!$Label.c.cs_Customer + $Label.c.cs_recourse}" value="{!v.transaction.Regress_Customer__r.Name}"></ui:outputText> 
+                    </td>
+             </tr>
+              
+               <!-- <tr><td> <ui:outputText title="{!$Label.c.cs_Customer + $Label.c.cs_recourse}" value="{!$Label.c.cs_Customer + $Label.c.cs_recourse}"></ui:outputText> </td>
+                  <td>
+                      
+                       <c:CS_RegressCustomer
+                          objectName="User"
+                          field_API_text="Name"
+                          field_API_val="Id"
+                          limit="100"
+                          field_API_search="Name"
+                          lookupIcon="standard:Account" 
+                          selItem ="{!v.selItem}" 
+                          placeholder="Enter Customer Name" 
+                        
+            		 /> 
+     
+                  </td></tr> -->
+              </aura:if>
+              <!--  rtegress end -->
+              
+               <aura:if isTrue="{!v.lineitemrecord.Type__c=='Manuell Behandling'}"> 
+                   <tr><td> <ui:outputText title="{!$Label.c.cs_invoice_number}" value= "{!$Label.c.cs_invoice_number}"></ui:outputText> </td>
+                  <td>
+      <ui:inputText value="{!v.lineitemrecord.Invoice_number__c}" aura:id="Invoice_number__c"/>
+                  </td></tr>
+                   
+                     <tr>
+             <td> <ui:outputText title="Accounting Unit" value="Accounting Unit"></ui:outputText> </td>
+              <td>
+					<lightning:select messageWhenValueMissing="Choose one!" required="true" aura:id="cs_Accounting_Unit__c"  value="{!v.lineitemrecord.cs_Accounting_Unit__c}" >
+					<option value="" text=""></option>
+						<aura:iteration items="{!v.OperatingUnit}" var="cus" indexVar="key">
+							<option value="{!cus.key}" text="{!cus.value}"></option>
+						</aura:iteration>
+					</lightning:select>
+              </td>
+              </tr>
+                 
+             
+              </aura:if>
+              <aura:if isTrue="{!or(or( v.lineitemrecord.Type__c=='Kompensasjon' ,v.lineitemrecord.Type__c=='Refusjon'),v.lineitemrecord.Type__c=='Erstatning')}"> 
+             <tr>
+             <td> <ui:outputText title="Accounting Unit" value="Accounting Unit"></ui:outputText> </td>
+             <td>
+                 <lightning:select aura:id="cs_Accounting_Unit__c"  value="{!v.lineitemrecord.cs_Accounting_Unit__c}" required="true">
+                    <ui:inputSelectOption label="" text=""/>
+                     <aura:iteration items="{!v.OperatingUnit}" var="cus" indexVar="key">
+                         <option value="{!cus.key}" text="{!cus.value}"></option>
+                     </aura:iteration>
+                 </lightning:select>
+              </td>
+              </tr>
+               
+              </aura:if>
+              
+               <aura:if isTrue="{!(v.transaction.RecordType.Name != $Label.c.cs_transactionCurrency)}">
+                    <tr><td>
+                       <ui:outputText title="{!$Label.c.cs_AmountsexcludingVAT}" value="{!$Label.c.cs_AmountsexcludingVAT}"></ui:outputText>
+                        </td>
+                  <td>
+     <ui:inputText value="{!v.lineitemrecord.Line_Amount__c}" aura:id="Line_Amount__c" required="true" ></ui:inputText>
+                  </td></tr>
+              </aura:if>
+                <aura:if isTrue="{!(v.transaction.RecordType.Name == $Label.c.cs_transactionCurrency)}">
+                    <tr><td> <ui:outputText title="{!$Label.c.cs_Amount}" value="{!$Label.c.cs_Amount}"></ui:outputText> </td>
+                  <td>
+      <lightning:input value="{!v.lineitemrecord.Amount_foreign_currency__c}" aura:id="Amount_foreign_currency__c" required= "true" messageWhenValueMissing="Please enter amount"></lightning:input>
+                  </td></tr>
+              </aura:if>
+            </table>
+            
+                   <footer class="slds-modal__footer slds-modal__footer_directional slds-align_absolute-center"> 
+               <lightning:buttonGroup  aura:id="btngroup">
+                   <aura:if isTrue="{!empty(v.type)}">  
+                   	<lightning:button variant="neutral" disabled="true" label="{!$Label.c.cs_Save + $Label.c.cs_transactionLine}" iconName="utility:save"  aura:id="addline" onclick="{!c.addline}"/>
+                         <aura:set attribute="else"> 
+                       <lightning:button variant="neutral" disabled="false" label="{!$Label.c.cs_Save + $Label.c.cs_transactionLine}" iconName="utility:save"  aura:id="addline" onclick="{!c.addline}"/>     
+                       </aura:set>
+                   </aura:if>
+                    <lightning:button variant="neutral" label="{!$Label.c.cs_Cancel}" iconName="utility:close" onclick="{!c.closeQuickAction}"/>   <!--     iconName="utility:close" iconPosition="left"-->
+                    
+                  
+                </lightning:buttonGroup> 
+            </footer>  
+        </div>
+      <div></div>
+         <ui:scrollerWrapper class="wrapui"> 
+       <h3 class="slds-section__title slds-theme_offline">
+    <span class="slds-truncate slds-p-horizontal_small" title="{!$Label.c.cs_EarlierTransactionLines}">{!$Label.c.cs_EarlierTransactionLines}</span>
+  </h3>
+     <div class="slds-card ">
+          <table class="slds-table slds-table_bordered slds-table_striped slds-table_cell-buffer slds-table_fixed-layout">
+  <thead>
+    <tr class="slds-line-height_reset">
+         <th class="" scope="col">
+        <div class="" title="{!$Label.c.cs_Transaction_Number}">{!$Label.c.cs_Transaction_Number}</div>
+      </th>
+    
+     
+      <th class="" scope="col">
+        <div class="" title="{!$Label.c.cs_Paymenttype}">{!$Label.c.cs_Paymenttype}</div>
+      </th>
+        
+         <th class="" scope="col">
+        <div class="" title="{!$Label.c.cs_Regress_type}">{!$Label.c.cs_Regress_type}</div>
+      </th>
+        
+         <th class="" scope="col">
+        <div class="" title="{!$Label.c.cs_Amounts_excluding_VAT}">{!$Label.c.cs_Amounts_excluding_VAT}</div>
+      </th>
+           <th class="" scope="col">
+        <div class="" title="{!$Label.c.cs_Amounts_including_VAT}">{!$Label.c.cs_Amounts_including_VAT}</div>
+      </th>
+               <th class="" scope="col">
+        <div class="" title="{!$Label.c.cs_Article_Number}">{!$Label.c.cs_Article_Number}</div>
+              </th>
+        
+           <th class="" scope="col">
+        <div class="" title="{!$Label.c.cs_Accounting_Unit_name}">{!$Label.c.cs_Accounting_Unit_name}</div>
+              </th>
+         </tr>
+        </thead>
+            <aura:iteration items="{!v.transactionlineitems}" var ="obj">
+          <tbody> 
+                   <td><div class="slds-truncate">{!obj.Name}</div></td>
+                   <td><div class="slds-truncate">{!obj.Type__c}</div></td>
+                   <td><div class="slds-truncate">{!obj.Regress_type__c}</div></td>
+                   <td><div class="slds-truncate">{!obj.Line_Amount__c}</div></td>
+                   <td> <div class="slds-truncate">{!obj.Line_Amount_inc_vat__c}</div></td>
+                   <td> <div class="slds-truncate">{!obj.Article_Number__c}</div></td>
+                   <td> <div class="slds-truncate">{!obj.cs_Accounting_Unit_Name__c}</div></td>
+               
+                 
+          </tbody>
+                   </aura:iteration>
+    </table>
+    </div>
+     </ui:scrollerWrapper>  
+     <br/>
+     <div>
+     
+
+     </div>
+        </form> 
+    </div> <!-- div end -->
+	
+</aura:component>

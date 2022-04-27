@@ -1,0 +1,21 @@
+<apex:page standardController="Task">
+
+    <apex:repeat value="{!Task.Attachments}" var="attachment" id="theRepeat" first="0" rows="1">
+
+        <apex:actionRegion rendered="{!attachment.contentType == 'application/pdf'}">    
+            <embed src="/servlet/servlet.FileDownload?file={!attachment.id}" width="100%" height="400" />
+        </apex:actionRegion>
+
+        <apex:pageblock >
+            <apex:pageBlockSection columns="1">
+            <!--CSphase2, Akash, 19122016-->
+            <!--Første vedlegg er ikke en PDF og kan derfor ikke vises. Se listen nedenfor for å lese vedleggene-->
+                {!$Label.cs_taskAttachment}
+            </apex:pageBlockSection>
+        </apex:pageblock>
+
+    </apex:repeat>
+
+
+    
+</apex:page>

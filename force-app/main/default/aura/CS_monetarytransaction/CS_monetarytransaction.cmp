@@ -1,0 +1,45 @@
+<aura:component implements="force:lightningQuickActionWithoutHeader,force:hasRecordId,force:hasSObjectName" access="public" controller="CS_MonetaryTransaction">
+    <!--Author: supriya-->
+    <aura:attribute name="options" type="List"/>
+    <aura:attribute name="noOptionsFound" type="boolean" default="false"/>
+    <aura:attribute name="recordtypeid" type="String" access="public"/>
+    <aura:attribute name="recordId" type="String"/>
+    <aura:attribute name="preselected" type="String"/>
+    <aura:attribute name="record" type="Object"/>
+    <aura:attribute name="recordFields" type="Object"/>
+    <aura:attribute name="recordError" type="String"/>
+    <aura:attribute name="recordErrorOnload" type="String"/>
+	<aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <div>
+        <div class="slds-box">
+            <div class="slds-text-title_caps slds-align_absolute-center slds-border_bottom">
+                <lightning:icon iconName="action:new_opportunity" size="xx-small"/>
+                &nbsp;
+                <h1>{!$Label.c.cs_new_monet}</h1>
+            </div>
+            <div class="slds-p-top_large"></div>
+
+            <aura:if isTrue="{!v.noOptionsFound}">
+                <ui:message title="Warning" severity="warning" closable="false">
+                  {!$Label.c.cs_no_access_on_monetarytransaction}
+                </ui:message>
+            </aura:if>
+            <aura:if isTrue="{!!v.noOptionsFound}">
+                <div class="slds-box slds-text-heading_small">
+                    <lightning:radioGroup name="TransactionRecordTypes"
+                        label="{!$Label.c.select_transaction_type}"
+                        options="{! v.options }"
+                        value="{! v.preselected }"
+                        type="radio"
+                        onchange="{! c.handleChange }"
+                        variant="standard"                  
+                        messageWhenValueMissing="Please select atleast one value"/>
+                </div>
+            </aura:if>
+        </div>
+        <div class="slds-docked-form-footer">
+            <lightning:button iconName="utility:close" variant="neutral" label="{!$Label.c.cs_Cancel}" onclick="{!c.cancel}"/>
+            <lightning:button iconName="utility:forward" variant="neutral" label="{!$Label.c.cs_Next}" onclick="{!c.next}" aura:id="nextbutton" disabled="{!v.noOptionsFound}"/>
+        </div>
+    </div>
+</aura:component>

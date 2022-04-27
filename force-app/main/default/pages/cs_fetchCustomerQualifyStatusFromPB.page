@@ -1,0 +1,47 @@
+<apex:page standardController="account" extensions="cs_DigitollApiHandler" action="{!getdisqualifyStatusFromPB }" showHeader="false" showQuickActionVfHeader="false" >
+	
+    <script type="text/javascript">
+    var AccountId = '{!account.Id}';
+    var errorMsg = '';
+        var isLex = '';
+        isLex = "{!$User.UIThemeDisplayed}";
+    console.log('isLex --->' + isLex);
+    if(isLex != "Theme4u" && isLex != "Theme4t" && isLex != "Theme4d"){
+        var errorBox = confirm("{!errorMessageClassic}");
+    		location.href = "/" + AccountId;
+    }
+    else{
+        errorMsg = "{!errorMessage}";
+        console.log('error --> '+errorMsg);
+        sforce.one.showToast({
+    	"type": "Error",
+    	"message": "{!$Label.Error_Toast_Message}" });
+    }
+    
+    function closeTab(){
+        console.log('Inside closeTab');
+        sforce.one.navigateToURL('/'+AccountId, true);
+    }
+    
+    </script>
+    
+<apex:slds />
+    
+<div class="demo-only" style="height:24rem">
+  <section role="alertdialog" tabindex="0" aria-labelledby="prompt-heading-id" aria-describedby="prompt-message-wrapper" class="slds-modal slds-fade-in-open slds-modal_prompt" aria-modal="true">
+    <div class="slds-modal__container">
+      <header class="slds-modal__header slds-theme_error slds-theme_alert-texture">
+        <h2 class="slds-text-heading_medium" id="prompt-heading-id">An Error Occured</h2>
+      </header>
+      <div class="slds-modal__content slds-p-around_medium" id="prompt-message-wrapper">
+        <p>{!errorMessage}</p>
+      </div>
+      <footer class="slds-modal__footer slds-theme_default">
+          <button class="slds-button slds-button_neutral" onClick="closeTab();return false;">Close</button>
+      </footer>
+    </div>
+  </section>
+  <div class="slds-backdrop slds-backdrop_open"></div>
+</div>    
+    
+</apex:page>

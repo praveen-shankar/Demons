@@ -1,0 +1,60 @@
+<aura:component controller="crm_addServicesControllerLightning" access="public">
+   <aura:attribute name="actualServiceFields" type="crm_Dynamic_Columns_Add_Opp_Services__c[]" />
+   <aura:attribute name="capturedTotalObjectAS" type="Object" access="public" />
+   <aura:attribute name="additionalServiceFields" type="crm_Dynamic_Columns_Add_Opp_Services__c[]" />
+   <aura:attribute name="picklistFieldOptions" type="Object" access="public" />
+   <aura:attribute name="displayPicklistComponent" type="Boolean" default="false" />
+   <aura:attribute name="inputvalue" type="String" />
+    <aura:attribute name="servicefamily" type="String" />
+    <aura:attribute name="passiveReturnEnabled" type="Boolean" default="false" />
+    <aura:attribute name="freePickUpEnabled" type="Boolean" default="false" />
+
+     <aura:attribute name="Passivereturnoptions" type="List"/>
+   <aura:handler name="init" value="{!this}" action="{!c.actionOnLoad}" />
+   <aura:attribute name="allSelectedVASSurchargeIds" type="List" access="public" />
+   <aura:registerEvent name="disableSave" type="c:addServicesOppDisableSave" />
+   <aura:method name="captureASdataAuraMethod" action="{!c.captureInputData}" description="Method to be called from parent component">
+      <aura:attribute name="actualServiceId" type="String" />
+      <aura:attribute name="oppId" type="String" />
+   </aura:method>
+   <div class="c-container">
+      <div class="slds-scrollable--x">
+         <lightning:layout verticalAlign="center">
+            <table class="slds-table slds-table--bordered slds-table--striped">
+               <tr>
+                  <lightning:layoutItem flexibility="auto" padding="around-small">
+                     <aura:iteration items="{!v.actualServiceFields}" var="f2" aura:id="actualServiceLoop">
+                        <aura:if isTrue="{!f2.crm_Type__c ne 'picklist'}">
+                           <lightning:input type="{!f2.crm_Type__c}" label="{!f2.crm_Label__c}" name="{!f2.crm_API_Name__c}" aura:id="inputfield" value="{!f2.crm_Value__c}" step="0.01" min="0" max="{!(f2.crm_API_Name__c == 'crm_Discount__c') ? 100 : ''}" onchange="{!c.handleInputError}" />
+                        </aura:if>
+                     </aura:iteration>
+                     <lightning:input type="number" name="standardUnitPrice" required="true" label="{!$Label.c.Annual_Service_Value}" aura:id="inputfield" min="0" step="0.01" onchange="{!c.handleInputError}"/>
+                     <div class="slds-p-top_x-small"></div>
+                     <lightning:input type="checkbox" label="{!$Label.c.Free_PickUp}" name="freepickupflag" aura:id="freepickupflag" disabled="{!v.freePickUpEnabled}"/> 
+                    <!-- <lightning:input type="checkbox" label="Passive Return" name="passivereturnflag" aura:id="passivereturnflag"/> -->
+                       <ui:inputSelect aura:id="crm_Passive_Return__c"  label="{!$Label.c.Passive_Return}" disabled="{!v.passiveReturnEnabled}">
+                                
+                                <aura:iteration items="{!v.Passivereturnoptions}" var="cus" indexVar="key">
+                                    <ui:inputSelectOption label="{!cus.key}" text="{!cus.value}" />
+                                    
+                                </aura:iteration>
+                      </ui:inputSelect>
+                     <div class="slds-p-top_xx-small"></div>
+                     <div class="slds-grid slds-wrap">
+                        <div class="slds-size_1-of-2">
+                           <lightning:input type="number" name="WeightIntervalFrom" label="{!$Label.c.Weight_Interval_From}" aura:id="inputfield" min="0" onchange="{!c.handleInputError}"/>
+                        </div>
+                        <div class="slds-size_1-of-2">
+                           <lightning:input type="number" name="WeightIntervalTo" label="{!$Label.c.Weight_Interval_To}" aura:id="inputfield" min="0" onchange="{!c.handleInputError}"/>
+                        </div>
+                     </div>
+                     <aura:if isTrue="{!v.displayPicklistComponent}">
+                        <c:lightningPicklistComponent picklistoptions="{#v.picklistFieldOptions}" actualServiceFields="{#v.actualServiceFields}" aura:id="lightningPicklistComponentId" />
+                     </aura:if>
+                  </lightning:layoutItem>
+               </tr>
+            </table>
+         </lightning:layout>
+      </div>
+   </div>
+</aura:component>

@@ -1,0 +1,15 @@
+<aura:component access="global" implements="force:hasRecordId,force:lightningQuickActionwithoutHeader" controller="CS_CloseInquiry" >
+    <aura:attribute name="recordId" type="String" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+     <aura:attribute name="closederror" type="boolean" default="false"/>
+    
+     <aura:handler event="aura:waiting" action="{!c.showSpinner}"/>
+    <aura:handler event="aura:doneWaiting" action="{!c.hideSpinner}"/>
+    <aura:attribute name="Spinner" type="boolean" default="false"/>
+    
+      <aura:if isTrue="{!v.closederror}">
+           <ui:message title="Information" severity="info" closable="false">
+         {!$Label.c.cs_Case_closed}  
+        </ui:message>
+    </aura:if>
+</aura:component>

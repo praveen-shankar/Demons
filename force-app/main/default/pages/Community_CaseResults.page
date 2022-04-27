@@ -1,0 +1,45 @@
+<apex:page standardController="Case" extensions="Community_SearchCaseController" showHeader="false" sidebar="false" contentType="application/vnd.ms-excel#{!fileName}.xls" cache="true">
+    
+    <head>
+        <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+    </head>
+    <apex:pageBlock id="thePageBlock">
+        <apex:pageBlockTable value="{!caseSearchResults}" var="case" id="reportExample">
+           <!-- <apex:column value="{!case.caseNumber}" headervalue="Saksnr."/>
+            <apex:column value="{!case.subject}" headervalue="Emne"/>
+            <apex:column value="{!case.Created_by_Unit__r.Name}" headervalue="Reg. av enhet"/>
+            <apex:column value="{!case.unit_to_blame__r.Name}" headervalue="Sak relatert til enhet"/>
+            <apex:column value="{!case.Status}" headervalue="Status"/>
+            <apex:column value="{!case.CreatedDate}" headervalue="Opprettet"/>
+            <apex:column value="{!case.deviation_time_of_incident__c}" headervalue="Tid for hendelse"/>
+            <apex:column value="{!case.recordType.name}" headervalue="Sakstype"/>
+            <apex:column value="{!case.Category__c}" headervalue="Henvendelsestype"/> 
+            <apex:column value="{!case.Produkt__c}" headervalue="Produkt"/>
+            <apex:column value="{!case.Code_Reason1__r.name}" headervalue="Årsak1"/>
+            <apex:column value="{!case.Code_Reason2__r.name}" headervalue="Årsak2"/>
+            
+            <apex:column value="{!case.Account.Name}" headervalue="Kunde"/>
+           <apex:column headervalue="Beskrivelse"><apex:outputText value="{!case.Description}" escape="false" /></apex:column> 
+           
+           CsPhase2 Supriya 20122016   
+           -->
+           
+            <apex:column value="{!case.caseNumber}" headervalue="{!$Label.cs_Case_number}"/>
+            <apex:column value="{!case.subject}" headervalue="{!$Label.cs_Subject}"/>
+            <apex:column value="{!case.Created_by_Unit__r.Name}" headervalue="{!$Label.cs_reg_Device}"/>
+            <apex:column value="{!case.unit_to_blame__r.Name}" headervalue="{!$Label.cs_Case_related_to_unit}"/>
+            <apex:column value="{!case.Status}" headervalue="Status"/>
+            <apex:column value="{!case.CreatedDate}" headervalue="{!$Label.cs_Createddate}"/>
+            <apex:column value="{!case.deviation_time_of_incident__c}" headervalue="{!$Label.cs_Time_Event}"/>
+            <apex:column value="{!case.recordType.name}" headervalue="{!$Label.cs_Case_Type}"/>
+            <apex:column value="{!case.Category__c}" headervalue="{!$Label.cs_Category}"/> 
+            <apex:column value="{!case.Produkt__c}" headervalue="{!$Label.cs_Product}"/>
+            <apex:column value="{!case.Code_Reason1__r.name}" headervalue="{!$Label.cs_Cause}1"/>
+            <apex:column value="{!case.Code_Reason2__r.name}" headervalue="{!$Label.cs_Cause}2"/>
+            
+            <apex:column value="{!case.Account.Name}" headervalue="{!$Label.cs_Customer}"/>
+           <apex:column headervalue="{!$Label.cs_Description}"><apex:outputText value="{!case.Description}" escape="false" /></apex:column> 
+               
+        </apex:pageBlockTable>
+    </apex:pageBlock>
+</apex:page>

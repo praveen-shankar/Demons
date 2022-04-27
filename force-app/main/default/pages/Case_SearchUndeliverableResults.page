@@ -1,0 +1,163 @@
+<apex:page Controller="Case_SearchUndeliverableController">
+<apex:includeScript value="/support/console/26.0/integration.js"/>
+
+<script>
+    function getPopup(){
+        //alert("OK");
+        var a = document.getElementById("{!$Component.undeliverableList.undeliverableInfoDetailsContent}");
+<!--        var a = document.getElementById("{!$Component.j_id0:searchUndeliverable:j_id51:undeliverableList.undeliverableInfoDetailsContent}");-->
+        a.style.visibility="visible";
+    }
+    
+    function openTab(id) 
+{
+ if (sforce.console.isInConsole()) {
+ sforce.console.getEnclosingPrimaryTabId(closeSubtab);
+  sforce.console.openSubtab(closeSubtab , '/' + id , true, '');
+  }
+ else
+  window.location.href = '/' + id;
+  
+}
+ var closeSubtab = function closeSubtab(result) {
+            //Now that we have the primary tab ID, we can close it
+            var tabId = result.id;
+           // sforce.console.closeTab(tabId);
+        };
+</script>
+
+<style type="text/css">
+   .customPopup{
+        background-color: white;
+        border-style: solid;
+        border-width: 1px;
+        left: 50%;
+        padding:10px;
+        position: absolute;
+        z-index: 9999;
+        /* These are the 3 css properties you will need to tweak so the pop 
+        up displays in the center of the screen. First set the width. Then set 
+        margin-left to negative half of what the width is. You can also add 
+        the height property for a fixed size pop up.*/
+        width: 500px;
+        margin-left: -250px;
+        top:125px;
+    }
+    .textCounterOuter{
+        text-align:left;                     
+    }
+</style>
+
+<apex:form id="undeliverableList">
+    
+<!--    <apex:actionFunction name="attachUndeliverable" action="{!attachUndeliverableToCase}" />-->
+    
+    <apex:PageBlock id="listBlock">
+
+        <apex:PageBlockTable id="litTable" value="{!results}" var="r">
+            <!--<apex:column headerValue="Ubesørgelig nummer" >
+            CSPhase2, 19122016, Supriya ->Added the labels
+            -->
+            
+            <apex:column headerValue="{!$Label.cs_Undeliverable_Number}" >
+                <apex:commandLink action="{!viewUndeliverable}" value="{!r.name}" onclick="openTab('{!r.Id}');">
+                    <apex:param value="{!r.Id}" assignTo="{!undeliverableId}" name="undeliverableId" />
+                </apex:commandLink>
+            </apex:column>
+            <!--
+            <apex:column headerValue="Innleverings Dato">{!DAY(r.submitted)}/{!MONTH(r.submitted)}/{!YEAR(r.submitted)}</apex:column>
+            <apex:column headerValue="Mottaker" value="{!r.recieverName}"/>
+            <apex:column headerValue="Avsender" value="{!r.shipperName}"/>
+            <apex:column headerValue="Ytre/gjenstands Beskrivelse" value="{!r.outerDescription}"/>
+            <apex:column headerValue="Innhold beskrivelse" value="{!r.innerDescription}"/>    
+            <apex:column headerValue="Sted Funnet" value="{!r.Funnet}"/>
+             CSPhase2, 19122016, Supriya ->Added the labels
+            -->
+            
+             <apex:column headerValue="{!$Label.cs_submission}">{!DAY(r.submitted)}/{!MONTH(r.submitted)}/{!YEAR(r.submitted)}</apex:column>
+            <apex:column headerValue="{!$Label.cs_Recipient}" value="{!r.recieverName}"/>
+            <apex:column headerValue="{!$Label.cs_Sender}" value="{!r.shipperName}"/>
+            <apex:column headerValue="{!$Label.cs_Outer_Target_Description}" value="{!r.outerDescription}"/>
+            <apex:column headerValue="{!$Label.cs_Content_Description}" value="{!r.innerDescription}"/>    
+            <apex:column headerValue="{!$Label.cs_location_Found}" value="{!r.Funnet}"/>
+           
+            
+            <apex:column headerValue="{!$Label.cs_Status}" value="{!r.status}" rendered="{!currentSearchStatus}" />
+<!--            <apex:column headerValue="Antall treff" value="{!r.hitsTotal}"/> -->
+            <apex:column >
+                <!--<apex:commandLink value="Funnet" onClick="getPopup()" rerender="messages" rendered="{!r.status == 'Uidentifisert'}">
+                  CSPhase2, 19122016, Supriya ->Added the labels
+               -->
+            
+            <apex:commandLink value="{!$Label.cs_Found}" onClick="getPopup()" rerender="messages" rendered="{!r.status == 'Uidentifisert'}">
+                
+                    <apex:param value="{!r.Id}" assignTo="{!undeliverableId}" name="undeliverableId" />
+                </apex:commandLink>
+                
+                <!--<apex:commandLink value="Gå til" action="{!viewUndeliverable}" rendered="{!r.status != 'Uidentifisert'}">
+                 CSPhase2, 19122016, Supriya ->Added the labels
+               -->
+                <apex:commandLink value="{!$Label.cs_Go_to}" action="{!viewUndeliverable}" rendered="{!r.status != 'Uidentifisert'}">
+                    <apex:param value="{!r.Id}" assignTo="{!undeliverableId}" name="undeliverableId" />
+                </apex:commandLink>
+            </apex:column>
+        </apex:PageBlockTable>
+    </apex:PageBlock>
+    
+    <apex:outputPanel id="undeliverableInfo" layout="block">
+        <apex:outputpanel layout="block" id="undeliverableInfoDetailsContent" style="visibility:hidden;" styleClass="customPopup">
+            <apex:pageBlock id="undeliverableInfoPageBlock">
+                <apex:pageBlockButtons id="undeliverableInfoButtons" location="bottom">
+                    <apex:commandButton value="OK" action="{!closeUndeliverable}" />
+                    
+                    <!--<apex:commandLink value="Avbryt">
+                      CSPhase2, 19122016, Supriya ->Added the labels
+                   -->
+                    <apex:commandLink value="{!$Label.cs_Cancel}">
+                        <apex:param value="" assignTo="{!undeliverableId}" name="undeliverableId" />
+                    </apex:commandLink>
+                </apex:pageBlockButtons>
+                <apex:pageBlockSection columns="1">
+                    <apex:PageBlockSectionItem >
+                    
+                        <!--<apex:OutputLabel value="Sendes til"/>
+                          CSPhase2, 19122016, Supriya ->Added the labels
+                   -->
+                        <apex:OutputLabel value="{!$Label.cs_Send_To}"/>
+                        <apex:inputTextarea value="{!shipTo}"  rows="7" cols="40"/>
+                    </apex:PageBlockSectionItem>
+                    <apex:PageBlockSectionItem >
+                    <!-- <apex:OutputLabel value="Kommentar"/>
+                      CSPhase2, 19122016, Supriya ->Added the labels
+                   -->
+                        <apex:OutputLabel value="{!$Label.cs_Comment}"/>
+                        <apex:outputPanel id="commentPanel" layout="block">                                           
+                            <apex:inputTextarea onmousedown="limitText(this,{!maxCommentLength}); handleTextAreaElementChange('{!$Component.comments}',{!maxCommentLength}, 'tegn igen', 'tegn over grense');"
+                                onkeyup="limitText(this,{!maxCommentLength}); handleTextAreaElementChange('{!$Component.comments}', {!maxCommentLength}, 'tegn igen', 'tegn over grense');"
+                                onkeydown="limitText(this,{!maxCommentLength}); handleTextAreaElementChange('{!$Component.comments}', {!maxCommentLength}, 'tegn igen', 'tegn over grense');"
+                                onclick="limitText(this,{!maxCommentLength}); handleTextAreaElementChange('{!$Component.comments}', {!maxCommentLength}, 'tegn igen', 'tegn over grense');"
+                                onchange="limitText(this,{!maxCommentLength}); handleTextAreaElementChange('{!$Component.comments}',{!maxCommentLength}, 'tegn igen', 'tegn over grense');"
+                                value="{!comment}" cols="40" rows="7" id="comments"/>
+                            <div class="textCounterOuter">
+                                <div class="textCounterMiddle">
+                                <div class="textCounter" id="{!$Component.comments}_counter">250 tegn igen</div>
+                                </div>
+                                </div>                              
+                       </apex:outputPanel>
+                    </apex:PageBlockSectionItem>                        
+                </apex:pageBlockSection>               
+            </apex:pageBlock>
+        </apex:outputpanel>
+    </apex:outputPanel>
+    
+</apex:form>
+
+<script>
+        function limitText(limitField, limitNum) {          
+            if (limitField.value.length > limitNum) {
+                limitField.value = limitField.value.substring(0, limitNum);
+            }
+        }
+</script>
+    
+</apex:page>

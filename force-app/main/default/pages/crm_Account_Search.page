@@ -1,0 +1,176 @@
+<apex:page controller="crm_AccountSearchController" sidebar="false">
+
+    <apex:includeScript value="{!$Resource.crmJS}"/>
+
+    <apex:form >
+        <apex:pageMessages id="errors" />
+            
+            <apex:pageBlock title="Customer Search">
+                
+                <table width="100%" border="0">
+                    <tr>  
+                    <td width="60px" valign="top">
+                        
+                        <apex:pageBlock title="Parameters"  id="criteria">
+                            
+                            <table cellpadding="2" cellspacing="2">      
+                                <tr>
+                                <td style="font-weight:bold;">Customer Name<br/>
+                                    <apex:inputText id="AccountName"  value="{!AccountName}" label="AccountName"/>   
+                                        </td>
+                                    </tr>
+                                    
+                                    
+                                    <tr>
+                                        <td style="font-weight:bold;">Organization Number<br/>
+                                            <apex:inputText id="orgNo" value="{!orgNo}" label="orgNo"/> 
+                                                </td>
+                                            </tr>
+                                            
+                                            
+                                            <tr>
+                                                <td style="font-weight:bold;">Company Group Name<br/>
+                                                    <apex:inputText id="CompanyGroupName" value="{!CompanyGroupName}" label="CompanyGroupName"/> 
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="font-weight:bold;">Business Street<br/>
+                                                            <apex:inputText id="BusinessStreet" value="{!BusinessStreet}" label="BusinessStreet"/> 
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td style="font-weight:bold;">Business City<br/>
+                                                                    <apex:inputText id="BusinessCity" value="{!BusinessCity}" label="BusinessCity"/> 
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td style="font-weight:bold;">Business Postcode<br/>
+                                                                            <apex:inputText id="BusinessPostalCode" value="{!BusinessPostalCode}" label="BusinessPostalCode"/> 
+                                                                                </td>
+                                                                            </tr>
+                                                                            
+                                                                            <tr>
+                                                                                <td style="font-weight:bold;">Business Country<br/>
+                                                                                    <apex:inputText id="BusinessCountry" value="{!BusinessCountry}" label="BusinessCountry"/> 
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                    
+                                                                                    
+                                                                                    <tr>
+                                                                                        <td style="font-weight:bold;">
+                                                                                            <apex:commandButton value="Search records" action="{!refreshPageSize}" status="fetchStatus"/>  
+                                                                                                </td>
+                                                                                            </tr>
+                                                                                            </table>
+                                                                                            
+                                                                                            </apex:pageBlock>
+                                                                                            
+                                                                                            </td>
+                                                                                            <td valign="top">
+                                                                                                
+                                                                                                <apex:pageBlock rendered="{!Accounts.size>0}" title="Search Result" > 
+                                                                                                    <apex:outputPanel >   
+                                                                                                        
+                                                                                                        
+                                                                                                        <apex:actionStatus id="fetchStatus" >
+                                                                                                            <apex:facet name="start" >
+                                                                                                                <img src="/img/loading.gif" /> Loading ..                    
+                                                                                                                </apex:facet>
+                                                                                                                </apex:actionStatus>
+                                                                                                                </apex:outputPanel> 
+                                                                                                                <br/>
+                                                                                                                    <apex:actionFunction name="refreshPageSize" action="{!refreshPageSize}" status="fetchStatus" reRender="pbId"/>
+                                                                                                                        <apex:pageBlock id="pbId" >
+                                                                                                                            <apex:pageBlockSection title="All Customers" collapsible="false" columns="1">
+                                                                                                                                
+                                                                                                                                <apex:pageblockTable value="{!Accounts}" var="a"  >
+                                                                                                                                    
+                                                                                                                                    <apex:column headerValue="Name">  
+                                                                                                                                        <apex:outputlink value="/{!a.id}"  target="{!IF(flag,'_self','_blank')}">{!a.Name}</apex:outputlink>  
+                                                                                                                                        </apex:column>  
+                                                                                                                                        
+                                                                                                                                        <!--<apex:column headerValue="RecordType">       {!a.recordtype.Name}   </apex:column>-->  
+                                                                                                                                        <apex:column headerValue="Organization No">   {!a.Orga__c}   </apex:column>   
+                                                                                                                                        <apex:column headerValue="Company Group Name">{!a.crm_Company_Group_Name__c }  </apex:column>   
+                                                                                                                                        <apex:column headerValue="Postcode">  {!a.crm_bus_addr_Zip_Code__c}   </apex:column>   
+                                                                                                                                        <apex:column headerValue="City">    {!a.crm_bus_addr_City__c}    </apex:column>  
+                                                                                                                                        <apex:column headerValue="No of Department">
+                                                                                                                                            
+                                                                                                                                            <apex:outputText value="{0, number, 0}">
+                                                                                                                                                <apex:param value="{!FLOOR(a.crm_Count_of_Relation_level_Accounts__c)}" />
+                                                                                                                                                    </apex:outputText>
+                                                                                                                                                
+                                                                                                                                                </apex:column> 
+                                                                                                                                                <apex:column style="text-align:right;" headerValue="Revenue This Yr ( {!defaultCur} )">
+                                                                                                                                                    <apex:outputText styleClass="currencyValue" id="RevenueThisYr" value="{0,number,#,###}"> 
+                                                                                                                                                        <apex:param value="{!(a.crm_Revenue_This_Year__c)}"/> 
+                                                                                                                                                            </apex:outputText>
+                                                                                                                                                        <script>
+                                                                                                                                                            $( ".currencyValue" ).each( function( index, element ){
+                                                                                                                                                            console.log( $( this ).text());
+                                                                                                                                                            
+                                                                                                                                                            $( this ).text($( this ).text().replace(/,/g, ' '));
+                                                                                                                                                            
+                                                                                                                                                            
+                                                                                                                                                        });
+    </script>
+</apex:column>   
+
+<apex:column style="text-align:right;" headerValue="Revenue Last Yr ( {!defaultCur} )" >
+    <apex:outputText styleClass="currencyValue" id="RevenueLastYr" value="{0,number,#,###}"  > 
+        <apex:param value="{!(a.crm_Revenue_Last_Year__c)}"/> 
+    </apex:outputText>
+    <script>
+    $( ".currencyValue" ).each( function( index, element ){
+        console.log( $( this ).text());
+        
+        $( this ).text($( this ).text().replace(/,/g, ' '));
+        
+        
+    });
+    </script>
+</apex:column> 
+
+</apex:pageBlockTable>     
+
+<apex:panelGrid columns="6"> 
+    
+    <apex:selectList value="{!size}" multiselect="false" size="1" onchange="refreshPageSize();">
+        <apex:selectOptions value="{!paginationSizeOptions}"/>
+    </apex:selectList>
+    
+    <apex:commandButton status="fetchStatus" reRender="pbId" value="First" action="{!setCon.first}" disabled="{!!setCon.hasPrevious}" title="First Page"/> 
+    
+    <apex:commandButton status="fetchStatus" reRender="pbId" value="Previous" action="{!setCon.previous}" disabled="{!!setCon.hasPrevious}" title="Previous Page"/> 
+    
+    <apex:commandButton status="fetchStatus" reRender="pbId" value="Next" action="{!setCon.next}" disabled="{!!setCon.hasNext}" title="Next Page"/> 
+    
+    <apex:commandButton status="fetchStatus" reRender="pbId" value="Last" action="{!setCon.last}" disabled="{!!setCon.hasNext}" title="Last Page"/> 
+    
+    <apex:outputText >{!(setCon.pageNumber * size)+1-size}-{!IF((setCon.pageNumber * size)>noOfRecords, noOfRecords,
+        (setCon.pageNumber * size))} of {!noOfRecords}
+    </apex:outputText> 
+    
+</apex:panelGrid>  
+
+</apex:pageBlockSection>
+</apex:pageBlock>
+
+</apex:pageBlock>
+
+<apex:pageBlock title="Search Result"  rendered="{!if(and(RecordFlag==false,LoadFirsttimeFlag==false,SearchCriteriaBlankFlag==false ),true, false)}">
+    There are no records to display
+</apex:pageBlock>
+<apex:pageBlock title="Search Result"  rendered="{!SearchCriteriaBlankFlag}">
+    Please provide search criteria
+</apex:pageBlock>    
+</td>
+</tr>
+</table>
+
+
+</apex:pageBlock>
+
+</apex:form>
+
+</apex:page>

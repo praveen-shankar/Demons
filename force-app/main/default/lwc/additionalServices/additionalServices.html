@@ -1,0 +1,392 @@
+<template>   
+
+    <lightning-accordion onsectiontoggle={toggleSectionHandleVAS}  
+              
+    active-section-name={activeSectionName}
+    allow-multiple-sections-open>
+      <lightning-accordion-section name="VAS" label="VAS" >
+          <template if:true={additionalServiceList} for:each={additionalServiceList} for:item="addser">            
+         
+              <div class="slds-m-around_medium" key ={addser.Additional_Service__r.Id}> 
+                 <div class="slds-var-m-around_medium">
+                     <div class="slds-grid slds-gutters"> 
+                      <lightning-input
+                                      
+                      style="padding : 10px;font: size 15px;font-weight : bold;"
+                      data-checkbox-id={addser.Additional_Service__r.Id} 
+                      name ="checkbox"
+                      class="slds-p-left_large" 
+                      type="checkbox" 
+                      key={addser.Id} 
+                      label={addser.Additional_Service__r.Name} 
+                      value={addser.Additional_Service__r.Id} 
+                      onchange={handleCheckboxChange}
+                      
+                      ></lightning-input>
+                        <!-- <h3><b> {addser.Additional_Service__r.Name}-{addser.Add_Service_ERP_ID__c}
+                     </b></h3> -->
+                  </div>
+                     <!-- Add.S.Id-: {addser.Add_Service_ERP_ID__c}-Ac.S.Id-: {addser.Actual_Service_ERP_ID__c} -->
+                     <div class="slds-grid slds-gutters">
+                         <div class="slds-col">
+                     <lightning-input
+                         value=""
+                         name="DiscountVAS"
+                         data-id={addser.Additional_Service__r.Id} 
+                         type="number"                        
+                         class="number-input"                         
+                         placeholder="Discount %"
+                         key={addser.Additional_Service__r.Id}
+                     ></lightning-input>
+                     </div>
+                     <div class="slds-col">
+                 <lightning-input        
+                         data-unit-id={addser.Additional_Service__r.Id}  
+                         name="UnitVAS"                
+                         type="number"
+                         min="0"
+                         max="100"
+                         key={addser.Additional_Service__r.Id}                         
+                         class="number-input"                        
+                         placeholder="Unit"
+                         value=""
+                      ></lightning-input>
+                     </div>
+                 </div>
+                 </div>
+              </div>
+             </template>
+      </lightning-accordion-section>
+    </lightning-accordion>
+
+
+
+    <lightning-accordion onsectiontoggle={toggleSectionHandleSurcharge}  
+              
+    active-section-name={activeSectionSurcharge}
+    allow-multiple-sections-open>
+      <lightning-accordion-section name="Surcharge" label="Surcharge" >
+          <template if:true={additionalServiceSurchage} for:each={additionalServiceSurchage} for:item="addser">            
+         
+              <div class="slds-m-around_medium" key ={addser.Id}> 
+                 <div class="slds-var-m-around_medium">
+                     <div class="slds-grid slds-gutters"> 
+                      <lightning-input data-id="checkbox" 
+                                      
+                      style="padding : 10px;font: size 15px;font-weight : bold;"
+                      data-surcharge-id="checkbox" 
+                      class="slds-p-left_large" 
+                      type="checkbox" 
+                      key={addser.Id} 
+                      label={addser.Additional_Service__r.Name} 
+                      value={addser.Additional_Service__r.Id} 
+                      onchange={handleCheckboxChangeSurcharge}
+                      
+                      ></lightning-input>
+                        <!-- <h3><b> {addser.Additional_Service__r.Name}-{addser.Add_Service_ERP_ID__c}
+                     </b></h3> -->
+                  </div>
+                     <!-- Add.S.Id-: {addser.Add_Service_ERP_ID__c}-Ac.S.Id-: {addser.Actual_Service_ERP_ID__c} -->
+                     <div class="slds-grid slds-gutters">
+                         <div class="slds-col">
+                     <lightning-input
+                         type="string"
+                         value={stringValue}
+                         class="string-input"
+                         onchange={handleStringChange}
+                         placeholder="Discount %"
+                     ></lightning-input>
+                     </div>
+                     <div class="slds-col">
+                 <lightning-input               
+                         type="number"
+                         min="0"
+                         max="100"
+                         value={numberValue}
+                         class="number-input"
+                         onchange={handleNumberChange}
+                         placeholder="Unit"
+                      ></lightning-input>
+                     </div>
+                 </div>
+                 </div>
+              </div>
+             </template>
+      </lightning-accordion-section>
+    </lightning-accordion>
+<!-- </div>  -->
+<footer>
+<lightning-button class="slds-m-left_x-small" label="Save Additional services" variant="brand" 
+onclick={saveAddServices}></lightning-button>
+</footer>
+<!-- <button onclick={ShowAddServices}>show selected additional services</button>
+<p>{strCheckBoxValue}</p> -->
+</template>
+
+
+
+    <!-- <p>{activeSectionName}</p> -->
+    <!-- <button onclick={closeAccordian}>Close Accordian</button> -->
+            <!-- <div class="slds-p-around--medium">   -->
+              <!-- <lightning-accordion 
+                        onsectiontoggle={toggleSectionHandleVAS} 
+                        active-section-name={activeSectionName}
+                        allow-multiple-sections-open
+                        > -->
+                        <!--  -->
+                        <!--    -->
+                <!-- <lightning-accordion-section  class="VASAccordianSection" name="VAS" label="VAS" > -->
+                   <!-- <template > -->
+                    <!-- <template if:true={additionalServiceList} for:each={additionalServiceList} for:item="con" for:index="ind">            
+                   
+                     <div class="slds-m-around_medium" key={con.Additional_Service__r}> 
+                        <div class="slds-var-m-around_medium">
+                            <!<div class="slds-grid slds-gutters"> -->
+                                <!-- <div class="slds-truncate" title="Select Contact">
+                                    <lightning-input type="checkbox" name={ind} 
+                                    value={con.isChecked} onchange={setCheckBox}>con.Additional_Service__r.Name</lightning-input>
+                                </div>
+                            <!</div> -->
+                            <!-- <div class="slds-grid slds-gutters"> 
+                                <div class="slds-col">
+                            <lightning-input
+                            type="text" value={con.FirstName} 
+                            placeholder="Discount" 
+                            name={ind} onchange={setFirstName} -->
+                            
+                            <!-- ></lightning-input>
+                            </div>
+                            <div class="slds-col">
+                        <lightning-input 
+                        type="text" value={con.LastName} placeholder="Unit" 
+                        name={ind} onchange={setLastName}
+                             ></lightning-input>
+                            </div>
+                        
+                        </div>
+                        </div> 
+                      </div>
+                   </template> --> 
+                <!-- </template> -->
+                                <!-- <lightning-input 
+                                style="padding : 10px;font: size 15px;font-weight : bold;"
+                                data-id="checkbox" 
+                                class="slds-p-left_large" 
+                                type="checkbox" 
+                                key={addser.Id} 
+                                label={addser.Additional_Service__r.Name} 
+                                value={addser.Additional_Service__r.Id} 
+                                onchange={handleCheckboxChange}></lightning-input> -->
+                            <!-- <h3 style="text-align:start;font-size:15px;" ><b>
+                                {addser.Additional_Service__r.Name}-{addser.Add_Service_ERP_ID__c}
+                            </b></h3> --> 
+                        
+                            <!-- Add.S.Id-: {addser.Add_Service_ERP_ID__c}-Ac.S.Id-: {addser.Actual_Service_ERP_ID__c} -->
+                  
+                <!-- </template> -->
+                    <!-- <template > -->
+                        <!-- <template if:true={blankRow} for:each={blankRow} for:item="con" for:index="con">
+                            <tr class="slds-hint-parent" key={con.Id}>
+                                <td data-label="Select Contact">
+                                    <div class="slds-truncate" title="Select Contact">
+                                        <lightning-input type="checkbox" name={con} value={con.isChecked} label={con.Additional_Service__r.Name} onchange={setCheckBox} style="padding : 10px;font: size 15px;font-weight : bold;"></lightning-input>
+                                    </div>
+                                </td>
+                                <td data-label="Discount %">
+                                <lightning-input type="text" value={Discount} placeholder="Discount %" name="Discount" onchange={setDiscount}></lightning-input>
+                                </td>
+                                <td data-label="Unit">
+                                    <lightning-input type="text" value={con.Unit} placeholder="Unit" name="Unit" onchange={setUnit}>></lightning-input>
+                                </td> -->
+                                <!-- <td data-label="Account Name">
+                                    <lightning-record-view-form record-id={selectedAccount} object-api-name="Account">
+                                        <lightning-output-field field-name="Name" variant="label-hidden"></lightning-output-field>
+                                    </lightning-record-view-form>
+                                </td> -->
+                                <!-- <td data-label="Action">
+                                    <lightning-button label="Remove" variant="neutral" value={ind} onclick={removeRow}></lightning-button>
+                                </td> -->
+                            <!-- </tr>
+                        </template> -->
+                    <!-- </template> -->
+                   
+                   
+                    <!-- <template if:true={boleanvalue}> -->
+
+                    <!-- <template if:true={additionalServiceList} for:each={additionalServiceList} for:item="addser">            
+                   
+                     <div class="slds-m-around_medium" key ={addser.Id}> 
+                        <div class="slds-var-m-around_medium" key={addser.Id} >
+                            <div class="slds-grid slds-gutters">
+                                <lightning-input 
+                                style="padding : 10px;font: size 15px;font-weight : bold;"
+                                data-id="checkbox" 
+                                class="slds-p-left_large" 
+                                type="checkbox" 
+                                key={addser.Id} 
+                                label={addser.Additional_Service__r.Name} 
+                                value={addser.Additional_Service__r.Id} 
+                                onchange={handleCheckboxChange}></lightning-input> -->
+                            <!-- <h3 style="text-align:start;font-size:15px;" ><b>
+                                {addser.Additional_Service__r.Name}-{addser.Add_Service_ERP_ID__c}
+                            </b></h3> -->
+                        <!-- </div> -->
+                            <!-- Add.S.Id-: {addser.Add_Service_ERP_ID__c}-Ac.S.Id-: {addser.Actual_Service_ERP_ID__c} -->
+                            <!-- <div class="slds-grid slds-gutters">
+                                <div class="slds-col">
+                            <lightning-input
+                                label="Discount %"
+                                type="string"
+                                value={stringValue}
+                                class="string-input"
+                                onchange={handleStringChange}
+                            ></lightning-input>
+                            </div>
+                            <div class="slds-col">
+                        <lightning-input 
+                                label="Unit"
+                                type="number"
+                                min="0"
+                                max="100"
+                                value={numberValue}
+                                class="number-input"
+                                onchange={handleNumberChange}
+                             ></lightning-input>
+                            </div>
+                        </div>
+                        </div>
+                        </div> -->
+                     <!-- </div> -->
+                    <!-- </template> -->
+                <!-- </template> -->
+                <!-- </lightning-accordion-section> -->
+              <!-- </lightning-accordion > -->
+
+  
+
+
+
+                    <!-- <h3 class="slds-text-heading_medium"><strong style="color:#270086;">Create Custom Accordion Section Expand/Collapse and Toggle in LWC </strong></h3>  -->
+
+        <!-- allow-multiple-sections-open -->
+                                <!-- onsectiontoggle={toggleSectionHandleW3web} -->
+                                <!-- active-section-name={activeSections} -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <!-- <template>
+        <lightning-card>
+        
+        <lightning-accordion allow-multiple-sections-open
+        onsectiontoggle={handleToggleSection}
+        active-section-name="VAS">
+                                onsectiontoggle={toggleSectionHandleW3web} --> 
+                            
+                            <!-- <lightning-accordion-section name="VAS" label="VAS"> -->
+                                <!-- <lightning-button-menu
+                                slot="actions"
+                                alternative-text="Show menu"
+                                menu-alignment="right"
+                            >
+                                <lightning-menu-item
+                                    value="New"
+                                    label="Menu Item One"
+                                ></lightning-menu-item>
+                                <lightning-menu-item
+                                    value="Edit"
+                                    label="Menu Item Two"
+                                ></lightning-menu-item>
+                            </lightning-button-menu> -->
+                <!-- <div class="slds-m-around_medium"> -->
+                    <!-- <h3>Additional Service 1 {additionalServiceName} {activeSections} new</h3>
+                    <div class="slds-grid slds-gutters">
+                    < <div class="slds-var-m-around_medium"> -->
+                        <!-- <div class="slds-col">
+                        <lightning-input
+                            label="Discount"
+                            type="string"
+                            value={stringValue}
+                            class="string-input"
+                            onchange={handleStringChange}
+                        ></lightning-input>
+                    </div> -->
+                    <!-- <div class="slds-col">
+                        <lightning-input
+                            label="Unit"
+                            type="number"
+                            min="0"
+                            max="100"
+                            value={numberValue}
+                            class="number-input"
+                            onchange={handleNumberChange}
+                        ></lightning-input> -->
+                    <!-- </div> -->
+                <!-- <c-contact-tile contact={contact}></c-contact-tile> -->
+                <!-- <c-add-services></c-add-services> -->
+            <!-- </div> -->
+            <!-- </div>
+            </lightning-accordion-section>
+
+            <lightning-accordion-section name="SURCHARGE"  label="Surcharge" > -->
+                <!-- <div class="slds-m-around_medium"> -->
+                    <!-- <div class="slds-var-m-around_medium"> -->
+                        <!-- <h3>Additional Service 1 {activeSections} </h3>
+                        <div class="slds-grid slds-gutters">
+                            <div class="slds-col">
+                        <lightning-input
+                            label="Discount"
+                            type="string"
+                            value={stringValue}
+                            class="string-input"
+                            onchange={handleStringChange}
+                        ></lightning-input>
+                        </div>
+                        <div class="slds-col"> -->
+                        <!-- <lightning-input
+                            label="Unit"
+                            type="number"
+                            min="0"
+                            max="100"
+                            value={numberValue}
+                            class="number-input"
+                            onchange={handleNumberChange} -->
+                        <!-- ></lightning-input>
+                        </div>
+                    </div> -->
+                <!-- <c-contact-tile contact={contact}></c-contact-tile> -->
+                <!-- <c-add-services></c-add-services> -->
+            <!-- </div> -->
+            <!-- </lightning-accordion-section>
+            </lightning-accordion>
+        
+            </lightning-card>
+    
+    </template> -->

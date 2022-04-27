@@ -1,0 +1,4 @@
+<aura:event type="COMPONENT">
+<aura:attribute name="indicatorStep" type="String"/>
+<aura:attribute name="additionalServiceEditTableColumns" type="crm_Dynamic_Columns_Add_Opp_Services__c[]"/>    
+</aura:event>

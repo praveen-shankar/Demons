@@ -1,0 +1,83 @@
+<aura:component controller="crm_CreateSegmentRegChange"  implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome">
+	  <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    
+    <aura:attribute name="getSegmentToBeApproved" type="List"/>
+     <aura:attribute name="showerror" type="Boolean"/>
+        <aura:attribute name="isSelectAll" type="boolean" default="false"/>
+    
+      <div class="slds" style="background-color:white">
+         <aura:if isTrue="{!v.showerror}"> 
+        <div class="slds-text-color_error" style="width:100%; color:red;height:60px;padding:20px">
+          No Records To Be Approved </div>
+         
+        </aura:if>
+          
+           <aura:if isTrue="{!!v.showerror}">
+		 <div class="slds-card__header slds-grid" style="font-size:14px" >
+               <strong>Records To Be Approved</strong></div>
+       
+            <br/>
+          <ui:scrollerWrapper class="wrapui"> 
+ 
+		 <table class="slds-table slds-table_bordered slds-table_striped slds-table_cell-buffer slds-table_fixed-layout">
+           <thead>
+            <tr> <!-- class="slds-text-heading_label"-->
+                     
+               <aura:if isTrue="{!v.getSegmentToBeApproved.length>1}"> 
+              <th width="5%"> <ui:inputCheckbox aura:id="selectAllvalues" change= "{!c.selectall}" value="{!v.isSelectAll}"/> </th>
+                </aura:if>
+                  <aura:if isTrue="{!v.segmentListApproved.length==1}">  
+                      <th width="5%"></th>
+                </aura:if>
+             
+              <th scope="col"><div  title="Segment Name" class="slds-text-heading--label slds-truncate">Segment Name</div></th>
+              <th scope="col"><div  title="Customer" class="slds-text-heading--label slds-truncate">Customer</div></th>
+              <th scope="col"><div  title="Current Sales Responsible" class="slds-text-heading--label slds-truncate">Current Sales Responsible</div></th>
+              <th scope="col"><div  title="Proposed Sales Responsible" class="slds-text-heading--label slds-truncate">Proposed Sales Responsible</div></th>
+              <th scope="col"><div  title="Start Date" class="slds-text-heading--label slds-truncate">Start Date</div></th>
+              <th scope="col"><div  title="Service Group" class="slds-text-heading--label slds-truncate">Service Group</div></th>
+              <th scope="col"><div  title="Status" class="slds-text-heading--label slds-truncate">Status</div></th>
+              <th scope="col"><div  title="Requested On" class="slds-text-heading--label slds-truncate">Requested On</div></th>
+             
+            </tr>
+          </thead>
+          <tbody>
+             <aura:iteration items="{!v.getSegmentToBeApproved}" var="seg">
+			   
+			   <tr>
+              
+                  <td style="width:8px">   <ui:inputCheckbox aura:id="selectedvalue" name="{!seg.Id}" value="{!seg.selected}"/></td>  
+                   
+                   <td class="slds-truncate" title="{!seg.Name}">  <aura:if isTrue="{!$Browser.isDesktop}">
+                                        <a href="{!'/'+ seg.Id}" target="_blank">{!seg.Name}</a>
+                                        <aura:set attribute="else">
+                                         <a target="_blank" data-record="{!seg.Id}" onclick="{!c.redirectToSobject}">{!seg.Name}</a>   
+                                        </aura:set>
+                                </aura:if></td> 
+                    <td class="slds-truncate" title="{!seg.CustomerName}"> <aura:if isTrue="{!$Browser.isDesktop}">
+                                        <a href="{!'/'+ seg.CustomerId}" target="_blank">{!seg.CustomerName}</a>
+                                        <aura:set attribute="else">
+                                         <a target="_blank" data-record="{!seg.CustomerId}" onclick="{!c.redirectToSobject}">{!seg.CustomerName}</a>   
+                                        </aura:set>
+                                </aura:if></td>
+                     <td class="slds-truncate" title="{!seg.Current_Sales_Responsible__r.Name}">{!seg.currentSalesUser}</td>
+                     <td class="slds-truncate" title="{!seg.Proposed_Sales_Responsible__r.Name}">{!seg.proposedSalesUser}</td>
+                    <td class="slds-truncate" title="{!seg.Start_Date__c}">{!seg.Startdate}</td>
+                    <td class="slds-truncate" title="{!seg.Service_Group__c}">{!seg.ServiceGrp}</td>
+                    <td class="slds-truncate" title="{!seg.Status__c}">{!seg.status}</td>
+                    <td class="slds-truncate" title="{!seg.Date_Requested_On__c}">{!seg.Requesteddate}</td>
+                   </tr>
+                  
+                        </aura:iteration>
+         </tbody>
+            </table> 
+               </ui:scrollerWrapper>
+                 <footer class="slds-modal__footer slds-modal__footer_directional"> 
+                <lightning:buttonGroup >
+                   
+                <lightning:button variant="neutral" label="Approve Records" iconName="utility:save" onclick="{!c.approverecords}"/>
+       </lightning:buttonGroup> 
+            </footer>
+          </aura:if>
+    </div>
+</aura:component>

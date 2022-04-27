@@ -1,0 +1,13 @@
+<apex:page controller="ActionController" action="{!goDo}">
+    <apex:outputPanel id="errorMessage">
+        <h1>Det har oppstått en feil!</h1>
+        <br/>
+        <br/>Vennligst kopier denne feilmeldingen, fyll ut punktet under og send til din Superbruker.
+        <br/>Oppgi informasjon om hva du gjorde rett før du fikk denne feilmeldingen, legg gjerne ved saksnummer, aktørnummer etc.:
+        <br/>
+        <br/>Melding til KATS forvaltning:
+        <br/>Når oppsto feilen: {!timestamp}
+        <br/>Hvor har feilen oppstått: Action.page
+        <br/>Hvilke parametere er sendt inn: {!parameters}
+    </apex:outputPanel>
+</apex:page>

@@ -1,0 +1,57 @@
+<aura:component controller="crm_NewCreateSegment">
+    
+   <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+   <aura:method name="capturesegmentdata" action="{!c.capturesegmentdata}" description="Method to be called from parent component">  
+   </aura:method>
+    
+   <!--Attributes Declaration Starts Here-->
+   <aura:attribute name="OpportunitiesServiceGroup" type="List"/>
+   <aura:attribute name="responsibleselleroptions" type="List"/>
+   <aura:attribute name="serviceGroup" type="String"/>
+   <aura:attribute name="serviceGroupKey" type="String"/>
+   <aura:attribute name="chkServiceGroup" type="Boolean" default="false"/>
+   <!--Picklist Attributes Starts Here -->
+   <aura:attribute name="opportunityRecord" type="Opportunity" default="{'sObjectType':'Opportunity','FirstName':'','LastName':'','Email':''}"/>
+   <!--Picklist Attributes Ends Here -->
+   <!--Attributes Declaration Ends Here -->
+   
+   <!--Page Container Starts Here -->
+   <div class="container">
+      <!--Table TD Starts Here --> 
+      <table>
+         <tbody>
+            <tr>
+               <td>
+                  <div class="slds-grid slds-wrap">
+                     <div class="slds-col slds-size_6-of-12">
+                        <div>
+                           <div class="slds-grid slds-wrap service-group-grid">
+                              <div class="slds-col slds-size_1-of-12 service-group-checkbox">
+                                 <lightning:input type="checkbox" class="input-checkbox" name="check-opportunities-service-group" aura:id="chkServiceGroup"  checked="{!v.chkServiceGroup}" value="{!v.chkServiceGroup}"/>
+                              </div>
+                              <div class="slds-col slds-size_11-of-12">
+                                 <ui:outputText aura:id="serviceGroup" value="{!v.serviceGroupKey}" class="slds-hide"/>
+                                 {!v.serviceGroup}
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                     <div class="slds-col slds-size_6-of-12">
+                        <div>
+                           <lightning:select name="select-responsible-seller" label="" aura:id="proposedresponsibleSeller" value="{!v.opportunityRecord.proposedresponsibleSeller}">
+                              <option value="">None</option>
+                              <aura:iteration items="{!v.responsibleselleroptions}" var="seller" indexVar="key">
+                                 <ui:inputSelectOption text="{!seller.key}" label="{!seller.value}" ></ui:inputSelectOption>
+                              </aura:iteration>
+                           </lightning:select>
+                        </div>
+                     </div>
+                  </div>
+               </td>
+            </tr>
+         </tbody>
+      </table>
+      <!--Table TD Ends Here -->
+   </div>
+   <!--Page Container Ends Here -->	
+</aura:component>

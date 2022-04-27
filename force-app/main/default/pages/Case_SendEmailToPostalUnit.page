@@ -1,0 +1,286 @@
+<!-- 
+## This page will enable to Customer Consultant to schedule an email for the related Postal Unit.
+## Information related to the customer will be picked up from the Account details and the backend systems
+## Information related to Postal Unit will be picked up from the Postal Unit set in the email
+-->
+<apex:page standardController="Case" extensions="Case_SendEmailToPostalUnitController" tabStyle="Letter_Template__c" >
+    
+    <apex:actionstatus id="processing">
+        <apex:facet name="start">
+            <div class="waitingSearchDiv" id="el_loading" style="background-color: #fbfbfb; height:100%;opacity:0.65;width:100%;">
+                <div class="waitingHolder" style="center: 100px; width: 91px;">
+                    <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />
+                    <span class="waitingDescription">Processing...</span>
+                </div>
+            </div>
+        </apex:facet>
+    </apex:actionstatus> 
+
+
+
+    <!-- 
+    ## Header
+    -->
+    <!--<apex:sectionHeader title="Send Epost til Postal Enhet" subtitle="{!c.CaseNumber}" />
+    
+    CSphase2, Supriya, 13122016 =>Added custom labels -->
+    <apex:sectionHeader title="{!$Label.cs_Send_Email_to_Postal_Unit}"  subtitle="{!c.CaseNumber}" />
+
+    <!-- Staring FORM tag -->
+    <apex:form >
+
+    <!-- Header Level Error messages
+    ## Here we will add all the random error messages encountered during processing
+    -->
+    <!--
+    <apex:pageMessage title="No Account" detail="There is no Account on this Case." severity="Error" strength="3" rendered="{!noAccount}"/>
+    <apex:pageMessage title="No Postal Unit" detail="There is no Postal Unit on this Case." severity="Error" strength="3" rendered="{!noPostalUnit}"/>
+    <apex:pageMessage title="No Customer Info" detail="Ingen kundeinfo tilgjengelig. Klarer ikke å hente kundeinfo fra baksystemet. Prøv å oppdater siden ved å trykke på knappen Oppdater under:" severity="info" strength="3" rendered="{!AND(NOT(hasEconnectData),NOT(isScheduled))}">
+     <apex:commandButton value="Oppdater" action="{!getCustomerDetailViaEconnect}" /> 
+      CSphase2, Supriya, 13122016 =>Added custom labels
+    -->
+    
+    <apex:pageMessage title="{!$Label.cs_NoAccount}" detail="{!$Label.cs_No_Account_on_Case}" severity="Error" strength="3" rendered="{!noAccount}"/>
+    <apex:pageMessage title="{!$Label.cs_No_Postal_Unit}" detail="{!$Label.cs_No_Postal_Unit}" severity="Error" strength="3" rendered="{!noPostalUnit}"/>
+    <apex:pageMessage title="{!$Label.cs_NoCustomerInfo}" detail="{!$Label.cs_No_customer_info}" severity="info" strength="3" rendered="{!AND(NOT(hasEconnectData),NOT(isScheduled))}">
+    <apex:commandButton value="{!$Label.cs_Update}" action="{!getCustomerDetailViaEconnect}" />    
+    </apex:pageMessage>
+    <!--<apex:pageMessage strength="3" title="Info" detail="Ref.adr.endring er deaktivert da dette ikke er utfylt i saken" severity="warning" rendered="{!IsBlank(c.change_address_ref_no__c)}"/>
+    CSphase2, Supriya, 13122016 =>Added custom labels
+    -->
+    <apex:pageMessage strength="3" title="Info" detail="{!$Label.cs_Ref_no}" severity="warning" rendered="{!IsBlank(c.change_address_ref_no__c)}"/>
+    <apex:pageMessages />
+    
+    <!--<apex:pageMessage title="Sende e-post nå?" severity="info" strength="3" detail="Basert på valgt utleveringsdato, kan ikke eposten bli utsatt. Hvis du vil sende nå, klikk på knappen Send nå under: " rendered="{!canSendNow}">
+    <apex:commandButton value="Send nå" action="{!sendEmailNow}" />
+    CSphase2, Supriya, 13122016 =>Added custom labels-->
+    
+    <!--<apex:pageMessage title="{!$Label.cs_Sending_email}" severity="info" strength="3" detail="{!$Label.cs_Click_on_send}" rendered="{!canSendNow}">
+    <apex:commandButton value="{!$Label.cs_Send_now}" action="{!sendEmailNow}"> 
+    </apex:pageMessage>
+    -->
+    <!-- 
+    ## This section will hold the fields required to set the email before sending
+    -->
+    <apex:pageBlock id="SetEmailToPostalUnit" rendered="{!AND(hasEconnectData,NOT(isScheduled),NOT(OR(noAccount,noPostalUnit)))}">
+
+        <apex:pageBlockButtons >
+           <!-- <apex:commandButton value="Neste" action="{!scheduleEmailToPostalUnit}"/>
+            <apex:commandButton value="Tilbake" action="{!cancel}"/>
+            
+            CSphase2, Supriya, 13122016 =>Added custom labels-->
+       <apex:commandButton value="{!$Label.cs_Save_and_close}" action="{!sendEmailToPostalUnitcheck}"/>
+            <apex:commandButton value="{!$Label.cs_Close}" action="{!cancel}"/>   
+            
+            
+        </apex:pageBlockButtons>
+
+        <apex:actionRegion >
+        <!--<apex:pageBlockSection title="Kategori" collapsible="false" columns="1">
+          CSphase2, Supriya, 13122016 =>Added custom labels-->
+          <apex:pageBlockSection title="{!$Label.cs_Category}" collapsible="false" columns="1">
+          
+        
+            <apex:selectRadio title="{!$Label.cs_Mode}: " value="{!sel_Category}" onClick="changeCategory();">
+                <apex:selectOption itemLabel="{!$Label.cs_Ref_address_change}" itemValue="addr" itemDisabled="{!IsBlank(c.change_address_ref_no__c)}" title="Test"/>
+                <apex:selectOption itemLabel="{!$Label.cs_zonelock}" itemValue="sone" />
+            </apex:selectRadio>
+        </apex:pageBlockSection>
+        </apex:actionRegion>
+        
+        <apex:actionFunction action="{!changeCategory}" name="changeCategory" reRender="ref" status="processing"/>
+
+        <apex:pageBlockSection showHeader="false" collapsible="false" columns="2" id="ref">
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="{!$Label.cs_Ref_address_change}" for="ctg"/>
+                <apex:inputText value="{!categoryRef}" id="ctg" disabled="true"/>
+            </apex:pageBlockSectionItem>
+        </apex:pageBlockSection>
+
+
+        <!--<apex:pageBlockSection title="Adresse" columns="2" collapsible="false" rendered="{!NOT(noAccount)}">
+              CSphase2, Supriya, 13122016 =>Added custom labels-->
+             <apex:pageBlockSection title="{!$Label.cs_Address}" columns="2" collapsible="false" rendered="{!NOT(noAccount)}"> 
+            <apex:actionRegion >
+           
+            <apex:pageBlockTable value="{!addrList}" var="add" id="addTable">
+                <!--  <apex:column headerValue="Velg" width="10"><apex:inputCheckbox value="{!add.sel}" onClick="setAddress();" /></apex:column>
+              <apex:column value="{!add.street}" headerValue="Gate/Sted" />
+                <apex:column value="{!add.city}" headerValue="Poststed" />
+                <apex:column value="{!add.postCode}" headerValue="Postnummer" />
+                 CSphase2, Supriya, 13122016 =>Added custom labels-->
+                
+                <apex:column headerValue="{!$Label.cs_Selectlabel}" width="10"><apex:inputCheckbox value="{!add.sel}" onClick="setAddress();" /></apex:column> 
+                 <apex:column value="{!add.street}" headerValue="{!$Label.cs_Gate_Area}" />
+                <apex:column value="{!add.city}" headerValue="{!$Label.cs_City}" />
+                <apex:column value="{!add.postCode}" headerValue="{!$Label.cs_Zipcode}" />
+                
+            </apex:pageBlockTable>
+            </apex:actionRegion>
+
+           <!-- <apex:pageBlockSection title="Valgt adresse" columns="1" collapsible="false" id="addressSelected">
+            CSphase2, Supriya, 13122016 =>Added custom labels-->
+            
+            <apex:pageBlockSection title="{!$Label.cs_Selected_Address}" columns="1" collapsible="false" id="addressSelected">
+           
+                <apex:pageBlockSectionItem >
+                    <!--<apex:outputLabel value="Gate/Sted" for="str"/>
+                    CSphase2, Supriya, 13122016 =>Added custom labels-->
+                    <apex:outputLabel value="{!$Label.cs_Gate_Area}" for="str"/>
+                    
+                    <apex:inputText value="{!addr_street}" id="str" />
+                </apex:pageBlockSectionItem>    
+                <apex:pageBlockSectionItem >
+                    <!--<apex:outputLabel value="Postnummer" for="ptc"/>
+                    CSphase2, Supriya, 13122016 =>Added custom labels-->
+                    
+                    <apex:outputLabel value="{!$Label.cs_Zipcode}" for="ptc"/>
+                    <apex:inputText value="{!addr_postCode}" id="ptc" />
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <!--<apex:outputLabel value="Poststed" for="cty"/>
+                    CSphase2, Supriya, 13122016 =>Added custom labels-->
+                    
+                    <apex:outputLabel value="{!$Label.cs_City}" for="cty"/>
+                    <apex:inputText value="{!addr_city}" id="cty" />
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+
+            <apex:actionFunction action="{!setAddress}" name="setAddress" reRender="addressSelected, addTable" status="processing" />
+
+        </apex:pageBlockSection>
+
+        <!--<apex:pageBlockSection title="Enhet" collapsible="false" columns="1" rendered="{!NOT(noPostalUnit)}">
+         CSphase2, Supriya, 13122016 =>Added custom labels-->
+         
+        <apex:pageBlockSection title="{!$Label.cs_Unit}" collapsible="false" columns="1" rendered="{!NOT(noPostalUnit)}">
+            <apex:outputField value="{!pu.unit_name__c}" />
+            <apex:outputField value="{!pu.unit_number__c}" />
+            <apex:pageBlockSectionItem >
+               <!-- <apex:outputLabel value="E-Post" for="eml" />
+                    CSphase2, Supriya, 13122016 =>Added custom labels-->
+                    
+                   <apex:outputLabel value="{!$Label.cs_email}" for="eml" />
+                <apex:inputText value="{!c.temp_email_PostalUnit__c}" id="eml" />
+            </apex:pageBlockSectionItem>
+        </apex:pageBlockSection>
+
+        <!--<apex:pageBlockSection title="Postmottakere" collapsible="false" columns="1" rendered="true" id="custField">
+         CSphase2, Supriya, 13122016 =>Added custom labels-->
+         
+        <apex:pageBlockSection title="{!$Label.cs_mail_Recipients}" collapsible="false" columns="1" rendered="true" id="custField">
+            <!--<apex:pageBlockSectionItem helpText="Er ikke postmottaker oppført nedenfor, kan du legge den til her.">
+               <apex:inputText label="Mottaker" value="{!cust2Add}" />
+                 <apex:commandButton value="Legg til" action="{!addRecepient}" reRender="custList,custField" status="processing" />
+            CSphase2, Supriya, 13122016 =>Added custom labels-->
+            <apex:pageBlockSectionItem helpText="{!$Label.cs_mail_recipient_not_listed}">
+                <apex:inputText label="{!$Label.cs_Recipient}" value="{!cust2Add}" />
+                <apex:commandButton value="{!$Label.cs_Add}" action="{!addRecepient}" reRender="custList,custField" status="processing" />
+            </apex:pageBlockSectionItem>
+        </apex:pageBlockSection>
+
+        <apex:pageBlockSection collapsible="false" columns="2" showHeader="false" id="custList">
+            <apex:pageBlockTable value="{!custList}" var="cust">
+                <!--<apex:column headerValue="Velg" width="10"><apex:inputCheckbox value="{!cust.sel}" /></apex:column>
+                <apex:column headerValue="Navn" value="{!cust.custName}" />
+                  CSphase2, Supriya, 13122016 =>Added custom labels
+                -->
+                
+                <apex:column headerValue="{!$Label.cs_Select}" width="10"><apex:inputCheckbox value="{!cust.sel}" /></apex:column>
+                <apex:column headerValue="{!$Label.cs_Name}" value="{!cust.custName}" />
+            </apex:pageBlockTable>
+        </apex:pageBlockSection>
+
+
+        <!--<apex:pageBlockSection title="Utleveringsalternativ" columns="1" collapsible="false">
+            <apex:selectRadio value="{!alternative}" label="Utleveringsalternativ" >
+             CSphase2, Supriya, 13122016 =>Added custom labels
+            -->
+            
+            <apex:pageBlockSection title="{!$Label.cs_Collect_Option}" columns="1" collapsible="false">
+            <apex:selectRadio value="{!alternative}" label="{!$Label.cs_Collect_Option}" >
+                <!--<apex:selectOption itemLabel="Posten ut i kassen" itemValue="Posten ut i postkassen" />
+                <apex:selectOption itemLabel="Å hente posten på sitt hentekontor" itemValue="Å hente posten på sitt hentekontor" />-->
+                
+                <apex:selectOption itemLabel="{!$Label.cs_Checkout_at_Posten}" itemValue="Posten ut i postkassen" />
+                <apex:selectOption itemLabel="{!$Label.cs_Retrieve_the_record_on_his_fetch_office}" itemValue="Å hente posten på sitt hentekontor" />
+                
+                
+            </apex:selectRadio>
+        </apex:pageBlockSection>
+
+       
+           <!-- <apex:pageMessage title="Neste mulige utleveringsdato:" summary="{!nxtPossDOD}" severity="info" />
+           
+            <apex:pageBlockSectionItem helpText="Kalenderen tar ikke hensyn til helligdager.">
+                <apex:outputLabel value="Leveringsdato" for="dod" />
+            CSphase2, Supriya, 13122016 =>Added custom labels
+            -->
+            
+            <apex:pageBlockSection columns="2" collapsible="false" id="date" >
+            <apex:pageMessage title="{!$Label.cs_Next_possible_extradition_date}" summary="{!nxtPossDOD}" severity="info" />
+
+            <apex:pageBlockSectionItem helpText="{!$Label.cs_No_holidays_considered}">
+                <apex:outputLabel value="{!$Label.cs_delivery_date}" for="dod" />
+                <apex:inputField value="{!c.Send_to_Postal_Unit__c}" id="dod" />
+            </apex:pageBlockSectionItem>
+
+            
+        </apex:pageBlockSection>
+
+    </apex:pageBlock>
+
+
+
+    <!--
+    ## This section will display if we have an already set email scheduled 
+    -->
+    <!--<apex:pageBlock id="EmailToPostalUnitDetail" title="Planlagt E-post" rendered="{!isScheduled}">
+        
+        <apex:pageBlockButtons id="buttons">
+            <apex:commandButton value="Tilbake" action="{!cancel}" disabled="{!reSchedule}"/>
+            <apex:commandButton value="Slett" action="{!resetScheduledEmailToPostalUnit}" disabled="{!OR(reSchedule,isSentNow)}"/>
+            <apex:commandButton value="Endre utleveringsdato" action="{!toggleReScheduleDateField}" status="processing" disabled="{!OR(reSchedule,isSentNow)}"/>
+            <apex:commandButton value="Send e-post nå" action="{!sendEmailNow}" disabled="{!OR(reSchedule,isSentNow)}"/>
+            <apex:commandButton value="Lagre" rendered="{!reSchedule}" action="{!reScheduleEmailToPostalUnit}"/>
+            <apex:commandButton value="Avbryt" rendered="{!reSchedule}" action="{!toggleReScheduleDateField}"/>
+        </apex:pageBlockButtons>
+           CSphase2, Supriya, 13122016 =>Added custom labels
+        -->
+        
+        
+        <apex:pageBlock id="EmailToPostalUnitDetail" title="{!$Label.cs_Scheduled_Email}" rendered="{!isScheduled}">
+        
+        <apex:pageBlockButtons id="buttons">
+            <apex:commandButton value="{!$Label.cs_Close}" action="{!cancel}" disabled="{!reSchedule}"/>
+            <!--<apex:commandButton value="{!$Label.cs_Delete}" action="{!resetScheduledEmailToPostalUnit}" disabled="{!OR(reSchedule,isSentNow)}"/>-->
+            <apex:commandButton value="{!$Label.cs_Change_Outbound_date}" action="{!toggleReScheduleDateField}" status="processing" disabled="{!OR(reSchedule,isSentNow)}"/>
+            <!--<apex:commandButton value="{!$Label.cs_Email_Now}" action="{!sendEmailNow}" disabled="{!OR(reSchedule,isSentNow)}"/>-->
+            <apex:commandButton value="{!$Label.cs_Save}" rendered="{!reSchedule}" action="{!reScheduleEmailToPostalUnit}"/>
+            <apex:commandButton value="{!$Label.cs_Cancel}" rendered="{!reSchedule}" action="{!toggleReScheduleDateField}"/>
+        </apex:pageBlockButtons>
+        
+        
+        <apex:actionRegion >
+        <apex:pageBlockSection id="emailAndDate">
+           <!-- <apex:outputField value="{!c.Send_to_Postal_Unit__c}" label="E-post vil bli sendt: " rendered="{!NOT(reSchedule)}"/>
+            <apex:inputField value="{!c.Send_to_Postal_Unit__c}" label="Ny utleveringsdato: " rendered="{!reSchedule}"/>
+            <apex:outputField value="{!c.temp_email_PostalUnit__c}" label="E-post vil bli sendt  til: " />
+            
+            CSphase2, Supriya, 13122016 =>Added custom labels-->
+            
+             <apex:outputField value="{!c.Send_to_Postal_Unit__c}" label="{!$Label.cs_Email_will_be_sent} " rendered="{!NOT(reSchedule)}"/>
+            <apex:inputField value="{!c.Send_to_Postal_Unit__c}" label="{!$Label.cs_New_delivery_date} " rendered="{!reSchedule}"/>
+            <apex:outputField value="{!c.temp_email_PostalUnit__c}" label="{!$Label.cs_Email_will_be_sent_to}" />
+        </apex:pageBlockSection>
+        </apex:actionRegion>
+
+        <apex:pageBlockSection columns="1" collapsible="false">
+        <apex:inputTextarea value="{!c.Private_Comments__c}" richText="false" cols="60" title="{!$Label.cs_email}" rows="14" disabled="true" label="{!$Label.cs_email}: " />
+        </apex:pageBlockSection>
+        {!c.Private_Comments__c}
+    </apex:pageBlock>
+
+    </apex:form>
+        
+</apex:page>

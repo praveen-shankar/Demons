@@ -1,0 +1,73 @@
+<apex:page controller="MainSearchController">
+    <apex:form id="contacts_search_results">
+        <!--<apex:pageblock id="pageblock" title="Kontaktpersoner for {!right_account.name}" rendered="{!has_contact_search_results}">-->
+        <apex:pageblock id="pageblock" title="{!$Label.cs_Contactpersonsfor} {!right_account.name}" rendered="{!has_contact_search_results}">
+            <apex:pageBlockButtons location="top">
+                <apex:commandbutton status="general_load_status" rendered="{!NOT(go_to_type_as_string='NEW_CASE')}" rerender="account_search_results,contacts_search_results" value="Vis konto" action="{!goDo}">
+                    <apex:param value="true" assignTo="{!override_required_contact}" name="override_required_contact" />
+                </apex:commandbutton>
+            </apex:pageblockbuttons>
+                
+            <script>scrollToElement('{!$Component.contacts_search_results}')</script>
+                   
+                   
+            <apex:outputpanel rendered="{!contact_search_results.size == 0}">      
+                <!--<em>Ingen kontakter funnet</em>-->
+                <em>{!$Label.cs_Nocontactsfound}</em>
+            </apex:outputpanel>
+            
+            <table class="KATS_table">
+                <tr>
+                    <!--<th>Efternavn</th>
+                    <th>Fornavn</th>
+                    <th>E-post</th>
+                    <th>Telefon</th>
+                    <td></td>-->
+                    <th>{!$Label.cs_afterName}</th>
+                    <th>{!$Label.cs_First_Name}</th>
+                    <th>{!$Label.cs_Email}</th>
+                    <th>{!$Label.cs_Telephone}</th>
+                    <td></td>
+                </tr>
+                
+            
+                <apex:variable var="rowNum" value="0" />
+                            
+                <apex:repeat value="{!contact_search_results}" var="contact_search_result">
+                    <tr>
+                        <td><apex:commandLink value="{!contact_search_result.lastName}" action="{!goDo}" status="general_load_status" rerender="messages,account_search_result,contacts_search_results">
+                            <apex:param value="{!rowNum}" assignTo="{!selected_contact_search_result}" name="selected_contact_search_result" />
+                            <apex:outputLabel rendered="{!NOT(ISBLANK(contact_search_result.salesforceId))}" value="*" />
+                            
+                        </apex:commandLink></td>
+                        <td><apex:commandLink value="{!contact_search_result.firstName}" action="{!goDo}" status="general_load_status" rerender="messages,account_search_result,contacts_search_results">
+                            <apex:param value="{!rowNum}" assignTo="{!selected_contact_search_result}" name="selected_contact_search_result" />
+                        </apex:commandLink></td>
+                        <td><apex:outputText value="{!contact_search_result.email}" /></td>
+                        <td><apex:outputText value="{!contact_search_result.phone}" /></td>
+                        <td></td>
+                    </tr>
+                    <apex:variable var="rowNum" value="{!VALUE(rowNum) + 1}" />
+                </apex:repeat>
+
+                <tr>
+                    <td><apex:inputField value="{!new_contact.lastName}" id="new_contact_lastname" onclick="this.select();" /></td>
+                    <td><apex:inputField value="{!new_contact.firstName}" id="new_contact_firstname" onclick="this.select();" /></td>
+                    <td><apex:inputField value="{!new_contact.email}" /></td>
+                    <td><apex:inputField value="{!new_contact.phone}" /></td>
+                    <td>
+                        <!--<apex:commandButton value="Opprett" action="{!goDo}" status="general_load_status" rerender="account_search_result,contacts_search_results">-->
+                        <apex:commandButton value="{!$Label.cs_Search}" action="{!goDo}" status="general_load_status" rerender="account_search_result,contacts_search_results">
+                            <apex:param value="-1" assignTo="{!selected_contact_search_result}" name="selected_contact_search_result" />
+                        </apex:commandButton>
+                    </td>
+                </tr>
+                
+            </table>
+        </apex:pageblock>
+    </apex:form>
+    
+    
+    
+    
+</apex:page>

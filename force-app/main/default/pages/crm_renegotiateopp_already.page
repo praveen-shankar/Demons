@@ -1,0 +1,6 @@
+<apex:page >
+  <apex:form >
+  <h1>{!$Label.Renegotiate_already}</h1>
+  <apex:commandButton action="/{!$Currentpage.parameters.opp}" value="Back To Opportunity"/>
+  </apex:form>
+</apex:page>

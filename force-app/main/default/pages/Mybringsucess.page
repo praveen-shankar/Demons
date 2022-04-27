@@ -1,0 +1,10 @@
+<apex:page >
+  <apex:form >
+  <h1><br/><br/><br/>
+  The User will be created in MyBring . <br/> 
+  The User will get an email on this email address '{!$CurrentPage.parameters.email}'</h1>
+  <br/>
+  
+  <apex:commandButton action="/{!$Currentpage.parameters.conid}" value="Back To Contact"/>
+  </apex:form>
+</apex:page>

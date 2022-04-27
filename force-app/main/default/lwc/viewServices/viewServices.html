@@ -1,0 +1,138 @@
+<template>
+
+
+    <!-- <div class="slds-m-top_medium slds-m-bottom_x-large"> -->
+        
+        <!-- Simple -->
+        <!-- <div class="slds-p-around_medium lgc-bg">
+            <lightning-tree-grid
+                columns={gridColumns}
+                data={gridData}
+                key-field="name"
+            ></lightning-tree-grid>
+        </div> -->
+    <!-- </div> -->
+<div class="slds-clearfix" style="background-color:rgb(180, 217, 241);"><lightning-button class="delete-button-all  slds-float_right" style="margin-right: 1em;margin-left: 1em;margin-top: 0.2em;margin-bottom: 0.2em;" label="Delete" variant="brand" onclick={delActualSer}><div> </div></lightning-button><lightning-button class="clone-button slds-float_right" style="margin-top: 0.2em;margin-bottom: 0.2em;" label="Clone" variant="brand" onclick={cloneProductsAndServices}></lightning-button></div>
+    <div class="slds-grid slds-gutters" style="background-color:rgb(180, 217, 241);">
+        <!-- <lightning-button
+        label="Clone it"
+        title="Clone"
+        onclick={cloningActualService}
+        ></lightning-button> -->
+        <div class="slds-col slds-size_1-of-3" style="background-color:rgb(130, 196, 240);"> 
+<h2 style="font-size: 16px; "><b>Actual services</b></h2>
+            <lightning-datatable max-row-selection=1 
+            data={ProductDataupdated}  
+            columns={columns} 
+            key-field="Id"  
+            onrowaction={handleRowActions} 
+            onrowselection={handleRowSelection}  > </lightning-datatable>
+            
+
+
+        
+        </div>
+        <div  class="slds-col slds-size_2-of-3" style="background-color:rgb(130, 196, 240);">
+            <h2 style="font-size: 16px; font-style: bold;"><b>Actual service Details</b></h2>
+          <div if:true={updatedArray}>
+            <lightning-datatable max-row-selection=1           
+            data={ActualServiceData}  
+            columns={updatedArray} 
+            key-field="Id"  
+            onsave={handleSave}
+            onrowselection={handleRowSelectionforAdd} 
+            > </lightning-datatable>
+        </div>
+            <!-- <lightning-datatable max-row-selection=1 
+            data={wiredOppLine.data}  
+            columns={columns1} 
+            key-field="Id"  
+            onrowaction={handlerowaction} 
+            onrowselection={handleRowSelection}  > </lightning-datatable> -->
+        </div>
+    </div>
+
+        <div if:true={AddServData} class="slds-col slds-size_2-of-3 slds-float--right" style="background-color:rgb(130, 196, 240); margin-top: 4em; margin-bottom: 2em;" >
+            <h2 style="font-size: 16px;"><b>Additional services</b></h2>
+            <lightning-datatable 
+            data={AddServData}  
+            columns={column2} 
+            key-field="Id"  
+            
+             > </lightning-datatable>
+  
+        </div>
+
+        <!-- <div if:true={AddServData} class="slds-col slds-size_1-of-3">
+            <h2 style="font-size: 16px; font-style: italic;"><b>Additional services</b></h2>
+            <lightning-datatable max-row-selection=1 
+            data={AddServData}  
+            columns={column2} 
+            key-field="Id"  
+            onrowaction={handlerowaction} 
+            onrowselection={handleRowSelectionnew}  > </lightning-datatable>
+  
+        </div> -->
+  
+
+
+
+
+    <!-- <lightning-datatable max-row-selection=1
+                data={newdata}
+                columns={columns2}
+                key-field="id"  
+                onrowaction={handlerowaction2} 
+                onrowselection={getSelectedName}
+                ></lightning-datatable> -->
+
+    <!-- <div class="container" style>
+        <lightning-layout vertical-align="stretch" multiple-rows="true" class="x-large">
+            <lightning-layout-item flexibility="auto" padding="around-small" class="custom-box">
+                <lightning-datatable max-row-selection=1
+                data={data}
+                columns={columns2}
+                onrowaction={handlerowaction2} 
+                onrowselection={getSelectedName}
+                ></lightning-datatable>
+            </lightning-layout-item>
+            <lightning-layout-item flexibility="auto" padding="around-small" class="custom-box">
+                <lightning-datatable max-row-selection=1
+                data={wiredOppLine.data}
+                columns={columns3}
+                onrowaction={handlerowaction3} 
+                onrowselection={handleRowSelection3}
+                ></lightning-datatable>
+            </lightning-layout-item>
+            <lightning-layout-item flexibility="auto" padding="around-small" class="custom-box">
+                <lightning-datatable max-row-selection=1
+                data={wiredOppLine.data}
+                columns={columns4}
+                onrowaction={handlerowaction4} 
+                onrowselection={handleRowSelection4}
+                ></lightning-datatable>
+            </lightning-layout-item>
+            
+        </lightning-layout>
+    </div> -->
+
+    <!-- <div class='grid-container'>
+        <div class='grid-left'></div>
+        <div class='grid-center'></div>
+        <div class='grid-right'></div>
+      </div> -->
+
+    <!-- <lightning-card title="View Services" icon-name="action:new_note" size="small">
+    </lightning-card> -->
+
+    <!-- <lightning-datatable
+        columns={columns}
+        
+    ></lightning-datatable> -->
+    <!-- data={wiredOppLine.data}   -->
+    
+    <!-- <button onclick={showrecordId}>showrecordId</button> -->
+
+    
+
+</template>

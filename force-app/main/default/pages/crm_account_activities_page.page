@@ -1,0 +1,61 @@
+<!-- 
+Created By:Supriya Goel
+Date: Sprint 1
+VF page to show all the open activities that are associated to the party level and relation level account
+
+-->
+
+
+
+<apex:page standardController="Account" extensions="crm_AccountActivitiesController"> 
+
+
+<script type="text/javascript" language="javascript">
+     
+    function newTask(){
+        window.top.location = '{!URLFOR($Action.Task.NewTask)}&what_id={!acnt.id}&saveURL={!acnt.id}&cancelURL={!acnt.id}';
+    }
+    
+    function newEvent(){
+       window.top.location = '{!URLFOR($Action.Event.NewEvent)}/e&what_id={!acnt.id}&saveURL={!acnt.id}&cancelURL={!acnt.id}';
+        
+    }
+    
+    
+    
+</script>
+
+    <apex:form >
+       <apex:pageBlock tabStyle="Account" rendered="{!acnt.id!=null}">
+           <!--<div style="float:right;width:650px">
+                <apex:commandButton onclick="newTask();" value="New Task" id="newTask"></apex:commandButton>
+                <apex:commandButton onclick="newEvent();" value="New Event" id="newEvent"></apex:commandButton>
+            </div>-->
+            <apex:pageBlockSection columns="1" rendered="{!actRList.size>0}">
+                <apex:pageBlockTable value="{!actRList}"  var="acntactivity" width="100%" >
+
+
+                <apex:column headervalue="Action">
+                <apex:outputLink value="/{!acntactivity.id}/e?retURL={!acntactivity.AccountId}" target="{!IF(flag,'_self','_blank')}">Edit</apex:outputLink> | 
+                <apex:outputLink value="/{!acntactivity.id}/e?close=1&retURL={!acntactivity.AccountId}" target="{!IF(flag,'_self','_blank')}">Cls</apex:outputLink>
+                </apex:column>
+
+                <apex:column headervalue="Subject"><apex:outputLink value="/{!acntactivity.id}" target="{!IF(flag,'_self','_blank')}">{!acntactivity.Subject}</apex:outputLink></apex:column>
+                <apex:column headervalue="Name"><apex:outputLink value="/{!acntactivity.whatId}" target="{!IF(flag,'_self','_blank')}">{!acntactivity.What.Name}</apex:outputLink></apex:column>
+                <apex:column headervalue="Related To"><apex:outputLink value="/{!acntactivity.AccountId}" target="{!IF(flag,'_self','_blank')}">{!acntactivity.Account.Name}</apex:outputLink></apex:column>
+                <apex:column headervalue="Task"><apex:inputCheckbox value="{!acntactivity.isTask}" disabled="true"/></apex:column>
+                <apex:column headervalue="Due Date"> <apex:outputText value="{0,date,MM/dd/yy}"> <apex:param value="{!acntactivity.ActivityDate}"/></apex:outputText>  </apex:column>
+                <apex:column headervalue="Status">{!acntactivity.Status}</apex:column>
+                <apex:column headervalue="Priority">{!acntactivity.Priority}</apex:column>
+                <apex:column headervalue="Assigned to"><apex:outputLink value="/{!acntactivity.OwnerId}" target="{!IF(flag,'_self','_blank')}">{!acntactivity.Owner.Name}</apex:outputLink></apex:column>
+
+                </apex:pageBlockTable>
+            </apex:pageBlockSection>
+        <apex:pageBlockSection columns="1" rendered="{!actRList.size==0}">
+            There are no activities for this customer
+    </apex:pageBlockSection>
+    </apex:pageBlock>
+
+    </apex:form>
+    
+</apex:page>

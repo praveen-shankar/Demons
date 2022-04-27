@@ -1,0 +1,10 @@
+<apex:page standardController="EmailMessage" extensions="EmailMessageActions" action="{!previousMsg}" showHeader="false" showQuickActionVfHeader="false">
+
+    <apex:slds />
+    <div class="slds-align_absolute-center" style="height:25rem">
+            <h1 style="font-size:1.5rem;">{!$Label.No_More_Previous_Email}</h1>
+    </div> 
+    
+    <base target="_parent" />
+    
+ </apex:page>

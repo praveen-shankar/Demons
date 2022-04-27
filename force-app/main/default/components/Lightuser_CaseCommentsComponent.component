@@ -1,0 +1,68 @@
+<apex:component controller="Lightuser_CaseCommentsController" allowDML="true"> 
+
+    <script>
+        function validateCommentInput() {
+            document.getElementById('senderError').style.display='none';
+            document.getElementById('commentError').style.display='none';
+            
+            var valid = true;
+        
+            var name = document.getElementById('{!$Component.CaseComment.CaseComment_pageBlock.CaseComment_pageBlock_section.CaseComment_sender_section.sender}').value;
+            var comment = document.getElementById('{!$Component.CaseComment.CaseComment_pageBlock.CaseComment_pageBlock_section.comment}').value;
+
+
+            if(name == '' || comment == '') {
+                if(name == '') {
+                    document.getElementById('senderError').style.display='block';
+                }
+                if(comment == '') {
+                    document.getElementById('commentError').style.display='block';
+                }
+                valid=false;
+            }
+            if(valid) {         
+                AddComment();
+            }
+        }
+    </script>
+
+    <!-- Attribute Definition -->
+    <apex:attribute name="CaseId" description="Salesforce Id of the Case whose Case Comments needs to be rendered" type="Id" required="false" assignTo="{!caseId}" />
+    
+    <!-- Component Body -->
+    <apex:componentBody rendered="{!$Label.Isactivelightuser}" >
+        <apex:form id="CaseComment" rendered="{!$Label.Isactivelightuser}" >
+            <apex:actionFunction name="AddComment" action="{!NewComment}" rerender="CaseComment_pageBlock"/>
+            <!--<apex:pageBlock title="Sakskommentarer til Kundeservice" id="CaseComment_pageBlock">-->
+            <apex:pageBlock title="{!$Label.cs_CaseComntCS}" id="CaseComment_pageBlock">
+                <apex:pageBlockTable value="{!Comments}" var="comment"> 
+                    <!--<apex:column headerValue="Kommentarer">-->
+                    <apex:column headerValue="{!$Label.cs_Comments}">
+                        <apex:outputText escape="false" value="{!comment.commentText}"/>
+                    </apex:column>
+                </apex:pageBlockTable>
+                <apex:pageBlockSection columns="1" id="CaseComment_pageBlock_section">
+                    <apex:inputTextarea value="{!commentBody}" rows="10" cols="210" id="comment"/>
+                    <div class="errorMsg" id="commentError" style="display: none;"><strong>{!$Label.cs_file}:</strong> {!$Label.cs_EnterValue}</div>
+                    <apex:pageBlockSectionItem id="CaseComment_sender_section">
+                        <apex:outputLabel value="{!$Label.cs_FullName}" />
+                        <apex:inputText value="{!sender}" required="true" id="sender"/>
+                    </apex:pageBlockSectionItem>
+                    <div class="errorMsg" id="senderError" style="display: none;"><strong>{!$Label.cs_file}:</strong> {!$Label.cs_EnterValue}</div>
+                </apex:pageBlockSection>
+                <!--
+                <apex:pageBlockSection columns="1" id="CaseComment_pageBlock_section">
+                    <apex:inputTextarea value="{!commentBody}" rows="10" cols="210" id="comment"/>
+                    <div class="errorMsg" id="commentError" style="display: none;"><strong>Feil:</strong> Du må angi en verdi</div>
+                    <apex:pageBlockSectionItem id="CaseComment_sender_section">
+                        <apex:outputLabel value="Fullt navn" />
+                        <apex:inputText value="{!sender}" required="true" id="sender"/>
+                    </apex:pageBlockSectionItem>
+                    <div class="errorMsg" id="senderError" style="display: none;"><strong>Feil:</strong> Du må angi en verdi</div>
+                </apex:pageBlockSection>
+                -->
+            </apex:pageBlock>
+        </apex:form>
+        <button onclick="validateCommentInput()" style="Height:25px;">{!buttonText}</button>
+    </apex:componentBody>
+</apex:component>

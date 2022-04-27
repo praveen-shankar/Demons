@@ -1,0 +1,95 @@
+<apex:component controller="ShipmentOverviewComponent">
+    <apex:attribute name="shipmentList" description="" type="ShipmentWrapper[]" required="false" assignTo="{!shipmentList}" />
+    <apex:attribute name="isSearchView" description="true if shipmentsearch" type="boolean" required="true" assignTo="{!isSearchView}" />
+    <apex:attribute name="mainSearchController" description="sending controller if part of mainsearch" type="MainSearchController" assignTo="{!mainSearchController}" required="false" />
+    
+    <apex:componentBody >
+        <!-- SHIPMENT DETAILS START -->
+        <apex:outputpanel id="shipment_search_results" layout="block">  
+               <apex:outputpanel id="shipmentDetails" layout="block" rendered="{!hasShipments}" >
+                   
+                   <apex:outputPanel id="ShipmentDetailsPopup" layout="block" style="visibility:hidden;">
+                       <apex:outputPanel styleClass="popupBackground" layout="block" />
+                       <apex:outputPanel styleClass="custPopup" layout="block" >
+                           
+                           <apex:outputlink onclick="hideElement('{!$Component.ShipmentDetailsPopup}'); return false;">{!$Label.cs_Back}</apex:outputlink>
+                           &nbsp;&nbsp;
+                           <apex:actionStatus id="shipmentDetailsPopupStatus" onstart="isLoading(true)" onstop="isLoading(false)">
+                               <apex:facet name="start"><apex:image value="{!$Resource.spinner_icon}" /></apex:facet>
+                           </apex:actionStatus>
+           
+                           <br /> 
+                           
+                           <apex:outputpanel layout="block" id="shipmentDetailsContent">                               
+                               <!-- Insert details component -->
+                               <c:ShipmentDetails EConnectWrapper_GetShipmentData="{!wrapper}" ShipmentUnitID="{!currentShipmentUnitID}"/>
+                           </apex:outputpanel>
+                       </apex:outputPanel>
+                   </apex:outputPanel>
+                   
+               </apex:outputpanel> 
+        <!-- SHIPMENT DETAILS END -->             
+                <apex:pageblock title="{!$Label.cs_WaybillwithLicencePlate}" >
+                        <apex:pageblockSection title="Oppsummering" collapsible="true" >
+                            <apex:panelGrid columns="2" >
+                                <b>{!$Label.cs_TransNo}:</b><apex:outputText value="{!shipmentSummary.shipmentNumber}"/>
+                                <b>{!$Label.cs_ShippersRef}::</b><apex:outputText value="{!shipmentSummary.senderReference}"/>
+                                <b>{!$Label.cs_Receiverreference}:</b><apex:outputText value="{!shipmentSummary.receiverReference}" />
+                            </apex:panelGrid>
+                        </apex:pageBlockSection>
+                        <apex:pageBlocksection title="{!$Label.cs_ListofLicencePlate}" collapsible="true" id="listKolli" >
+                            
+                              <apex:dataTable value="{!shipmentList}" var="shipment" styleClass="KATS_table" width="100%">
+                                 <apex:column >
+                                    <apex:facet name="header">{!$Label.cs_Kollinumber}</apex:facet>
+                                    <apex:commandLink onclick="clearElement('{!$Component.shipmentDetailsContent}'); showElement('{!$Component.ShipmentDetailsPopup}');" action="{!showShipmentDetails}" rerender="shipmentDetailsContent,shipmentDetailsPopupMessages" status="shipmentDetailsPopupStatus">
+                                                    <apex:outputText value="{!shipment.ShipmentUnitID}&nbsp;" escape="false" />
+                                                    <apex:param assignTo="{!currentShipmentUnitID}" value="{!shipment.ShipmentUnitID}" name="currentShipmentUnitID"/>
+                                    </apex:commandLink>            
+                                 </apex:column>
+                                 <apex:column >
+                                    <apex:facet name="header">{!$Label.cs_Ident}</apex:facet>
+                                    <apex:outputText value="{!shipment.ShipUnitSequenceID}&nbsp;" escape="false" />
+                                 </apex:column>
+                                 <apex:column >
+                                    <apex:facet name="header">{!$Label.cs_VAS}</apex:facet>
+                                    <apex:outputText value="{!shipment.ValueAddedService}&nbsp;" escape="false"/>
+                                 </apex:column>
+                                 <apex:column >
+                                    <apex:facet name="header">{!$Label.cs_Weight}</apex:facet>
+                                    <apex:outputText value="{!shipment.LoadingWeightMeasure}&nbsp;" escape="false"/>
+                                 </apex:column>
+                                 <apex:column >
+                                    <apex:facet name="header">{!$Label.cs_Product}</apex:facet>
+                                    <apex:outputText value="{!shipment.Product}&nbsp;" escape="false" />
+                                 </apex:column>
+                                 <apex:column >
+                                    <apex:facet name="header">{!$Label.cs_Sender_Name}</apex:facet>
+                                    <apex:outputText value="{!shipment.NameSender}&nbsp;" escape="false"/>
+                                 </apex:column>
+                                 <apex:column >
+                                    <apex:facet name="header">{!$Label.cs_recipientName}</apex:facet>
+                                    <apex:outputText value="{!shipment.NameRecipient}&nbsp;" escape="false"/>
+                                 </apex:column>
+                                 <apex:column >
+                                    <apex:facet name="header">{!$Label.cs_DeliverStreetAddress}</apex:facet>
+                                    <apex:outputText value="{!shipment.ShipToStreetAddress}&nbsp;" escape="false"/>
+                                 </apex:column>
+                                 <apex:column >
+                                    <apex:facet name="header">{!$Label.cs_postcode}.</apex:facet>
+                                    <apex:outputText value="{!shipment.PostalCode}&nbsp;" escape="false" /> 
+                                    <apex:outputText value="{!shipment.City}&nbsp;" escape="false" />
+                                 </apex:column>
+                                 <apex:column rendered="{!isSearchView}">
+                                    <apex:facet name="header">{!$Label.cs_LinktoAmphora}</apex:facet>
+                                    <a href="http://amphora.bring.no/amphora/billoflading/info/search/index2.jsp?kollinr={!shipment.ShipmentUnitID}" target="Mi_Fraktbrev_Sok">
+                                        {!$Label.cs_Toopen}
+                                    </a>
+                                 </apex:column>
+                             </apex:dataTable>
+                            </apex:pageBlocksection>
+                        </apex:pageblock>
+                    </apex:outputpanel>
+                   
+    </apex:componentBody>
+</apex:component>

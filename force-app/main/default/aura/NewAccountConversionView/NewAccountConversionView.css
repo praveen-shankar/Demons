@@ -1,0 +1,212 @@
+.THIS .container.cNewAccountConversionView
+{
+    font-family: 'Salesforce Sans',Arial,sans-serif;
+    font-size: 100%;
+    line-height: 1.5;
+    background: rgb(250, 250, 249);
+    color: rgb(22, 50, 92);
+    -webkit-tap-highlight-color: transparent;
+    padding: 20px 20px 20px 20px; 
+    
+}
+
+.THIS .header
+{
+    border: 1px solid #ccc; 
+    padding: 10px;
+    margin-top: 10px;
+}
+
+
+.THIS .top-pagination-container
+{
+    padding-bottom: 20px;
+    padding-left: 20px;
+    padding-right: 10px;
+    background: rgb(250, 250, 249);
+    color: rgb(22, 50, 92);
+    -webkit-tap-highlight-color: transparent;
+}
+
+.THIS .bottom-pagination-container
+{
+    padding-left: 20px;
+    padding-top: 20px;
+    padding-right: 10px;
+    padding-bottom: 20px;
+    background: rgb(250, 250, 249);
+    color: rgb(22, 50, 92);
+    -webkit-tap-highlight-color: transparent;
+}
+
+.THIS label.slds-form-element__label.input-label
+{
+    padding: 0 !important; 
+    margin-bottom: 0 !important; 
+    position: relative;
+    bottom: -8px;
+}
+
+.THIS .input-search .slds-input 
+{
+    top: -5px!important;
+    position: relative;
+}
+
+.THIS .header-container
+{
+   background-color: #fff !important;    
+}
+
+.THIS .converted-customer 
+{
+    font-size: 18px;
+    padding-left: 10px;
+}
+
+.THIS article.slds-card.custom-lightning-card
+{
+    border: none !important;
+    background-color: transparent !important;
+}
+
+.THIS .slds-card__body
+{
+    margin-bottom: 0 !important;
+}
+
+.THIS .total-records
+{
+   padding-top: 30px;
+}
+
+.THIS .pagination-block
+{
+    padding-top: 20px;
+}
+
+.THIS table.record-table th
+{
+    background-color: #f2f2f2 !important; 
+}
+
+.THIS .slds-checkbox .slds-form-element__label
+{
+    display: inline;
+    vertical-align: middle;
+    font-size: 10px !important;
+}
+
+.THIS .input-checkbox
+{    
+    
+}
+
+.THIS .checkbox-label
+{
+
+}
+
+.THIS .agreement-input-checkbox
+{
+	
+     
+}
+
+.THIS .agreement-checkbox-label
+{
+    
+}
+
+.THIS.slds-spinner_container 
+{  
+  z-index: 10000;
+  position: fixed;   
+}
+
+.THIS .slds-table th, .THIS .slds-table td 
+{
+    padding: .25rem .5rem;
+    white-space: normal !important;
+    position: relative;
+}
+
+.THIS .conversion-input-select label
+{
+    white-space: nowrap !important;
+}
+
+.THIS .name-up-arrow, .THIS .name-down-arrow
+{
+    position: relative; 
+    top: 5px;
+}
+
+.THIS .input-class
+{
+    position: relative;
+}
+
+.THIS .arrow
+{
+    position: absolute;
+    top:5px;
+    right:0;
+    
+}
+
+.THIS .slds-truncate
+{
+    white-space:normal !important;
+}
+
+.THIS .slds-text-title_caps
+{
+    width:18%;
+}
+
+.THIS .slds-form-element__control .slds-radio, .THIS .slds-form-element__control .slds-checkbox 
+{
+    display: block;
+    float: left;
+}
+
+.THIS span.slds-checkbox
+{
+    width: 23%;
+}
+
+.THIS span.agreement.slds-form-element__label
+{
+    float: left;
+    padding: 0px 0px 0px 21px;
+    margin-top: -33px;
+}
+
+.THIS label.slds-form-element__label 
+{
+    font-size: 10px;
+    font-weight: bold;
+}
+
+.THIS span.arrow.agreement-sort
+{
+    margin-top: -8px;
+}
+
+.THIS span.arrow.conversion-sort
+{
+    margin-top: 10px;
+}
+
+.THIS span.customerConverted-process-uparrow, .THIS span.conversionHeat-process-uparrow
+{
+   	margin-right: 10px;
+    position: relative;
+    top: 6px;
+}
+
+.THIS .lightning-datepicker .slds-datepicker
+{
+    max-width: 26rem !important;
+}

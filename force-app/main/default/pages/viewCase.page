@@ -1,0 +1,22 @@
+<apex:page contentType="text/xml" controller="adHoc_viewCaseController">
+
+    <apex:outputText value="{!xmlInfo}" />
+    <KATS>
+        <case>
+            <casenumber><apex:outputText value="{!myCase.casenumber}" /></casenumber>
+            <subject><apex:outputText value="{!myCase.subject}" /></subject>
+            <status><apex:outputText value="{!myCase.status}" /></status>
+            <caseDescription><apex:outputText value="{!caseDescription}" /></caseDescription>
+            <caseType><apex:outputText value="{!myCase.RecordType.Name}" /></caseType>
+            <createdDate><apex:outputText value="{0,date,MM'.'dd'.'yyyy}" ><apex:param value="{!myCase.createdDate}" /></apex:outputText></createdDate>
+            <processingDeadline value="{0,date,MM'.'dd'.'yyyy}"><apex:param value="{!myCase.processing_deadline__c}"/></processingDeadline>
+            <lastModifiedDate><apex:outputText value="{0,date,MM'.'dd'.'yyyy HH':'mm}" ><apex:param value="{!myCase.LastModifiedDate}" /></apex:outputText></lastModifiedDate>
+            <ShipmentNumber><apex:outputText value="{!myCase.Shipment_number__c}" /></ShipmentNumber>
+            <origin><apex:outputText value="{!myCase.origin}" /></origin>   
+            <error><apex:outputText value="{!error}" /></error>
+            <!--CSphase2, Akash, 19122016-->
+           <!--<text>Denne siden viser status for den aktuelle saken. Hvis du har spørsmål vennligst svar på e-posten hvor du fant lenken til denne siden.</text>-->
+            <text>{!$Label.cs_ViewCaseError2}</text>
+        </case>
+    </KATS>
+</apex:page>

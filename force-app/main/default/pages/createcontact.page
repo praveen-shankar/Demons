@@ -1,0 +1,2 @@
+<apex:page standardController="Contact" action="{!createContactinMyBring}" extensions="crm_createContactinMyBringController">
+</apex:page>

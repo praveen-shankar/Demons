@@ -1,0 +1,10 @@
+<aura:component implements="flexipage:availableForRecordHome,force:hasRecordId">
+    <!-- Author: Rajeev Shekhar -->
+    <aura:attribute name="recordId" type="String"/>
+    <aura:attribute name="showsystemLM" type="Boolean"/>
+    <aura:attribute name="showsystemMB" type="Boolean"/>
+    
+    <lightning:card variant="Narrow" title="{!$Label.c.edi_integrationHeader}" iconName="standard:work_type">
+        <c:edi_Integration_selectComp recordId="{#v.recordId}" showsystemLM="{#v.showsystemLM}" showsystemMB="{#v.showsystemMB}"/>	        
+    </lightning:card>    
+</aura:component>

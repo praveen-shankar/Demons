@@ -1,0 +1,73 @@
+<apex:page standardController="Account" extensions="crm_CreatePartyCustomer" sidebar="false" tabStyle="Account" showHeader="false" title="Request Customer" >
+    
+    <apex:form id="form">
+        <apex:pageBlock title="Create Customer">
+            <apex:pageMessages escape="false" rendered="true" ></apex:pageMessages>
+            <apex:pageblockSection id="theBlock" >
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="{!$ObjectType.crm_Request_RelationCustomer__c.fields.crm_Credit_Needed__c.Label}"  />
+                    <apex:actionRegion >
+                    <apex:inputCheckbox value="{!customerObj.crm_Credit_Needed__c}">
+                        <apex:actionSupport event="onchange" action="{!toggleStatus}" rerender="form"/>
+                    </apex:inputCheckbox>
+                    </apex:actionRegion>    
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="{!$ObjectType.crm_Request_RelationCustomer__c.fields.crm_AdditionalInformation__c.Label}" />
+                    <apex:outputField value="{!customerObj.crm_AdditionalInformation__c}"/>
+                </apex:pageBlockSectionItem>
+                
+                   <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="{!$ObjectType.Account.fields.crm_Requested_Credit_Amount__c.Label}" />
+                    <apex:inputField id="selectId" value="{!Account.crm_Requested_Credit_Amount__c}" required="{!requiredFlag}"/>
+                </apex:pageBlockSectionItem>
+            </apex:pageblockSection>
+            
+            <apex:pageBlockSection title="Customer Contact Person For Credit" >
+                
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="{!$ObjectType.crm_Request_RelationCustomer__c.fields.crm_First_Name__c.Label}" />
+                    <apex:inputField value="{!customerObj.crm_First_Name__c}" required="{!requiredFlag}"/>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="{!$ObjectType.crm_Request_RelationCustomer__c.fields.crm_Last_Name__c.Label}" />
+                    <apex:inputField value="{!customerObj.crm_Last_Name__c}" required="{!requiredFlag}"/>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="{!$ObjectType.crm_Request_RelationCustomer__c.fields.crm_Mobile__c.Label}" />
+                    <apex:inputField value="{!customerObj.crm_Mobile__c}" required="{!requiredFlag}"/>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="{!$ObjectType.crm_Request_RelationCustomer__c.fields.crm_Email__c.Label}" />
+                    <apex:inputField value="{!customerObj.crm_Email__c}" required="{!requiredFlag}"/>
+                </apex:pageBlockSectionItem>
+                
+             
+                
+            </apex:pageBlockSection>
+            
+            
+            <apex:pageBlockButtons location="bottom">
+                <apex:commandButton value="Send Request" action="{!convertToParty}"  rerender="form" status="status"/>
+                <apex:actionStatus id="status">
+                    <apex:facet name="start">
+                        <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; opacity: 0.75; z-index: 1000; background-color: black;">
+                            &nbsp;
+                        </div>
+                        <div style="position: fixed; left: 0; top: 0; bottom: 0; right: 0; z-index: 1001; margin: 20% 50%">
+                            <img src="{!$Resource.crmWaiting}" />
+                        </div>
+                    </apex:facet>
+                </apex:actionStatus>
+                <apex:commandButton value="Go Back" action="{!Cancel}"/>
+            </apex:pageBlockButtons>
+        </apex:pageBlock>
+    </apex:form>
+    
+</apex:page>

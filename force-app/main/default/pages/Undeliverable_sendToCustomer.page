@@ -1,0 +1,5 @@
+<apex:page standardController="UndeliverableShipment__c" extensions="Undeliverable_sendToCustomer" action="{!loaddata}">
+<!--<h1>Undeliverable Shipments as sent to customer...</h1>-->
+<!--CSphase2, Akash, 19122016-->
+<h1>{!$Label.cs_UndeliveredShip}</h1>
+</apex:page>

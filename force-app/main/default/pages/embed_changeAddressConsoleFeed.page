@@ -1,0 +1,191 @@
+<apex:page standardController="case" extensions="embed_caseDetail" sidebar="false" showHeader="false" standardStylesheets="true">
+    <apex:form >
+        <apex:inputHidden value="{!case.AccountId}" />
+    </apex:form>
+
+    <A HREF="#" onClick="testOpenSubtab();return false">
+        </A> 
+
+<style>
+.activeTab {background-color: #d62d22; color:white; background-image:none; height:20px; border-top: 2px solid #d62d22; border-right: 2px solid #d62d22; border-left: 2px solid #d62d22;}
+.inactiveTab { background-color: #EAEAEA; color:black; background-image:none; height:20px; border-top: 2px solid #EAEAEA; border-right: 2px solid #EAEAEA; border-left: 2px solid #EAEAEA;}
+</style>
+
+    <apex:includeScript value="/support/console/40.0/integration.js"/>
+    <script type="text/javascript">
+        function testOpenSubtab() {
+            //First find the ID of the primary tab to put the new subtab in
+            sforce.console.getEnclosingPrimaryTabId(openSubtab);
+        }
+        
+        var openSubtab = function openSubtab(result) {
+            //Now that we've got the primary tab ID, we can open a new subtab in it
+            var primaryTabId = result.id;
+            sforce.console.openSubtab(primaryTabId , '/apex/mainsearch', false, 
+                'google', null, null);
+        };
+        
+        function refreshActiveTab() {
+          if (sforce.console.isInConsole()) {
+            sforce.console.getFocusedPrimaryTabId(function(result) {
+                var tabid = result.id;
+                    sforce.console.refreshPrimaryTabById(tabid, true, function(res) {}, true);
+                
+            });
+          }
+        }
+        
+      
+    </script>
+    
+    <!-- While processing -->
+    <apex:actionstatus id="counterStatus">
+        <apex:facet name="start">
+          <div class="waitingSearchDiv" id="el_loading" style="background-color: #fbfbfb; height:100%;opacity:0.65;width:100%;">
+            <div class="waitingHolder" style="center: 100px; width: 91px;">
+              <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />
+             <span class="waitingDescription">{!$Label.cs_Processing}</span>
+            </div>
+          </div>
+       </apex:facet>
+    </apex:actionstatus>
+    <apex:OutputPanel layout="block" style="overflow:auto;width:620px;height:350px">
+    <apex:tabPanel switchType="client" rendered="{!HasEConnectData}" tabClass="activeTab" inactiveTabClass="inactiveTab">
+    <apex:tab label="{!$Label.cs_address_changes}">
+    <div style="overflow:auto; {!addr_TabSection}">
+     <apex:pageBlock >
+    <apex:pageBlockTable value="{!forwardingElements.forwardingTypes}" var="type">
+    
+    <apex:column >
+    <apex:facet name="header">{!$Label.cs_Type}
+    
+    </apex:facet>
+    <apex:outputlabel value="{!If(type.Type_x=='Oppbevaring','v','o')}" style="font-weight: bolder"/>
+    </apex:column>
+    <apex:column >
+    <apex:facet name="header">{!$Label.cs_Reference_Number}
+    </apex:facet>
+    <apex:outputlabel value="{!type.Number_X}" / >
+    </apex:column>
+    <apex:column >
+    <apex:facet name="header">{!$Label.cs_Reference_Number}OMA
+    </apex:facet>
+    <apex:outputlabel value="{!type.ReferenceOMA }" / >
+    </apex:column>
+    <apex:column >
+    <apex:facet name="header">{!$Label.cs_From_Address}
+    </apex:facet>
+    <apex:outputlabel value="{!type.FromAddress.StreetName} {!type.FromAddress.BuildingNumber},{!type.FromAddress.BuildingName},{!type.FromAddress.PostOfficeBox}"/ ><apex:outputlabel value="{!type.FromAddress.PostalCode} "/ ><apex:outputlabel value="{!type.FromAddress.CityName}"/ >
+    </apex:column>
+    
+    <apex:column >
+    <apex:facet name="header">{!$Label.cs_To_Address}
+    </apex:facet>
+    <apex:outputlabel value="{!type.ToAddress.StreetName} {!type.ToAddress.BuildingNumber},{!type.ToAddress.BuildingName},{!type.ToAddress.PostOfficeBox}"/ ><apex:outputlabel value="{!type.ToAddress.PostalCode} "/ ><apex:outputlabel value="{!type.ToAddress.CityName}"/ >
+    </apex:column>
+    
+    <apex:column >
+    <apex:facet name="header">{!$Label.cs_valid_from_date}
+    </apex:facet>
+    <apex:outputText value="{0,date,dd'/'MM'/'yyyy}"><apex:param value="{!type.StartDate}"/></apex:outputText>
+    </apex:column>
+    
+    <apex:column >
+    <apex:facet name="header">{!$Label.cs_Valid_To_Date}
+    </apex:facet>
+    <apex:outputText value="{0,date,dd'/'MM'/'yyyy}"><apex:param value="{!type.EndDate}"/></apex:outputText>
+    </apex:column>
+    <apex:column >
+    <apex:facet name="header">{!$Label.cs_Status}
+    </apex:facet>
+    <apex:outputlabel value="{!type.Status}" / >
+    </apex:column>
+       <apex:column >
+    <apex:facet name="header">{!$Label.cs_Source}
+    </apex:facet>
+    <apex:outputlabel value="{!type.Source}" / >
+    </apex:column>
+    </apex:pageBlockTable>
+    </apex:pageBlock>
+ <!----
+       <apex:repeat value="{!forwardingElements.forwardingTypes}" var="type" >
+        <apex:pageBlock >
+            <apex:pageBlockSection title="{!type.Number_x} - {!type.Type_x}" columns="1" collapsible="true">
+                <apex:pageBlockSection columns="3">
+                    <apex:pageBlockSectionItem ><apex:outputLabel value="Referansenummer"/><apex:outputText value="{!type.Number_x}"/></apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem ><apex:outputLabel value="OMA Referansenummer"/><apex:outputText value="{!type.ReferenceOMA}"/></apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem ><apex:outputText rendered="NOT({!type.OEBSURI}=='')" escape="true" ><a href="{!type.OEBSURI}" target="_blank">Link FAR</a></apex:outputText></apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem ><apex:outputLabel value="Type"/><apex:outputText value="{!type.Type_x}"/></apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem ><apex:outputLabel value="Kilde"/><apex:outputText value="{!type.Source}"/></apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem ></apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem ><apex:outputLabel value="Dato start"/><apex:outputText value="{0,date,dd'/'MM'/'yyyy}"><apex:param value="{!type.StartDate}"/></apex:outputText></apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem ><apex:outputLabel value="Dato slutt"/><apex:outputText value="{0,date,dd'/'MM'/'yyyy}"><apex:param value="{!type.EndDate}"/></apex:outputText></apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem ><apex:outputLabel value="Oppbevaringsdato"/><apex:outputText value="{0,date,dd'/'MM'/'yyyy}"><apex:param value="{!type.HoldDate}"/></apex:outputText></apex:pageBlockSectionItem>
+                </apex:pageBlockSection>        
+        
+        
+                <table style="padding-bottom:10px">
+                    <tr>
+                        <th width="200">Fornavn</th>
+                        <th width="200">Mellomnavn</th>
+                        <th width="200">Etternavn</th>
+                    </tr>
+                    <apex:repeat value="{!type.OtherParties.party}" var="otherParty">
+                        <tr>
+                            <td>{!otherParty.FirstName}</td>
+                            <td>{!otherParty.MiddleName}</td>
+                            <td>{!otherParty.LastName}</td>
+                        </tr>
+                    </apex:repeat>
+                </table>
+            
+                <table style="padding-bottom:10px">
+                    <tr>
+                        <th>Fra addresse</th>
+                    </tr>
+                    <tr>
+                        <th width="200">Gateadresse</th>
+                        <th width="200">Poststed</th>
+                        <th width="200">Postnummer</th>
+                    </tr>
+                    <apex:repeat value="{!type.FromAddress}" var="toAddress" >
+                        <tr>
+                            <td>{!toAddress.Street}</td>
+                            <td>{!toAddress.City}</td>
+                            <td>{!toAddress.PostalCode}</td>
+                        </tr>
+                    </apex:repeat>
+                </table>
+            
+                <table style="padding-bottom:10px">
+                    <tr>
+                        <th>Ny adresse</th>
+                    </tr>
+                    <tr>
+                        <th width="200">Gateadresse</th>
+                        <th width="200">Poststed</th>
+                        <th width="200">Postnummer</th>
+                    </tr>
+                    <apex:repeat value="{!type.ToAddress}" var="newAddress" >
+                        <tr>
+                            <td>{!newAddress.Street}</td>
+                            <td>{!newAddress.City}</td>
+                            <td>{!newAddress.PostalCode}</td>
+                        </tr>
+                    </apex:repeat>
+                </table>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+        </apex:repeat> -->
+        </div>
+    </apex:tab>
+    
+</apex:tabPanel>
+</apex:OutputPanel>
+<apex:outputpanel id="messages">
+    <div style="overflow:auto; {!addr_MsgSection}">
+        <apex:messages layout="list" />
+    </div>
+</apex:outputpanel>
+
+</apex:page>

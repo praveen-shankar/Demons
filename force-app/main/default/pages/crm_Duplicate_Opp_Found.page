@@ -1,0 +1,15 @@
+<apex:page >
+    
+  <apex:form >
+  <h1 id="duplicateError"></h1>
+  <apex:commandButton action="/{!$Currentpage.parameters.agr}" value="Back To Agreement"/>
+  </apex:form>
+    
+  <script>
+    var duplicateOppFoundError = '{!$Label.crm_DuplicateOpportunityFound}';
+    var duplicateOppFoundErrorwithdate = duplicateOppFoundError.replace("dateVar", "{!$CurrentPage.parameters.agrstrtdate}");
+    document.getElementById("duplicateError").innerHTML = duplicateOppFoundErrorwithdate;
+    
+    //alert(duplicateOppFoundErrorwithdate);
+   </script>
+</apex:page>

@@ -1,0 +1,5 @@
+<apex:page standardController="Case" extensions="createCaseFromEmailController" action="{!loadData}">
+  <!--<h1>A new case is being created...</h1>-->
+  <!--CSphase2, Akash, 19122016-->
+  <h1>{!$Label.cs_NewCase}</h1>
+</apex:page>

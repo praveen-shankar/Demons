@@ -1,0 +1,21 @@
+<apex:page standardController="Contact">
+        <apex:includeLightning />
+
+    <div id="lightning" />
+
+    <script>
+        $Lightning.use("c:MyBringUserRolesApp", function() {
+          $Lightning.createComponent("c:cs_MybringUserRole",
+              {
+                  "recordId" : "{!Contact.Id}"
+              },
+              "lightning",
+              function(cmp) {
+                console.log("Component created");
+                // do some stuff
+              }
+          );
+        });
+    </script>
+    
+</apex:page>

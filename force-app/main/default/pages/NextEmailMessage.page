@@ -1,0 +1,10 @@
+<apex:page standardController="EmailMessage" extensions="EmailMessageActions" action="{!nextMsg}" showHeader="false" showQuickActionVfHeader="false">
+
+    <apex:slds />
+    
+    <div class="slds-align_absolute-center" style="height:25rem">
+            <h1 style="font-size:1.5rem;">{!$Label.No_More_Next_Emails}</h1>
+    </div> 
+    <base target="_parent" />
+    
+</apex:page>

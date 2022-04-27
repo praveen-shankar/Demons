@@ -1,0 +1,52 @@
+<!-- Author: Rajeev Shekhar -->
+<!-- Odigo CTI Project      -->
+
+<apex:page controller="OdigoAgentSupervisionController" showHeader="true" sidebar="false" id="odigoagentpage">
+   <style>
+      .greenColour {background-color:#98FB98;}
+      .yellowColour {background-color:#FFFF00;}
+      .amberColour {background-color:#feb217;}
+      .otherColour {background-color:#FDFFDB;}
+      .redColour {background-color:#FF0000;}
+      .ct {text-align:center;}
+      .rowHeight{height: 5px !important;}
+   </style>
+  
+   <apex:form id="odigoagentform">      
+      <apex:outputPanel id="odigoagentpanel">
+         <apex:outputPanel rendered="{!NOT(initialised)}">
+            <p align="center" style='{font-family:"Arial", Helvetica, sans-serif; font-size:20px;}'>
+               <apex:image value="/img/loading.gif" />
+               &nbsp;Vennligst vent
+            </p>
+            <script>
+               window.addEventListener('DOMContentLoaded', function() {
+                   doInit();
+               });
+            </script>
+         </apex:outputPanel>
+         <apex:actionFunction name="doInit" action="{!getStats}"/>
+         <apex:actionPoller interval="15" action="{!refresh}" enabled="{!$Label.Odigo_Agent_Supervision_Allow_Refresh}"/>
+         <apex:sectionHeader title="{!$Label.Agent_Supervision}" subtitle="Odigo"/>
+         <apex:pageMessages />
+         <apex:outputPanel rendered="{!initialised}" id="odigoagentpanel2">
+            <apex:pageBlock mode="edit" id="odigoagentpageblock">
+             <apex:commandButton action="{!refresh}" value="{!$Label.Reload_Omni}"/>
+               <div style="overflow: scroll; height: 600px;">
+                  <apex:pageBlockTable value="{!keys}" var="k" rules="groups" id="odigoagentpageblocktable">
+                     <apex:column value="{!k}" headerValue="{!$Label.Odigo_Queue}" style="width:120px" headerClass="ct" id="odigoagentpageblocktablemaincol"/>
+                     <apex:column headerValue="{!$Label.Odigo_Key_Metrics}" headerClass="ct" style="width:200px" id="odigoagentpageblocktablecol">
+                        <apex:pageBlockTable value="{!responseMapNew[k]}" var="r" rules="groups" id="odigoagentpageblocktable2">
+                           <apex:column value="{!metricsMap[r.id]}" headerValue="Parameter" style="width:100px" 
+                            title="{!Case(metricsMap[r.id],"TCW",$Label.Odigo_Agent_TCW,"AA",$Label.Odigo_Agent_AA,"LWT",$Label.Odigo_Agent_LWT,"")}" id="odigoagentpageblocktable2col1"/>
+                           <apex:column value="{!r.value}" headerValue="{!$Label.Odigo_Agent_Value}" id="odigoagentpageblocktable2col"
+                           styleClass="{!IF((metricsMap[r.id] == "AA" && r.value == "0"),"redColour",IF((k != "" && metricsMap[r.id] == "LWT" && VALUE(r.value) > LWTmap[k]),"redColour","greenColour"))}"/>
+                        </apex:pageBlockTable>
+                     </apex:column>
+                  </apex:pageBlockTable>
+               </div>
+            </apex:pageBlock>
+         </apex:outputPanel>
+      </apex:outputPanel>
+   </apex:form>
+</apex:page>

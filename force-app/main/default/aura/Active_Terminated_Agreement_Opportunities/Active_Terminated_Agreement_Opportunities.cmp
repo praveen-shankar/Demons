@@ -1,0 +1,163 @@
+<aura:component controller="ActiveTerminatedAgreementOpportunities" implements="lightning:availableForFlowScreens,force:appHostable,force:hasRecordId,force:lightningQuickAction" access="global" >
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:attribute name="getActiveAgreementOpportunities" type="Opportunity[]" default="[]"/>
+    <aura:attribute name="OpportunityDeleteRecordId" type="String" default="Id"/>
+    <aura:attribute name="headerName" type="String" default="Opportunity"/>
+    <aura:attribute name="obj" type="String" />
+    <aura:attribute name="saveTabledata" type="SObject[]" default="[]"/>
+    <aura:attribute name="selectedRows" type="SObject[]" default="[]"/>
+    <aura:attribute name="sortedBy" type="String" />
+    <aura:attribute name="sortedDirection" type="String" />
+    <aura:attribute name="maxRowSelection" type="String" />
+    <aura:attribute name="hideCheckboxColumn" type="Boolean" default="true" />
+    <aura:attribute name="preSelection" type="SObject[]" default="[]"/>
+    <aura:attribute name="preSelectedIds" type="List" />
+    <aura:attribute name="draftValues" type="Object[]"/>
+    <aura:attribute name="keyField" type="String" default="Id"/>
+    <aura:attribute name="mydata_standard1" type="Opportunity[]" default="[]"/>
+    <aura:attribute name="selectedRows_standard1" type="Opportunity[]" default="[]"/>
+    <aura:attribute name="singleSelection" type="String" />
+    <aura:attribute name="tablecolumns" type="List"/>
+	<aura:attribute name="tabledata" type="SObject[]" default="[]"/>  
+    <aura:attribute name="recordSize" type="Integer" default="0"/>
+    <aura:attribute name="deleteDisabled" type="Boolean" default="false" />
+    <aura:attribute name="currentProfileName" type="String" default="" />
+    
+    <aura:attribute name="column01_icon" type="String"/>
+    <aura:attribute name="column01_label" type="String"/>
+    <aura:attribute name="column01_fieldName" type="String"/>
+    <aura:attribute name="column01_type" type="String" default="text"/>
+    <aura:attribute name="column01_width" type="Integer"/>
+    <aura:attribute name="column01_align" type="String"/>
+    <aura:attribute name="column01_editable" type="Boolean" default="false"/>
+    
+    <aura:attribute name="column02_label" type="String"/>
+    <aura:attribute name="column02_fieldName" type="String"/>
+    <aura:attribute name="column02_type" type="String" default="text"/>
+    <aura:attribute name="column02_width" type="Integer"/>
+    <aura:attribute name="column02_align" type="String"/>
+    <aura:attribute name="column02_editable" type="Boolean" default="false"/>
+
+    <aura:attribute name="column03_label" type="String"/>
+    <aura:attribute name="column03_fieldName" type="String"/>
+    <aura:attribute name="column03_type" type="String" default="text"/>
+    <aura:attribute name="column03_width" type="Integer"/>
+    <aura:attribute name="column03_align" type="String"/>
+    <aura:attribute name="column03_editable" type="Boolean" default="false"/>
+	
+ 
+    <aura:attribute name="column04_icon" type="String"/>
+    <aura:attribute name="column04_label" type="String"/>
+    <aura:attribute name="column04_fieldName" type="String"/>
+    <aura:attribute name="column04_type" type="String" default="text"/>
+    <aura:attribute name="column04_width" type="Integer"/>
+    <aura:attribute name="column04_align" type="String"/>
+    <aura:attribute name="column04_editable" type="Boolean" default="false"/>
+    
+    <aura:attribute name="column05_label" type="String"/>
+    <aura:attribute name="column05_fieldName" type="String"/>
+    <aura:attribute name="column05_type" type="String" default="text"/>
+    <aura:attribute name="column05_width" type="Integer"/>
+    <aura:attribute name="column05_align" type="String"/>
+    <aura:attribute name="column05_editable" type="Boolean" default="false"/>
+
+    <aura:attribute name="column06_label" type="String"/>
+    <aura:attribute name="column06_fieldName" type="String"/>
+    <aura:attribute name="column06_type" type="String" default="text"/>
+    <aura:attribute name="column06_width" type="Integer"/>
+    <aura:attribute name="column06_align" type="String"/>
+    <aura:attribute name="column06_editable" type="Boolean" default="false"/>
+    
+    <aura:attribute name="column07_label" type="String"/>
+    <aura:attribute name="column07_fieldName" type="String"/>
+    <aura:attribute name="column07_type" type="String" default="text"/>
+    <aura:attribute name="column07_width" type="Integer"/>
+    <aura:attribute name="column07_align" type="String"/>
+    <aura:attribute name="column07_editable" type="Boolean" default="false"/>
+    
+    <aura:attribute name="column08_label" type="String"/>
+    <aura:attribute name="column08_fieldName" type="String"/>
+    <aura:attribute name="column08_type" type="String" default="text"/>
+    <aura:attribute name="column08_width" type="Integer"/>
+    <aura:attribute name="column08_align" type="String"/>
+    <aura:attribute name="column08_editable" type="Boolean" default="false"/>
+    
+    <aura:attribute name="column09_label" type="String"/>
+    <aura:attribute name="column09_fieldName" type="String"/>
+    <aura:attribute name="column09_type" type="String" default="text"/>
+    <aura:attribute name="column09_width" type="Integer"/>
+    <aura:attribute name="column09_align" type="String"/>
+    <aura:attribute name="column09_editable" type="Boolean" default="false"/>
+  
+     
+	<div aura:id="deleteModal" class="hideDiv"> 
+        <div class="slds-modal slds-fade-in-open hideDiv" aria-hidden="false" role="dialog">
+            <div class="slds-modal__container">
+                <header class="slds-modal__header">
+                    <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close">
+                        <lightning:icon icon-name="action:close" alternative-text="Close" title="Close"></lightning:icon>
+                        <span class="slds-assistive-text">Close</span>
+                    </button>
+                    <h2 id="modal-heading-01" class="slds-modal__title slds-hyphenate">{!$Label.c.Delete_Opportunity}</h2>
+                </header>
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                    <p>{!$Label.c.Opportunity_Delete_Message}</p>
+                </div>
+                <footer class="slds-modal__footer">
+                    <button class="slds-button slds-button_neutral" onclick="{!c.fnCloseDeleteWarning}" disabled="">{!$Label.c.Opp_Cancel_Button}</button>
+                    <!--button class="slds-button slds-button_brand" onclick="{!c.fnDeleteOpprtunity}" disabled="{! v.spinLoaded }">{!$Label.c.Opp_Delete_Button}</button-->  
+                    
+                    <aura:if isTrue="{!v.deleteDisabled}">
+                        <lightning:button label="{!$Label.c.Opp_Delete_Button}" variant="Brand" disabled="true"/>
+                        <aura:set attribute="else">
+                            <lightning:button label="{!$Label.c.Opp_Delete_Button}" onclick="{!c.fnDeleteOpprtunity}" variant="Brand" />
+                        </aura:set>
+                    </aura:if>
+                    
+                </footer>
+            </div>
+        </div>
+		<div class="slds-backdrop slds-backdrop_open "></div>
+    </div>
+    
+    <div class="slds-page-header slds-box slds-box_small">
+    	<div class="slds-page-header__row">
+            <div class="slds-page-header__col-title">
+                <div class="slds-media">
+                    <div class="slds-media__figure">
+                        <span class="slds-icon_container slds-icon-standard-opportunity" title="opportunity">
+                            <!--svg class="slds-icon slds-page-header__icon" aria-hidden="true">
+                              <use xlink:href="/assets/icons/standard-sprite/svg/symbols.svg#opportunity"></use>
+                            </svg-->
+                            <lightning:icon size="small" iconName="custom:custom11" title="Opportunity" />
+                            <!--span class="slds-assistive-text">opportunity</span-->
+                        </span>
+                    </div>
+                    <div class="slds-media__body">
+                        <div class="slds-page-header__name">
+                            <div class="slds-page-header__name-title">
+                                <h1>
+                                    <b><span  class=" slds-hyphenate" title="{!v.headerName}">{!v.headerName}  ({!v.recordSize})</span></b>
+                                </h1>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+	</div>
+    <aura:if isTrue="{!greaterthan(v.recordSize,0)}">
+        <div style="height: 200px; border: 1px solid lightgrey;border-radius: 5px;">
+    		<lightning:datatable aura:id="flowTable" data="{!v.tabledata}" 
+                columns="{! v.tablecolumns }" 
+                keyField="Id"
+                hideCheckboxColumn="{! v.hideCheckboxColumn }"
+                sortedBy="{! v.sortedBy }"
+                onsort="{! c.updateColumnSorting }"
+                suppressBottomBar="true"
+                onrowaction="{! c.handleRowAction }"/>
+        </div>
+	</aura:if>
+    <br/>
+</aura:component>

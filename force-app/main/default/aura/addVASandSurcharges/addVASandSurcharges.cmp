@@ -1,0 +1,36 @@
+<aura:component access="public" controller="crm_addServicesControllerLightning">
+    <aura:attribute name="allSelectedVASSurchargeIds" type="List" access="public" />
+    <aura:attribute name="selectedActualServiceId" type="String" access="public" />
+    <aura:attribute name="selectedActualServiceName" type="String" access="public" />
+    <aura:attribute name="generateInputTablesVar" type="Boolean" default="false" />
+    <aura:attribute name="OpprecordId" type="String" />
+    <aura:attribute name="product2options" type="Product2[]" />
+    <aura:attribute name="servicefamily" type="String" />
+    <aura:attribute name="actualserviceEditTableColumns" type="crm_Dynamic_Columns_Add_Opp_Services__c[]" />
+    <aura:attribute name="additionalServiceEditTableColumns" type="crm_Dynamic_Columns_Add_Opp_Services__c[]" />
+    <aura:handler name="init" value="{!this}" action="{!c.generateInputTablesActualService}" />
+    <aura:registerEvent name="progressIndicatorEvent" type="c:addServiceProgressIndicatorEvent" />
+    <aura:registerEvent name="progressIndicatorEvent2" type="c:addServiceProgressIndicatorEvent2" />
+    <aura:handler name="change" value="{!v.selectedActualServiceId}" action="{!c.setSelectedProductName}" />
+    <aura:handler name="disableSave" event="c:addServicesOppDisableSave" action="{!c.disableNextButton}"/>
+    
+    <div class="slds-page-header">
+        <div class="slds-text-heading_medium slds-text-align_center slds-text-title_caps">
+            <strong>Actual Service : {!v.selectedActualServiceName}</strong></div>
+    </div>
+    <div class="slds-p-top_medium"></div>
+    <div>
+
+    <aura:if isTrue="{!v.generateInputTablesVar}">
+    	<c:lightningDataTable actualServiceFields="{#v.actualserviceEditTableColumns}" allSelectedVASSurchargeIds="{#v.allSelectedVASSurchargeIds}" servicefamily="{#v.servicefamily}"  aura:id="lightningDataTableCmp" />
+    </aura:if>
+    </div>
+    <div class="slds-docked-form-footer">
+        <lightning:button class="slds-float_left" variant="neutral" label="Cancel" iconName="utility:close" iconPosition="left" onclick="{!c.closeQuickAction}"/>
+        <lightning:buttonGroup >
+            <lightning:button iconName="utility:back" variant="neutral" label="Back" onclick="{!c.goBack}" />
+            <lightning:button iconName="utility:forward" variant="neutral" label="Next" onclick="{!c.goNextPage}" aura:id="nextbutton"/>
+        </lightning:buttonGroup>
+    </div>
+
+</aura:component>

@@ -1,0 +1,145 @@
+<apex:page standardController="Case" extensions="embed_caseDetail" showHeader="false" showChat="false" sidebar="false">
+    
+    <!-- While processing -->
+    <apex:actionstatus id="counterStatus">
+        <apex:facet name="start">
+          <div class="waitingSearchDiv" id="el_loading" style="background-color: #fbfbfb; height:100%;opacity:0.65;width:100%;">
+            <div class="waitingHolder" style="center: 100px; width: 91px;">
+              <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />
+             <span class="waitingDescription">{!$Label.cs_Processing}</span><!--CSphase2, Akash, 27122016-->
+            </div>
+          </div>
+       </apex:facet>
+    </apex:actionstatus> 
+      <apex:outputPanel id="top">
+    <apex:outputPanel rendered="{!viewInvoiceData}">
+        <div style="overflow:auto; {!inv_TabSection}">
+            
+            <apex:form >
+            <apex:outputPanel rendered="{!IF(raised , false,true)}">
+            <apex:pageBlock >
+                <apex:pageBlockTable value="{!invoiceElements.invoiceTypes}" var="invoice">
+                
+                      <!--<apex:column headerValue="Fakturanummer"><apex:outputLink value="{!invoice.ItellaURI}" target="_blank" >{!invoice.Number_x}</apex:outputLink></apex:column>
+                      
+                    <apex:column headervalue="Fakturadato">{!invoice.DocumentDateTime}</apex:column>
+                    <apex:column headervalue="Fakturaforfall">{!invoice.TrxDueDateTime}</apex:column>
+                    <apex:column headerValue="Fakturatype">{!invoice.Type_x}</apex:column>
+                    CSPhase2 , Supriya, 10122016  =>Added the labels
+                    -->                 
+                    <apex:column headerValue="{!$Label.cs_invoice_number}"><apex:outputLink value="{!invoice.ItellaURI}" target="_blank" >{!invoice.InvoiceNumber}</apex:outputLink></apex:column>
+                    
+                    <apex:column headervalue="{!$Label.cs_invoice_date}">{!invoice.DocumentDateTime}</apex:column>
+                    <apex:column headervalue="{!$Label.cs_Invoice_for_all}">{!invoice.TrxDueDateTime}</apex:column>
+                    <apex:column headerValue="{!$Label.cs_Invoice_type}">{!invoice.InvoiceType }</apex:column>
+                    <apex:column headerValue="Sum">{!invoice.Sum}</apex:column>
+                    <apex:column headerValue="Status">{!invoice.Status}</apex:column>
+                    <!--
+                    <apex:column headerValue="Lagre">
+                    CSPhase2 , Supriya, 10122016  =>Added the labels
+                    -->
+                     <apex:column headerValue="{!$Label.cs_Save}">
+                        <apex:commandButton image="{!$Resource.save_icon}" action="{!downloadInvoicePDF}" rerender="message" status="counterStatus">
+                            <apex:param name="invNo" value="{!invoice.InvoiceNumber}" assignTo="{!invNumber}" />
+                        </apex:commandButton>
+                    </apex:column>
+                    <apex:column headerValue="{!$Label.cs_Dispute_Action}" >
+                        <apex:outputPanel rendered="{!AND(IF((recordTypeDev == 'Claim_Goods_NPB_OEBS'),true,false),(invoice.sourceSys != 'InvoiceDetails_AR'))}">
+                        <Apex:commandButton value="{!$Label.cs_Dispute}" disabled="{!IF(invoice.Status=='CL',true,false)}" title="Raise Dispute" rerender="top" action="{!raiseDispute}" status="counterStatus" >
+                        <apex:param name="invNumber" value="{!invoice.InvoiceNumber}" assignTo="{!invNumber}"/>
+                        <apex:param name="invId" value="{!invoice.InvoiceId}" assignTo="{!Invoice_Id}"/>
+                        <apex:param name="UnitName" value="{!invoice.UnitName}" assignTo="{!UnitName}"/>
+                        <apex:param name="UnitNumber" value="{!invoice.UnitNumber}" assignTo="{!UnitNumber}"/>
+                        <apex:param name="OrganizationNumber" value="{!invoice.OrganizationNumber}" assignTo="{!OrganizationNumber}"/>
+                        <apex:param name="ExternalReference" value="{!invoice.ExternalReference}" assignTo="{!ExternalReference}"/>
+ 
+                        </apex:commandButton>
+                        </apex:outputPanel>
+                        <apex:outputPanel rendered="{!IF(AND(IF((recordTypeDev == 'Claim_Goods_NPB_OEBS'),true,false),(invoice.sourceSys != 'InvoiceDetails_AR')),false,true)}">
+                        NA
+                        </apex:outputPanel>
+                    </apex:column>
+                </apex:pageBlockTable>
+            </apex:pageBlock>
+            
+            </apex:outputPanel>
+
+            <apex:outputPanel rendered="{!raised}">
+
+<apex:pageBlock title="{!$Label.cs_Raise_Dispute}" rendered="{!Show}" >
+<apex:pageBlockSection title="{!$Label.cs_Dispute_Details}" columns="1" collapsible="false">
+
+<apex:pageBlockSectionItem >
+<apex:outputText value="{!$Label.cs_Dispute_Amount }"/>
+<apex:outputPanel styleClass="requiredInput" layout="block"> 
+<apex:outputPanel styleClass="requiredBlock"/>
+<apex:inputtext value="{!disputeObj.Dispute_Amount__c}"/>
+</apex:outputPanel>
+</apex:pageBlockSectionItem>
+<apex:pageBlockSectionItem >
+
+<apex:outputLabel value="{!$Label.cs_Dispute_Reason  }" />
+<apex:outputPanel styleClass="requiredInput" layout="block"> 
+<apex:outputPanel styleClass="requiredBlock"/>
+<apex:selectList value="{!reason}"  multiselect="false" size="5" >
+<apex:selectOptions value="{!options}"/>
+</apex:selectList>
+</apex:outputPanel>
+</apex:pageBlockSectionItem>
+
+<apex:pageBlockSectionItem >
+<apex:outputText value="{!$Label.cs_Dispute_Comments }"/>
+<apex:outputPanel styleClass="requiredInput" layout="block" > 
+<apex:outputPanel styleClass="requiredBlock"/>
+<apex:inputTextarea value="{!disputeObj.Dispute_Comment__c}"/>
+</apex:outputPanel>
+</apex:pageBlockSectionItem>
+
+</apex:pageBlockSection>
+<apex:pageBlockButtons >
+<apex:commandButton value="{!$Label.cs_Send_Dispute }" action="{!requestDispute}"/>
+<apex:commandButton value="{!$Label.cs_cancel }" action="{!BackToCase}"/>
+</apex:pageBlockButtons>
+</apex:pageBlock>
+
+</Apex:outputPanel>
+
+<apex:outputPanel rendered="{!IF(Show,false,true)}">
+
+<apex:pageBlock >
+
+<apex:pageBlockSection >
+<apex:pageBlockSectionItem >
+<apex:outputText >{!$Label.cs_dispute_already_raised  }</apex:outputText>
+</apex:pageBlockSectionItem>
+</apex:pageBlockSection>
+
+<Apex:pageBlockSection columns="1" collapsible="false">
+<apex:pageBlockSectionItem >
+<apex:outputText value="{!$Label.cs_Dispute_Closure_Amount  }"/>
+<apex:outputField value="{!disputeObj.Dispute_Amount__c}"/>
+</apex:pageBlockSectionItem>
+
+<apex:pageBlockSectionItem >
+<apex:outputText >{!$Label.cs_Dispute_Close_Comments }</apex:outputText>
+<apex:outputPanel styleClass="requiredInput" layout="block" > 
+<apex:outputPanel styleClass="requiredBlock" rendered="{!if(closedDispute,FALSE,TRUE)}"/>
+<apex:inputTextarea value="{!disputeObj.Close_Dispute_Comment__c}" REndered="{!if(closedDispute,FALSE,TRUE)}"/>
+<apex:OUTPUTText value="{!disputeObj.Close_Dispute_Comment__c}" REndered="{!closedDispute}"/>
+</apex:outputPanel>
+
+</apex:pageBlockSectionItem>
+
+</apex:pageBlockSection>
+<apex:commandButton action="{!closeDispute}" value="{!$Label.cs_Close_Dispute}" disabled="{!closedDispute}" title="{!messageBtn}" />
+<apex:commandButton action="{!BackToCase}" value="{!$Label.cs_Back_To_Case }"/>
+</apex:pageBlock>
+</apex:outputPanel>
+            
+            </apex:form>
+        </div>
+    </apex:outputPanel>
+    
+    <apex:messages rendered="{!viewInvoiceData}" layout="list" id="message"/>
+</apex:outputPanel>    
+</apex:page>

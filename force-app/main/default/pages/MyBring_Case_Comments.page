@@ -1,0 +1,40 @@
+<apex:page standardController="MyBring_Conversation__c" extensions="MyBringCaseCommentsController" >
+    <apex:sectionHeader subtitle="New MyBring Comment" title="MyBring Case Comments"/>
+    
+    <style type="text/css">
+        .description { width: 150px; height:100px}
+    </style>
+    
+    <apex:form > 
+        <apex:actionFunction name="TemplateList" action="{!TemplateLists}" >
+        </apex:actionFunction> 
+        <apex:actionRegion >
+            <apex:outputPanel id="pibpanel" >
+                
+                <apex:pageBlock id="commandButtons">
+                     <apex:pageMessages />
+                      <apex:pageBlockButtons >
+                        <apex:commandButton value="Save" action="{!save1}" />
+                        <apex:commandButton value="Save & New" action="{!SaveandNew}"/>
+                        <apex:commandButton value="Cancel" action="{!cancel}"/>
+                    </apex:pageBlockButtons>
+                    <apex:pageBlockSection > 
+                        <apex:selectList id="templatelist" label="Please select template" size="1" 
+                                         value="{!templatelist}" >
+                            <apex:selectOptions value="{!countriesSelectList}"/>
+                            <apex:actionSupport event="onchange" action="{!TemplateLists}" rerender="pibpanel"/>
+                        </apex:selectList>
+                        <apex:inputField label="Case"  value="{!mbcon.Case__c}" /> 
+                       
+                        <apex:inputField label="Subject"  style="width:250px"  value="{!mbcon.Subject__c}" id="pibsubject"/ > <!--rendered="{!NOT(isSaved)}" required="true"/> -->                       
+                        <br/>
+                        
+                        <apex:inputField label="Email Body"  value="{!mbcon.Email_body__c}" style="width:400px;height:200px"  />
+                        <br/>
+                        <apex:inputField label="Message to Mybring"  value="{!mbcon.Description__c}" style="width:250px;height:100px" />
+                    </apex:pageBlockSection>
+                </apex:pageBlock>
+            </apex:outputPanel>
+        </apex:actionRegion>
+            </apex:form>
+        </apex:page>

@@ -1,0 +1,57 @@
+<apex:page standardController="lead" extensions="cs_leadtocase" tabStyle="lead" >
+<apex:form >
+ 
+<apex:PageBlock mode="edit"   rendered="{!if(and(casenumber=='',Caseidnull ==true , cannotbeconverted=false),true, false)}">
+            <apex:PageBlockButtons > 
+             
+                 <apex:commandButton action="{!saveCase}" value="{!$Label.cs_Save}"/>
+                 <apex:commandButton action="{!Cancel}" value="{!$Label.cs_Cancel}"/>
+                
+               </apex:PageBlockButtons>
+        
+       <apex:PageBlockSection title="{!$Label.cs_lead_to_case_title}" columns="1">
+        
+         <apex:PageBlockSectionItem >
+                 <apex:outputLabel value="{!$Label.cs_SelectRecordType}" />
+                <apex:selectList value="{!selectedrecord}" size="1">
+                    <apex:selectOptions value="{!records}"/>
+                </apex:selectList>
+            </apex:PageBlockSectionItem>
+            
+            
+            <apex:PageBlockSectionItem >
+                 <apex:outputLabel value="{!$Label.cs_SelectServiceGroup}" />
+                <apex:selectList value="{!selectedservicegroup}" size="1">
+                    <apex:selectOptions value="{!ServiceGroup}"/>
+                </apex:selectList>
+            </apex:PageBlockSectionItem>
+            
+             <apex:PageBlockSectionItem >
+                 <apex:outputLabel value="{!$Label.cs_SelectQueue}" />
+                <apex:selectList value="{!selectedqueue}" size="1">
+                    <apex:selectOptions value="{!queues}"/>
+                </apex:selectList>
+            </apex:PageBlockSectionItem> 
+   </apex:PageBlockSection>   
+   
+  
+   
+  </apex:PageBlock>   
+  
+  <apex:PageBlock rendered="{!if(and(casenumber!='',Caseidnull ==false),true, false)}" >
+  <h1>{!casenumber} &nbsp;&nbsp; {!$Label.cs_Case_Already_created}</h1>
+  <apex:commandButton action="{!Cancel}" value="{!$Label.cs_BackTolead}"/>
+     </apex:PageBlock>       
+     
+     
+      <apex:PageBlock rendered="{!if(and(casenumber!='',Casecreated==true ),true, false)}">
+ <h1>{!casenumber}&nbsp;&nbsp; {!$Label.cs_Case_Created}</h1>
+  <apex:commandButton action="{!Cancel}" value="{!$Label.cs_BackTolead}"/>
+     </apex:PageBlock>    
+     
+    <apex:PageBlock rendered="{!if(cannotbeconverted,true, false)}">
+ <h1>{!casenumber}&nbsp;&nbsp;  {!$Label.cs_Lead_cannot_be_converted}</h1>
+  <apex:commandButton action="{!Cancel}" value="{!$Label.cs_BackTolead}"/>
+     </apex:PageBlock>          
+  </apex:form>
+</apex:page>

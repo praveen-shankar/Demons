@@ -1,0 +1,721 @@
+<apex:page controller="MainSearchController" sidebar="false" tabStyle="Customer_search__tab" cache="true" expires="300"> 
+
+
+<style type="text/css">
+.active_tab
+{
+    padding-top: 13px;
+    padding-bottom: 11px;
+    border-bottom: 2px solid #db2c21;
+    box-shadow: none;
+    padding: 12px 20px;
+    display: block;
+    background: #d62d22;
+    color: #fff;
+    font-size: 1em;
+    font-weight: bold;
+    text-decoration: none;
+    text-transform: uppercase;
+    vertical-align: middle;
+    transition: background-color;
+    border: 0;
+    font-style: inherit;
+    font-family: inherit;
+    cursor: pointer;
+}
+.inactive_tab
+{
+    background: #717074;
+    display: block;
+    color: #fff;
+    font-size: 0.9em;
+    padding: 12px 20px;
+    text-decoration: none;
+    text-transform: uppercase;
+    vertical-align: middle;
+    box-shadow: inset 0 -8px 7px -10px black;
+    display: block;
+    transition: background-color;
+    border: 0;
+    font-weight: inherit;
+    font-style: inherit;
+    font-family: inherit;
+    cursor: pointer;
+}
+</style>
+
+
+    <apex:stylesheet value="{!URLFOR($Resource.kats_css)}" />
+    
+    <apex:form id="searchForm">
+
+        <apex:actionRegion >
+            <apex:actionFunction name="createNewCase" status="general_load_status" action="{!goDo}" rerender="account_search_result,contacts_search_results,messages">
+                <apex:param value="" assignTo="{!selected_account_search_result}" name="selected_account_search_result" />
+                <apex:param value="" assignTo="{!new_case_data.recordTypeId}" name="new_case_data_recordTypeId" />                         
+                <apex:param value="" assignTo="{!go_to_type}" name="go_to_type" />                         
+            </apex:actionFunction>
+        </apex:actionRegion>
+        
+        <apex:actionStatus id="general_load_status" onstart="isLoading(true)" onstop="isLoading(false)" />
+
+        <apex:actionStatus id="section_load_status" onstart="isSectionLoading(true)" onstop="isSectionLoading(false)" />
+
+        <table><!-- Table layout -->
+            <tr valign="top"><!-- Table layout - start main row -->
+                <td><!-- Table layout - start left menu cell -->
+                
+<!-- SEARCH PARAMS START -->
+                    <apex:tabPanel switchType="client" value="{!activeSearchTab}" id="searchParams" style="width: 278px;" activeTabClass="active_tab" inactiveTabClass="inactive_tab" >
+                        <apex:tab ontabenter="currentSearchTab='tabPrivate';setSearchTabInURL();" style="padding: 0px;" label="{!$Label.cs_Private}" name="tabPrivate" id="tabPrivate" status="general_load_status" >
+                            
+                            <apex:pageblock id="NoPrivateSearchAllowed" rendered="{!blockPrivateSearch}" tabStyle="ProcessSupport__c" mode="edit">
+                                <apex:pageblockSection columns="1">
+                                    <p style="font-weight: bold; font-size: 1.2em;">{!$Label.cs_main_search_4}</p>
+                                    <p style="font-style: italic;">{!$Label.cs_main_search_3}</p>
+                                    <br />
+                                </apex:pageblockSection>
+                            </apex:pageblock>                           
+                            
+                            <apex:actionRegion rendered="{!!blockPrivateSearch}"><div class="actionRegion">
+                                <apex:actionFunction status="general_load_status" name="searchPersonAccount" action="{!searchPersonAccounts}" rerender="contacts_search_results,account_search_results,shipment_search_results,messages" >
+                                    <apex:param value="" assignTo="{!currentSearchModus}" name="currentSearchModus" />
+                                    <apex:param value="tabPrivate" assignTo="{!activeSearchTab}" name="activeSearchTab" />
+                                </apex:actionFunction>
+                            
+                            
+                                <apex:pageblock mode="inlineEdit" tabStyle="ProcessSupport__c">
+                                    <apex:pageblockbuttons >
+                                        <apex:image value="{!$Resource.LoaderRed}" styleClass="KATS_spinner" style="visibility: hidden;" />
+                                        <apex:commandbutton value="{!$Label.cs_search_Customer}" onclick="doSearch(); return false;" />
+                                        <apex:outputLink onclick="clearAllInputs(getActionRegion(this)); return false;" >{!$Label.cs_Reset}</apex:outputLink>
+                                    </apex:pageblockbuttons>
+                                        
+                                    
+                                    <apex:pageblockSection columns="1">
+                                            
+                                        <apex:pageblockSectionItem labelStyleClass="KATS_odd" dataStyleClass="KATS_odd"><apex:outputLabel value="{!$Label.cs_First_Name}" />
+                                        <apex:inputText value="{!person_first_name}"  onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" onchange="return searchFieldKeyUp(event, this);" styleClass="searchParam_FOT" id="person_first_name"/>
+                                        </apex:pageblockSectionItem>
+                                        <apex:pageblockSectionItem labelStyleClass="KATS_odd" dataStyleClass="KATS_odd"><apex:outputLabel value="{!$Label.cs_titlesur}" />
+                                        <apex:inputText value="{!person_last_name}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" onchange="return searchFieldKeyUp(event, this);" styleClass="searchParam_FOT" />
+                                        </apex:pageblockSectionItem>
+                                        <!--<apex:pageblockSectionItem labelStyleClass="KATS_odd" dataStyleClass="KATS_odd"><apex:outputLabel value="Mellomnavn" />
+                                        <apex:inputText value="{!person_middle_name}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" onchange="return searchFieldKeyUp(event, this);" styleClass="searchParam_FOT"/>
+                                        </apex:pageblockSectionItem>-->
+                                        <apex:pageblockSectionItem rendered="{!allowFullPrivateSearch}" labelStyleClass="KATS_even" dataStyleClass="KATS_even"><apex:outputLabel value="Fødselsnr." />
+                                        <apex:inputText value="{!person_national_identification_number}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" onchange="return searchFieldKeyUp(event, this);" styleClass="searchParam_FOT" />
+                                        </apex:pageblockSectionItem>
+                                        <apex:pageblockSectionItem labelStyleClass="KATS_odd" dataStyleClass="KATS_odd"><apex:outputLabel value="{!$Label.cs_Actor_number}" />
+                                        <apex:inputText value="{!party_number}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" onchange="return searchFieldKeyUp(event, this);" styleClass="searchParam_FOT" />
+                                        </apex:pageblockSectionItem>
+                                        <apex:pageblockSectionItem labelStyleClass="KATS_even" dataStyleClass="KATS_even" ><apex:outputLabel value="{!$Label.cs_Address}" />
+                                        <apex:inputText value="{!address_street_name}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" onchange="return searchFieldKeyUp(event, this);" styleClass="searchParam_FOT" />
+                                        </apex:pageblockSectionItem>
+                                        <apex:pageblockSectionItem labelStyleClass="KATS_even" dataStyleClass="KATS_even"><apex:outputLabel value="{!$Label.cs_Husnr}" />
+                                        <apex:inputText value="{!address_house_number}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" onchange="return searchFieldKeyUp(event, this);" styleClass="searchParam_FOT" />
+                                        </apex:pageblockSectionItem>
+                                        <apex:pageblockSectionItem labelStyleClass="KATS_even" dataStyleClass="KATS_even"><apex:outputLabel value="{!$Label.cs_house_Letter}" />
+                                        <apex:inputText value="{!address_house_letter}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" onchange="return searchFieldKeyUp(event, this);" styleClass="searchParam_FOT" />
+                                        </apex:pageblockSectionItem>
+                                        <apex:pageblockSectionItem labelStyleClass="KATS_even" dataStyleClass="KATS_even"><apex:outputLabel value="{!$Label.cs_mailbox}" />
+                                        <apex:inputText value="{!address_po_box_number}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" onchange="return searchFieldKeyUp(event, this);" styleClass="searchParam_FOT" />
+                                        </apex:pageblockSectionItem> 
+                                        <apex:pageblockSectionItem labelStyleClass="KATS_even" dataStyleClass="KATS_even"><apex:outputLabel value="{!$Label.cs_zip_code}" />
+                                        <apex:inputText value="{!address_postal_code}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" onchange="return searchFieldKeyUp(event, this);" styleClass="searchParam_FOT" />
+                                        </apex:pageblockSectionItem>
+                                        <apex:pageblockSectionItem labelStyleClass="KATS_even" dataStyleClass="KATS_even"><apex:outputLabel value="{!$Label.cs_City}" />
+                                        <apex:inputText value="{!address_city}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" onchange="return searchFieldKeyUp(event, this);" styleClass="searchParam_FOT" />
+                                        </apex:pageblockSectionItem>
+                                        <apex:pageblockSectionItem labelStyleClass="KATS_odd" dataStyleClass="KATS_odd" ><apex:outputLabel value="{!$Label.cs_Order_no}" />
+                                        <apex:inputText value="{!order_number}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" onchange="return searchFieldKeyUp(event, this);" styleClass="searchParam_OM" />
+                                        </apex:pageblockSectionItem>
+                                        <apex:pageblockSectionItem labelStyleClass="KATS_odd" dataStyleClass="KATS_odd"><apex:outputLabel value="{!$Label.cs_Customer_Number}" />
+                                        <apex:inputText value="{!account_number}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" onchange="return searchFieldKeyUp(event, this);" styleClass="searchParam_FOT" />
+                                        </apex:pageblockSectionItem>
+                                        <apex:pageblockSectionItem labelStyleClass="KATS_odd" dataStyleClass="KATS_odd" ><apex:outputLabel value="{!$Label.cs_Ref_Change_of_Address} " />
+                                        <apex:inputText value="{!forwardingnumber}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" onchange="return searchFieldKeyUp(event, this);" styleClass="searchParam_FW" />
+                                        </apex:pageblockSectionItem>
+                                        <apex:pageblockSectionItem labelStyleClass="KATS_odd" dataStyleClass="KATS_odd" ><apex:outputLabel value="{!$Label.cs_inv}" />
+                                        <apex:inputText value="{!receivable_number}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" onchange="return searchFieldKeyUp(event, this);" styleClass="searchParam_AR" />
+                                        </apex:pageblockSectionItem>
+                                        <apex:inputhidden value="{!phone}" />
+                                        <apex:inputhidden value="{!email}" />
+                                    
+                                    </apex:pageblockSection>
+                                
+                                </apex:pageblock>
+                            </div></apex:actionRegion>
+                                
+                        </apex:tab>
+                        <apex:tab ontabenter="currentSearchTab='tabBusiness';setSearchTabInURL();" style="padding: 0px;" label="{!$Label.cs_bedrift}" name="tabBusiness" id="tabBusiness" status="general_load_status">
+                            <apex:actionRegion ><div class="actionRegion">
+                                
+                                <apex:actionFunction status="general_load_status" name="searchBusinessAccounts" action="{!searchBusinessAccounts}" rerender="contacts_search_results,account_search_results,shipment_search_results,messages">
+                                    <apex:param value="" assignTo="{!currentSearchModus}" name="currentSearchModus" />
+                                    <apex:param value="tabBusiness" assignTo="{!activeSearchTab}" name="activeSearchTab" />                         
+                                </apex:actionFunction>
+                                
+                                <apex:pageblock mode="inlineEdit" tabStyle="ProcessSupport__c">
+                                    <apex:pageblockbuttons >
+                                        <apex:image value="{!$Resource.LoaderRed}" styleClass="KATS_spinner" style="visibility: hidden;" />
+                                        <apex:commandbutton value="{!$Label.cs_search_Customer}" onclick="doSearch(); return false;" />
+                                        <apex:outputLink onclick="clearAllInputs(getActionRegion(this)); return false;" >{!$Label.cs_Reset}</apex:outputLink>
+                                    </apex:pageblockbuttons>
+                    
+                                    
+                                    <apex:pageblocksection columns="1" >
+                                        <apex:pageblockSectionItem labelStyleClass="KATS_even" dataStyleClass="KATS_even" ><apex:outputLabel value="{!$Label.cs_Oms}" />
+                                            <apex:selectList value="{!selectedRevenueArea}" size="1">
+                                                <apex:selectOptions value="{!revenueAreas}"/>
+                                            </apex:selectList>
+                                        </apex:pageblockSectionItem>
+                                        <apex:pageblockSectionItem labelStyleClass="KATS_even" dataStyleClass="KATS_even" ><apex:outputLabel value="{!$Label.cs_bedrift}" />
+                                        <apex:inputText value="{!org_name}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" onchange="return searchFieldKeyUp(event, this);" styleClass="searchParam_CAESAR" />
+                                        </apex:pageblockSectionItem>
+                                        <apex:pageblockSectionItem labelStyleClass="KATS_even" dataStyleClass="KATS_even" ><apex:outputLabel value="{!$Label.cs_org_no}" />
+                                        <apex:inputText value="{!org_fiscal_reference}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" onchange="return searchFieldKeyUp(event, this);" styleClass="searchParam_CAESAR" />
+                                        </apex:pageblockSectionItem>
+                                        <apex:pageblockSectionItem labelStyleClass="KATS_even" dataStyleClass="KATS_even"><apex:outputLabel value="{!$Label.cs_Actor_number}" />
+                                        <apex:inputText value="{!party_number}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" onchange="return searchFieldKeyUp(event, this);" styleClass="searchParam_CAESAR" />
+                                        </apex:pageblockSectionItem>
+                                        <apex:pageblockSectionItem labelStyleClass="KATS_even" dataStyleClass="KATS_even" ><apex:outputLabel value="{!$Label.cs_contact_phone}" />
+                                        <apex:inputText value="{!org_contactFirstName}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" onchange="return searchFieldKeyUp(event, this);" styleClass="searchParam_CAESAR" />
+                                        </apex:pageblockSectionItem>
+                                        <apex:pageblockSectionItem labelStyleClass="KATS_even" dataStyleClass="KATS_even" ><apex:outputLabel value="{!$Label.cs_contact_lastname}" />
+                                        <apex:inputText value="{!org_contactLastName}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" onchange="return searchFieldKeyUp(event, this);" styleClass="searchParam_CAESAR" />
+                                        </apex:pageblockSectionItem>
+                                        <apex:pageblockSectionItem labelStyleClass="KATS_odd" dataStyleClass="KATS_odd" ><apex:outputLabel value="{!$Label.cs_phone}" />
+                                        <apex:inputText value="{!phone}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" onchange="return searchFieldKeyUp(event, this);" styleClass="searchParam_CAESAR" />
+                                        </apex:pageblockSectionItem>
+                                        <apex:pageblockSectionItem labelStyleClass="KATS_odd" dataStyleClass="KATS_odd"><apex:outputLabel value="{!$Label.cs_email}" />
+                                        <apex:inputText value="{!email}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" onchange="return searchFieldKeyUp(event, this);" styleClass="searchParam_CAESAR" />
+                                        </apex:pageblockSectionItem>
+                                        <apex:pageblockSectionItem labelStyleClass="KATS_even" dataStyleClass="KATS_even" ><apex:outputLabel value="{!$Label.cs_Postadr}" />
+                                        <apex:inputText value="{!address_street_name}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" onchange="return searchFieldKeyUp(event, this);" styleClass="searchParam_CAESAR" />
+                                        </apex:pageblockSectionItem>
+                                        <apex:pageblockSectionItem labelStyleClass="KATS_even" dataStyleClass="KATS_even"><apex:outputLabel value="{!$Label.cs_Husnr}" />
+                                        <apex:inputText value="{!address_house_number}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" onchange="return searchFieldKeyUp(event, this);" styleClass="searchParam_CAESAR" />
+                                        </apex:pageblockSectionItem>
+                                        <apex:pageblockSectionItem labelStyleClass="KATS_even" dataStyleClass="KATS_even" ><apex:outputLabel value="{!$Label.cs_house_Letter}" />
+                                        <apex:inputText value="{!address_house_letter}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" onchange="return searchFieldKeyUp(event, this);" styleClass="searchParam_CAESAR" />
+                                        </apex:pageblockSectionItem>
+                                        <apex:pageblockSectionItem labelStyleClass="KATS_even" dataStyleClass="KATS_even"><apex:outputLabel value="{!$Label.cs_postbox}" />
+                                        <apex:inputText value="{!address_po_box_number}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" onchange="return searchFieldKeyUp(event, this);" styleClass="searchParam_CAESAR" />
+                                        </apex:pageblockSectionItem>
+                                        <apex:pageblockSectionItem labelStyleClass="KATS_even" dataStyleClass="KATS_even"><apex:outputLabel value="{!$Label.cs_postcode}" />
+                                        <apex:inputText value="{!address_postal_code}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" onchange="return searchFieldKeyUp(event, this);" styleClass="searchParam_CAESAR" />
+                                        </apex:pageblockSectionItem>
+                                        <apex:pageblockSectionItem labelStyleClass="KATS_even" dataStyleClass="KATS_even"><apex:outputLabel value="{!$Label.cs_City}" />
+                                        <apex:inputText value="{!address_city}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" onchange="return searchFieldKeyUp(event, this);" styleClass="searchParam_CAESAR" />
+                                        </apex:pageblockSectionItem>
+                                        <apex:pageblockSectionItem labelStyleClass="KATS_odd" dataStyleClass="KATS_odd" ><apex:outputLabel value="{!$Label.cs_Order_no}" />
+                                        <apex:inputText value="{!order_number}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" onchange="return searchFieldKeyUp(event, this);" styleClass="searchParam_OM" />
+                                        </apex:pageblockSectionItem>
+                                        <apex:pageblockSectionItem labelStyleClass="KATS_odd" dataStyleClass="KATS_odd"><apex:outputLabel value="{!$Label.cs_account_number}" />
+                                        <apex:inputText value="{!account_number}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" onchange="return searchFieldKeyUp(event, this);" styleClass="searchParam_CAESAR" />
+                                        </apex:pageblockSectionItem>
+                                        <apex:pageblockSectionItem labelStyleClass="KATS_odd" dataStyleClass="KATS_odd" ><apex:outputLabel value="{!$Label.cs_Forward}" />
+                                        <apex:inputText value="{!forwardingnumber}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" onchange="return searchFieldKeyUp(event, this);" styleClass="searchParam_FW" />
+                                        </apex:pageblockSectionItem>
+                                        <apex:pageblockSectionItem labelStyleClass="KATS_odd" dataStyleClass="KATS_odd" ><apex:outputLabel value="{!$Label.cs_inv}" />
+                                        <apex:inputText value="{!receivable_number}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" onchange="return searchFieldKeyUp(event, this);" styleClass="searchParam_AR" />
+                                        </apex:pageblockSectionItem>
+                                    </apex:pageblocksection>
+                                </apex:pageblock>
+                            </div></apex:actionRegion>
+                        </apex:tab>
+                        <apex:tab ontabenter="currentSearchTab='tabShipment';setSearchTabInURL();" style="padding: 0px;" label="{!$Label.cs_transmission}" name="tabShipment" id="tabShipment" status="general_load_status">
+                            <apex:actionRegion ><div class="actionRegion">
+                                <apex:actionFunction status="general_load_status" name="searchShipments" action="{!searchShipments}" rerender="messages,contacts_search_results,account_search_results,shipment_search_results,simCases,shipmentDetails">
+                                    <apex:param value="" assignTo="{!currentSearchModus}" name="currentSearchModus" />
+                                    <apex:param value="tabShipment" assignTo="{!activeSearchTab}" name="activeSearchTab" />                         
+                                </apex:actionFunction>
+
+                                <!-- New Action Function for the Kollinummer field to check for existing Cases with the Same number -->
+                                <apex:actionFunction status="section_load_status" name="checkKollinummerForCases" action="{!checkKollinummerForCases}" reRender="messages,contacts_search_results,account_search_results,shipment_search_results,shipmentDetails" />
+                                
+                                <apex:pageblock mode="inlineEdit" tabStyle="ProcessSupport__c">
+                                    <apex:pageblockbuttons >
+                                        <apex:image value="{!$Resource.LoaderRed}" styleClass="KATS_spinner" style="visibility: hidden;" />
+                                        <apex:commandbutton value="{!$Label.cs_SearchTransmission}" onclick="doSearch(); return false;" />
+                                        <apex:outputLink onclick="clearAllInputs(getActionRegion(this)); return false;" >{!$Label.cs_Reset}</apex:outputLink>
+                                    </apex:pageblockbuttons>
+            
+                                    <apex:pageblocksection columns="1"> 
+                                        <!-- C-00457 - Single field for all types of references  -->
+                                        <apex:pageblockSectionItem labelStyleClass="KATS_even" dataStyleClass="KATS_even"><apex:outputLabel value="{!$Label.cs_Kollinr_Sendingsnr_Fraktbrevnr}" /><apex:inputText value="{!ShipmentUnitID}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" onchange="checkKollinummerForCases();return searchFieldKeyUp(event, this);" styleClass="searchParam_LM_GENERAL_UNITID" /></apex:pageblockSectionItem>
+
+                                        <!-- This field will not be used anymore as we have only ShipmentUnitId as one single field for reference
+                                        <apex:pageblockSectionItem labelStyleClass="KATS_even" dataStyleClass="KATS_even"><apex:outputLabel value="Sendingsnr/Fraktbrevnr" /><apex:inputText value="{!ShipmentID}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" onchange="checkKollinummerForCases();return searchFieldKeyUp(event, this);" styleClass="searchParam_LM_ID" /></apex:pageblockSectionItem> -->
+                                        
+                                        <apex:pageblockSectionItem labelStyleClass="KATS_even" dataStyleClass="KATS_even"><apex:outputLabel value="{!$Label.cs_Actor_number}" /><apex:inputText value="{!ShipmentPartyNumber}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" onchange="return searchFieldKeyUp(event, this);" styleClass="searchParam_LM_GENERAL_PARTYNO" /></apex:pageblockSectionItem>
+                                        <apex:pageblockSectionItem labelStyleClass="KATS_even" dataStyleClass="KATS_even" ><apex:outputLabel value="Avs. ref." /><apex:inputText value="{!SendersReferenceNumber}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" onchange="return searchFieldKeyUp(event, this);" styleClass="searchParam_LM_GENERAL_REFNO" /></apex:pageblockSectionItem>
+                                        <apex:pageblockSectionItem labelStyleClass="KATS_odd" dataStyleClass="KATS_odd">
+                                            <apex:outputLabel value="{!$Label.cs_date_from}" />
+                                            <apex:outputPanel styleClass="requiredInput" layout="block">  
+                                                <apex:outputPanel styleClass="requiredBlock" layout="block"/>
+                                                <apex:inputText value="{!ShipmentDateTimeFrom}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" onchange="return searchFieldKeyUp(event, this);" styleClass="searchParam_LM_GENERAL" />
+                                            </apex:outputPanel>
+                                        </apex:pageblockSectionItem>
+                                        <apex:pageblockSectionItem labelStyleClass="KATS_odd" dataStyleClass="KATS_odd">
+                                            <apex:outputLabel value="{!$Label.cs_date_till}" />
+                                            <apex:outputPanel styleClass="requiredInput" layout="block">  
+                                                <apex:outputPanel styleClass="requiredBlock" layout="block"/>
+                                                <apex:inputText value="{!ShipmentDateTimeTo}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" onchange="return searchFieldKeyUp(event, this);" styleClass="searchParam_LM_GENERAL" />
+                                            </apex:outputPanel>
+                                        </apex:pageblockSectionItem>
+                                        <!--<apex:pageblockSectionItem ><apex:outputLabel value="Aktørnavn" /><apex:inputText value="{!PartyName}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" styleClass="searchParam_LM" /></apex:pageblockSectionItem>-->
+                                        <!--<apex:pageblockSectionItem ><apex:outputLabel value="Produkt" /><apex:inputText value="{!Product}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" styleClass="searchParam_LM" /></apex:pageblockSectionItem>-->
+                                        <apex:pageblockSectionItem labelStyleClass="KATS_even" dataStyleClass="KATS_even"><apex:outputLabel value="{!$Label.cs_City}" /><apex:inputText value="{!ShipmentCity}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" onchange="return searchFieldKeyUp(event, this);" styleClass="searchParam_LM_GENERAL" /></apex:pageblockSectionItem>
+                                        <apex:pageblockSectionItem labelStyleClass="KATS_even" dataStyleClass="KATS_even" ><apex:outputLabel value="{!$Label.cs_SendersPostCode}" /><apex:inputText value="{!PostalCodeSource}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" onchange="return searchFieldKeyUp(event, this);" styleClass="searchParam_LM_GENERAL" /></apex:pageblockSectionItem>
+                                        <apex:pageblockSectionItem labelStyleClass="KATS_even" dataStyleClass="KATS_even" ><apex:outputLabel value="{!$Label.cs_Postcode_mkt}" /><apex:inputText value="{!PostalCodeDestination}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" onchange="return searchFieldKeyUp(event, this);" styleClass="searchParam_LM_GENERAL" /></apex:pageblockSectionItem>
+                                        <apex:pageblockSectionItem labelStyleClass="KATS_even" dataStyleClass="KATS_even"><apex:outputLabel value="{!$Label.cs_weightof}" /><apex:inputText value="{!LoadingWeightMeasureFrom}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" onchange="return searchFieldKeyUp(event, this);" styleClass="searchParam_LM_GENERAL" /></apex:pageblockSectionItem>
+                                        <apex:pageblockSectionItem labelStyleClass="KATS_even" dataStyleClass="KATS_even"><apex:outputLabel value="{!$Label.cs_weightto}" /><apex:inputText value="{!LoadingWeightMeasureTo}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" onchange="return searchFieldKeyUp(event, this);" styleClass="searchParam_LM_GENERAL" /></apex:pageblockSectionItem>
+                                    </apex:pageblocksection>
+                                </apex:pageblock>  
+                            </div></apex:actionRegion>
+                        </apex:tab>
+                    </apex:tabPanel>
+<!-- SEARCH PARAMS END -->
+                <div><span class="JStimeSpend">0000 ms.</span> from click to ready</div>
+                        
+            </td><!-- Table layout - end left menu cell -->
+            <td><!-- Table layout - start content cell -->
+
+                <apex:outputpanel rendered="{!go_to_type_as_string == 'NEW_CASE' || go_to_type_as_string == 'EXISTING_CASE'}">
+                    <h2>Velg kunde/kontaktperson for sak <apex:outputLink value="/{!right_case.id}">{!right_case.caseNumber}</apex:outputLink></h2>
+                </apex:outputpanel>
+                    
+<!-- ACCOUNT RESULTS START -->
+        
+                <apex:outputpanel id="account_search_results" layout="block">
+                    <apex:actionRegion >
+                    
+                    <apex:pageblock title="{!$Label.cs_search_Customer}" rendered="{!AND(has_account_search_results, NOT(has_shipment_search_results))}">
+                        
+                        <!-- If no matches are returned -->
+                        <apex:outputPanel rendered="{!account_search_results.size==0}">
+                            <em>{!$Label.cs_search_error}</em>
+                        </apex:outputPanel>
+                        
+                        
+                        
+                        <apex:outputPanel id="private_account_search_results" layout="block" rendered="{!AND(activeSearchTab = 'tabPrivate', NOT(account_search_results.size==0))}">
+            
+                            <table class="KATS_table">
+                                <tr>
+                                    <th>Navn</th>
+                                    <th>Aktørnummer</th>
+                                    <th>Adresse</th>
+                                    <th></th>
+                                </tr>
+
+                                <apex:variable var="rowNum" value="0" />
+                                <apex:repeat value="{!account_search_results}" var="account_search_result">
+                                    <tr class="{!IF(selected_account_search_result=VALUE(rowNum), 'KATS_selected', '')}">
+                                        <td>
+                                            <apex:commandLink status="general_load_status" action="{!goDo}" rerender="messages,contacts_search_results">
+                                                <apex:image url="{!$Resource.icon_person_account}" />
+                                                <apex:outputText value="{!account_search_result.name}" />
+                                                
+                                                <apex:param value="{!rowNum}" assignTo="{!selected_account_search_result}" name="selected_account_search_result" />
+                                                <apex:param value="-2" assignTo="{!selected_contact_search_result}" name="selected_contact_search_result" />
+                                                <apex:param value="{!go_to_type_as_string == 'ACCOUNT'}" assignTo="{!override_required_contact}" name="override_required_contact" />                                                
+                                                <apex:param value="{!IF(go_to_type_as_string=='NEW_CASE', 'ACCOUNT', go_to_type_as_string)}" assignTo="{!go_to_type}" name="go_to_type" />                                              
+
+                                            </apex:commandLink>
+                                            
+                                            <apex:outputLabel rendered="{!NOT(ISBLANK(account_search_result.salesforceId))}" value="*" />
+                                        </td>
+                                        <td><apex:outputText title="Party Nummer" value="{!account_search_result.partyNumber}" /></td>
+                                        <td><apex:outputText title="Adresse" value="{!account_search_result.address}" /></td>
+                                        <td>
+                                            <apex:outputpanel layout="none" rendered="{!go_to_type_as_string != 'NEW_CASE' && go_to_type_as_string != 'EXISTING_CASE'}">
+                                                <input type="hidden" value="{!rowNum}" /><!--Work around for VF bug - see getPreviousElement() in mainSearch_js.resource -->
+                                                <apex:inputField ondblclick="createNewCase(getPreviousElement(this).value, this.value, 'NEW_CASE');" onchange="createNewCase(getPreviousElement(this).value, this.value, 'NEW_CASE');" value="{!new_case_data.recordTypeId}" />
+                                            </apex:outputpanel>
+                                        </td>
+                                    </tr>
+                
+                                    <apex:variable var="rowNum" value="{!VALUE(rowNum) + 1}" />
+                                </apex:repeat>
+                
+                                <!-- <tr>
+                                    <td><apex:inputField value="{!new_account.name}" onclick="this.select();" /></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td>
+                                        <apex:commandButton value="Opprett kunde" action="{!goDo}" status="general_load_status" onclick="this.disabled=true;" rerender="contacts_search_results">
+                                            <apex:param value="-1" assignTo="{!selected_account_search_result}" name="selected_account_search_result" />
+                                            <apex:param value="ACCOUNT" assignTo="{!go_to_type}" name="go_to_type" />
+                                        </apex:commandButton>
+                                    </td>
+                                </tr> -->
+                            </table>
+                        </apex:outputPanel> <!-- End private_account_search_results --> 
+                        
+                        <apex:outputPanel id="business_account_search_results" layout="block" rendered="{!AND(NOT(activeSearchTab = 'tabPrivate'), NOT(account_search_results.size==0))}">
+                            <table class="KATS_table">
+                                <tr>
+                                    <th>Aktørnavn</th>
+                                    <th>Aktørnummer</th>
+                                    <th>Status</th>
+                                    <th>Adresse</th>
+                                    <th>Forr. omr.</th>
+                                    <th>Oms. i år*</th>
+                                    <th>Oms. i fjor*</th>
+                                    <th></th>
+                                </tr>
+                
+                                <apex:variable var="rowNum" value="0" />
+                                <apex:repeat value="{!account_search_results}" var="account_search_result">
+                                    <tr class="{!IF(selected_account_search_result=VALUE(rowNum), 'KATS_selected', '')}">
+                                        <td>
+                                            <apex:commandLink status="general_load_status" action="{!goDo}" rerender="messages,contacts_search_results">
+                                                <apex:image url="{!$Resource.icon_person_account}" rendered="{!account_search_result.isPersonAccount}" />
+                                                <apex:image url="{!$Resource.icon_organization_account}" rendered="{!NOT(account_search_result.isPersonAccount)}" />
+                                                <apex:outputText value="{!account_search_result.name}" />
+                                                
+                                                <apex:param value="{!rowNum}" assignTo="{!selected_account_search_result}" name="selected_account_search_result" />
+                                                <apex:param value="-2" assignTo="{!selected_contact_search_result}" name="selected_contact_search_result" />
+                                                <apex:param value="{!go_to_type_as_string == 'ACCOUNT'}" assignTo="{!override_required_contact}" name="override_required_contact" />
+                                                <apex:param value="{!IF(go_to_type_as_string=='NEW_CASE', 'ACCOUNT', go_to_type_as_string)}" assignTo="{!go_to_type}" name="go_to_type" />                                              
+                                            </apex:commandLink>
+                                            
+                                            <apex:outputLabel rendered="{!NOT(ISBLANK(account_search_result.salesforceId))}" value="*" />
+                                            
+                                        </td>
+                                        <td><apex:outputText title="Party Nummer" value="{!account_search_result.partyNumber}" /></td>
+                                        <td><apex:outputText title="Status" value="{!account_search_result.status}" /></td>
+                                        <td><apex:outputText title="Adresse" value="{!account_search_result.address}" /></td>
+                                        <td title="{!account_search_result.divisions}"><apex:outputText value="{!account_search_result.divisionShort}" /></td>
+                                        <td><apex:outputText value="{!account_search_result.revenueCurrentYear}" /></td>
+                                        <td><apex:outputText value="{!account_search_result.revenuePreviousYear}" /></td>
+                                        <td>
+                                            <apex:outputpanel layout="none" rendered="{!go_to_type_as_string != 'NEW_CASE' && go_to_type_as_string != 'EXISTING_CASE'}">
+                                                <input type="hidden" value="{!rowNum}" /><!-- Work around for VF bug - see getPreviousElement() in mainSearch_js.resource -->
+                                                <apex:inputField ondblclick="createNewCase(getPreviousElement(this).value, this.value, 'NEW_CASE');" onchange="createNewCase(getPreviousElement(this).value, this.value, 'NEW_CASE');" value="{!new_case_data.recordTypeId}" />
+                                            </apex:outputpanel>
+                                        </td>
+                                    </tr>
+                
+                                    <apex:variable var="rowNum" value="{!VALUE(rowNum) + 1}" />
+                                </apex:repeat>
+                
+                                <!-- <tr>
+                                    <td><apex:inputField value="{!new_account.name}" onclick="this.select();" /></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td>
+                                        <apex:commandButton value="Opprett kunde" action="{!goDo}" status="general_load_status" onclick="this.disabled=true;" rerender="contacts_search_results">
+                                            <apex:param value="-1" assignTo="{!selected_account_search_result}" name="selected_account_search_result" />
+                                            <apex:param value="ACCOUNT" assignTo="{!go_to_type}" name="go_to_type" />
+                                        </apex:commandButton>
+                                    </td>
+                                </tr> -->
+                            </table>
+                            <p>* {!$Label.cs_main_search_paragraph}</p>
+                        </apex:outputPanel> <!-- End business_account_search_results -->
+                    </apex:pageblock>
+                    </apex:actionRegion>
+                </apex:outputpanel>
+<!-- ACCOUNT RESULTS END -->
+
+        
+<!-- SHIPMENT RESULTS START -->
+                <apex:outputpanel id="shipment_search_results" layout="block">
+
+<!-- SHIPMENTS WITH SAME KOLLINUMMER - START  -->               
+                    
+                    <!-- Loader Image -->
+                    <apex:image value="{!$Resource.section_Loader_Red}" styleClass="KATS_section_spinner" style="visibility: hidden;display: block;margin-left: auto;margin-right: auto" />
+
+                    <!-- New Action Function for the Kollinummer field to check for existing Cases with the Same number -->
+                    <apex:actionFunction status="section_load_status" name="checkKollinummerWithDateRange" action="{!checkKollinummerForCases}" reRender="simCases"/>
+
+                    <apex:pageBlock title="Similar Cases" rendered="{!dispSimCases}" id="simCases" mode="edit"  tabStyle="ProcessSupport__c">
+
+                        <apex:pageBlockButtons location="top">
+                        Date Range:&nbsp;&nbsp;
+                        <apex:selectList label="Date Range" size="1" value="{!dateRange}" onchange="checkKollinummerWithDateRange();" >
+                            <apex:selectOption itemValue="w" itemLabel="Week" />
+                            <apex:selectOption itemValue="m" itemLabel="Month" />
+                            <apex:selectOption itemValue="q" itemLabel="Quarter" />
+                            <apex:selectOption itemValue="h" itemLabel="HalfYear" />
+                            <apex:selectOption itemValue="y" itemLabel="Year" />
+                        </apex:selectList>
+                        </apex:pageBlockButtons>
+
+                        <apex:pageMessage summary="No Cases found!" severity="warning" rendered="{!(simCasesList.size == 0)}" />
+                        <apex:pageMessage summary="More than 10 Cases found!" severity="warning" rendered="{!(simCasesList.size > 10)}" />
+
+                        <apex:pageBlock id="shipResultBlock" rendered="{!(simCasesList.size > 0)}" tabStyle="ProcessSupport__c" mode="maindetail">
+                            <apex:pageBlockTable value="{!simCasesList}" var="case" rendered="{!(simCasesList.size > 0)}" id="simCasesTable">
+                                <apex:column headerValue="Case Number"><apex:outputLink value="/{!case.id}" target="_blank">{!case.CaseNumber}</apex:outputLink></apex:column>
+                                <apex:column headerValue="Owner" value="{!case.Owner.Name}" />
+                                <apex:column value="{!case.Status}" />
+                                <apex:column value="{!case.Shipment_identification__c}" />
+                                <apex:column value="{!case.Shipment_number__c}" />
+                                <apex:column value="{!case.Subject}" />
+                                <apex:column headerValue="Closed?" value="{!case.isClosed}" />
+                            </apex:pageBlockTable>
+                        </apex:pageBlock>
+
+                    </apex:pageBlock>
+<!-- SHIPMENTS WITH SAME KOLLINUMMER - END  --> 
+
+
+                    <apex:repeat value="{!organizedShipmentList}" var="shipmentHolder">                 
+                        <apex:outputPanel layout="block" id="shipmentCaseCreationButtons" rendered="{!showShipmentOverview}">
+                            <apex:commandButton value="Informasjon - avsender" action="{!godoSenderShipmentcaseRI}" rerender="messages,ShipmentDetailsPopup,contacts_search_results,account_search_results,chooseAccountTypePopup" status="shipmentDetailsPopupStatus" >
+                                <apex:param value="{!shipmentHolder.ShipmentNumber}" assignTo="{!currentShipmentNumber}" name="currentShipmentNumber" />
+                           </apex:commandButton>
+                           <apex:commandButton value="Informasjon - mottaker" action="{!godoRecieverShipmentcaseRI}" rerender="messages,ShipmentDetailsPopup,contacts_search_results,account_search_results,chooseAccountTypePopup" status="shipmentDetailsPopupStatus" >
+                                <apex:param value="{!shipmentHolder.ShipmentNumber}" assignTo="{!currentShipmentNumber}" name="currentShipmentNumber" />
+                           </apex:commandButton>
+                           <apex:commandButton value="Klage - avsender" action="{!godoSenderShipmentcaseKlage}" rerender="messages,ShipmentDetailsPopup,contacts_search_results,account_search_results,chooseAccountTypePopup" status="shipmentDetailsPopupStatus" >
+                                <apex:param value="{!shipmentHolder.ShipmentNumber}" assignTo="{!currentShipmentNumber}" name="currentShipmentNumber" />
+                           </apex:commandButton>
+                           <apex:commandButton value="Klage - mottaker" action="{!godoRecieverShipmentcaseKlage}" rerender="messages,ShipmentDetailsPopup,contacts_search_results,account_search_results,chooseAccountTypePopup" status="shipmentDetailsPopupStatus" >
+                                <apex:param value="{!shipmentHolder.ShipmentNumber}" assignTo="{!currentShipmentNumber}" name="currentShipmentNumber" />
+                           </apex:commandButton>
+                           <apex:commandButton value="Ny sak - reklamasjon gods" action="{!godoGodscase}" rerender="messages,ShipmentDetailsPopup,contacts_search_results,account_search_results,chooseAccountTypePopup" status="shipmentDetailsPopupStatus" >
+                                <apex:param value="{!shipmentHolder.ShipmentNumber}" assignTo="{!currentShipmentNumber}" name="currentShipmentNumber" />
+                           </apex:commandButton>
+                        </apex:outputPanel>
+                        <c:ShipmentOverview shipmentList="{!shipmentHolder.shipmentUnitList}" isSearchView="true" rendered="{!showShipmentOverview}" />             
+                    </apex:repeat>
+
+
+
+                    
+<!-- SHIPMENT DETAILS START -->
+                    <apex:outputpanel id="shipmentDetails" layout="block" rendered="{!has_shipment_search_results && NOT showShipmentOverview}">
+                        
+                        <apex:outputPanel id="ShipmentDetailsPopup" layout="block" style="visibility:hidden;">
+                            <apex:outputPanel styleClass="popupBackground" layout="block" />
+                            <apex:outputPanel styleClass="custPopup" layout="block" >
+                                
+                                <apex:outputlink onclick="hideElement('{!$Component.searchForm.ShipmentDetailsPopup}'); return false;">Tilbake</apex:outputlink>
+                                &nbsp;&nbsp;
+                                <apex:actionStatus id="shipmentDetailsPopupStatus" onstart="isLoading(true)" onstop="isLoading(false)">
+                                    <apex:facet name="start"><apex:image value="{!$Resource.spinner_icon}" /></apex:facet>
+                                </apex:actionStatus>
+                
+                                <br /> 
+                                
+                                <apex:outputpanel layout="block" id="shipmentDetailsContent">
+                                    <apex:commandButton value="Informasjon - avsender" action="{!godoSenderShipmentcaseRI}" rerender="messages,ShipmentDetailsPopup,contacts_search_results,account_search_results,chooseAccountTypePopup" status="shipmentDetailsPopupStatus" />
+                                    <apex:commandButton value="Informasjon - mottaker" action="{!godoRecieverShipmentcaseRI}" rerender="messages,ShipmentDetailsPopup,contacts_search_results,account_search_results,chooseAccountTypePopup" status="shipmentDetailsPopupStatus" />
+                                    <apex:commandButton value="Klage - avsender" action="{!godoSenderShipmentcaseKlage}" rerender="messages,ShipmentDetailsPopup,contacts_search_results,account_search_results,chooseAccountTypePopup" status="shipmentDetailsPopupStatus" />
+                                    <apex:commandButton value="Klage - mottaker" action="{!godoRecieverShipmentcaseKlage}" rerender="messages,ShipmentDetailsPopup,contacts_search_results,account_search_results,chooseAccountTypePopup" status="shipmentDetailsPopupStatus" />
+                                    <apex:commandButton value="Ny sak - reklamasjon gods" action="{!godoGodscase}" rerender="messages,ShipmentDetailsPopup,contacts_search_results,account_search_results,chooseAccountTypePopup" status="shipmentDetailsPopupStatus" />
+                                    <c:ShipmentDetails EConnectWrapper_GetShipmentData="{!right_shipment}" />
+                                </apex:outputpanel>
+                            </apex:outputPanel>
+                        </apex:outputPanel>
+                        
+                    </apex:outputpanel> 
+<!-- SHIPMENT DETAILS END -->
+                    
+                    <!-- If no matches are returned -->
+                    <apex:outputPanel rendered="{! NOT has_shipment_search_results && NOT shipmentResultSuccessFull }">
+                        <em>KATS finner ikke sending, prøv å endre søkekriteriene</em>
+                    </apex:outputPanel>
+            
+                    <apex:pageblock title="Resultat sendingssøk" rendered="{! has_shipment_search_results && NOT showShipmentOverview}">
+                    
+                         <table class="KATS_table">
+                             <tr>
+                                 <th>{!$Label.cs_parcel_number}</th>
+                                 <th>Ident</th>
+                                 <th>{!$Label.cs_votes}</th> 
+                                 <th>{!$Label.cs_weight_label}</th>
+                                 <th>{!$Label.cs_product_label}</th>
+                                 <th>{!$Label.cs_Sender_Name}</th>
+                                 <th>{!$Label.cs_recipientName}</th>
+                                 <th>{!$Label.cs_DeliveryGateAddress}</th>
+                                 <th>{!$Label.cs_zip_code}</th>
+                                 <th>{!$Label.cs_LinktoAmphora}</th>
+                             </tr>
+                             <apex:variable var="rowNum" value="0" />
+                             <apex:repeat value="{!shipment_search_results}" var="shipment_search_result">
+                                 <tr>
+                                     <td>
+                                        <apex:commandLink onclick="clearElement('{!$Component.searchForm.shipmentDetailsContent}'); showElement('{!$Component.searchForm.ShipmentDetailsPopup}');" action="{!showShipmentDetails}" rerender="shipmentDetailsContent,shipmentDetailsPopupMessages" status="shipmentDetailsPopupStatus">
+                                            <apex:outputText value="{!shipment_search_result.ShipmentUnitID}" />
+                                            <apex:param value="{!rowNum}" assignTo="{!selected_shipment_search_result}" name="selected_shipment_search_result" />
+                                        </apex:commandLink>
+                                     </td>
+                                     <td><apex:outputText value="{!shipment_search_result.ShipUnitSequenceID}" /></td>
+                                     <td><apex:outputText value="{!shipment_search_result.ValueAddedService}" /></td>
+                                     <td><apex:outputText value="{!shipment_search_result.LoadingWeightMeasure}" escape="false" /></td>
+                                     <td><apex:outputText value="{!shipment_search_result.Product}" /></td>
+                                     <td><apex:outputText value="{!shipment_search_result.NameSender}" /></td>
+                                     <td><apex:outputText value="{!shipment_search_result.NameRecipient}" /></td>
+                                     <td><apex:outputText value="{!shipment_search_result.ShipToStreetAddress}" /></td>
+                                     <td>
+                                        <apex:outputText value="{!shipment_search_result.PostalCode}" /> 
+                                        <apex:outputText value="{!shipment_search_result.City}" />
+                                     </td>
+                                     <td><a href="http://amphora.bring.no/amphora/billoflading/info/search/index2.jsp?kollinr={!shipment_search_result.ShipmentUnitID}" target="Mi_Fraktbrev_Sok">
+                                            <apex:outputText value="Åpne" rendered="{!shipment_search_result.ShipUnitSequenceID != ''}" />
+                                         </a>
+                                     </td>
+                                 </tr>
+                
+                                 <apex:variable var="rowNum" value="{!VALUE(rowNum) + 1}" />
+                             </apex:repeat>
+                         </table>
+                     
+                    </apex:pageblock>
+                </apex:outputpanel>
+<!-- SHIPMENT RESULTS END -->
+
+<!-- CONTACT RESULTS START -->
+                <apex:outputpanel layout="block" id="contacts_search_results">
+                    <apex:actionRegion >
+                        <apex:pageblock title="Velg kontaktperson for {!right_account.name}" rendered="{!has_contact_search_results}">
+                            <apex:pageBlockButtons location="top">
+                                <apex:outputpanel rendered="{!go_to_type_as_string='NEW_CASE'}"><em>({!$Label.cs_Linkedtothecase})</em></apex:outputpanel>
+                                
+                                <apex:commandbutton status="general_load_status" rendered="{!NOT(go_to_type_as_string=='NEW_CASE') && NOT(go_to_type_as_string == 'EXISTING_CASE')}" rerender="account_search_results,contacts_search_results" value="Vis kunde" action="{!goDo}">
+                                    <apex:param value="true" assignTo="{!override_required_contact}" name="override_required_contact" />
+                                </apex:commandbutton>
+                                
+                                <!-- Button for creating case without contact -->
+                                <apex:commandbutton status="general_load_status" rerender="account_search_results,contacts_search_results" value="Ingen kontakt" action="{!goDo}" style="float:right;">
+                                    <apex:param value="true" assignTo="{!override_required_contact}" name="override_required_contact" />
+                                </apex:commandbutton>
+                            </apex:pageblockbuttons>
+                                
+                            <script>scrollToElement('{!$Component.searchForm.contacts_search_results}')</script>
+                                   
+                            <apex:outputpanel rendered="{!contact_search_results.size == 0}">      
+                                <em>Ingen kontakter funnet</em>
+                            </apex:outputpanel>
+                            
+                            <apex:outputpanel rendered="{!contact_search_results.size > 0}">
+                                <table class="KATS_table">
+                                    <tr>
+                                        <th>{!$Label.cs_titlesur}</th>
+                                        <th>{}</th>
+                                        <th>E-post</th>
+                                        <th>Telefon</th>
+                                        <td></td>
+                                    </tr>
+                                
+                                    <apex:variable var="rowNum" value="0" />
+                                    <apex:repeat value="{!contact_search_results}" var="contact_search_result">
+                                        <tr>
+                                            <td><apex:commandLink value="{!contact_search_result.lastName}" action="{!goDo}" status="general_load_status" rerender="messages,account_search_result,contacts_search_results">
+                                                <apex:param value="{!rowNum}" assignTo="{!selected_contact_search_result}" name="selected_contact_search_result" />
+                                                <apex:outputLabel rendered="{!NOT(ISBLANK(contact_search_result.salesforceId))}" value="*" />
+                                                
+                                            </apex:commandLink></td>
+                                            <td><apex:commandLink value="{!contact_search_result.firstName}" action="{!goDo}" status="general_load_status" rerender="messages,account_search_result,contacts_search_results">
+                                                <apex:param value="{!rowNum}" assignTo="{!selected_contact_search_result}" name="selected_contact_search_result" />
+                                            </apex:commandLink></td>
+                                            <td><apex:outputText value="{!contact_search_result.email}" /></td>
+                                            <td><apex:outputText value="{!contact_search_result.phone}" /></td>
+                                            <td></td>
+                                        </tr>
+                                        <apex:variable var="rowNum" value="{!VALUE(rowNum) + 1}" />
+                                    </apex:repeat>
+                                </table>
+                            </apex:outputpanel>
+<!-- CREATE NEW CONTACT -->
+                            <apex:outputpanel >
+                            <em>Opprett ny kontakt</em>
+                            <table class="KATS_table">
+                                <tr>
+                                    <th>{!$Label.cs_titlesur}</th>
+                                    <th>{!$Label.cs_First_Name}</th>
+                                    <th>E-post</th>
+                                    <th>Telefon</th>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td><apex:inputField value="{!new_contact.lastName}" id="new_contact_lastname" onclick="this.select();" /></td>
+                                    <td><apex:inputField value="{!new_contact.firstName}" id="new_contact_firstname" onclick="this.select();" /></td>
+                                    <td><apex:inputField value="{!new_contact.email}" /></td>
+                                    <td><apex:inputField value="{!new_contact.phone}" /></td>
+                                    <td>
+                                        <apex:commandButton value="Opprett" action="{!goDo}" status="general_load_status" rerender="account_search_result,contacts_search_results">
+                                            <apex:param value="-1" assignTo="{!selected_contact_search_result}" name="selected_contact_search_result" />
+                                        </apex:commandButton>
+                                    </td>
+                                </tr>
+                            </table>
+                            </apex:outputpanel>
+<!-- END CREATE NEW CONTACT -->
+
+                            <div style="text-align: left; margin-top: 15px;">
+                                    <em>{!$Label.cs_main_search_1} <a href="http://caesar.posten.no/caesar/" target="_blank">Caesar</a> {!$Label.cs_main_search_2}</em><br /> 
+                                    <!--  <em>2. Hvis kontaktperson skal opprettes lokalt i KATS, gå til fane Kunder og registrer ny Kontakt.</em> -->
+                            </div>
+                            
+                        </apex:pageblock> 
+                    </apex:actionRegion>
+                </apex:outputpanel>
+<!-- CONTACT RESULTS END -->
+
+<!-- MESSAGES START -->
+                <apex:outputpanel id="messages">
+                    <apex:pagemessages />   
+                </apex:outputpanel>
+<!-- MESSAGES END -->
+                                
+                </td><!-- Table layout - end content cell -->
+            </tr><!-- Table layout - end main row -->
+        </table><!-- Table layout - END -->
+        
+        
+    </apex:form>
+    
+    
+    <!-- JavaScript is moved to the bottom of the page as this will result in the page loading faster. -->
+    <apex:includeScript value="{!$Resource.mainSearch_js}"/>
+    <script language="JavaScript">currentSearchTab = '{!activeSearchTab}';
+        
+        function showGoToCustomerSearchPopup() {
+            showElement("{!$Component.searchForm.goToCustomerSearchPopup}");
+        }
+
+        function isSectionLoading(isLoading) 
+        {
+            //console.log(isLoading);
+            var loaderElementsVisibility;
+
+            if(isLoading) 
+            {
+                document.body.style.cursor = 'progress';
+                loaderElementsVisibility = 'visible';
+                //enableDisableButtons(false);
+                startTimer();
+            }
+            else 
+            {
+                document.body.style.cursor = 'auto';
+                loaderElementsVisibility = 'hidden';
+                //enableDisableButtons(true);
+                stopTimer();
+            }
+
+            spinnerElements = document.getElementsByClassName('KATS_section_spinner')
+            for(var i=0; i<spinnerElements.length; i++) {
+                spinnerElements[i].style.visibility = loaderElementsVisibility;
+            }
+
+        }
+
+
+    </script>
+    
+</apex:page>

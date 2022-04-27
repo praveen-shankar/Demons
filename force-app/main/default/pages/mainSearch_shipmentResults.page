@@ -1,0 +1,73 @@
+<apex:page controller="MainSearchController">
+<!--CSphase2, Akash, 26122016-->
+    <apex:form id="shipmentDetails" >
+        <apex:outputPanel id="ShipmentDetailsPopup" style="visibility:hidden;">
+            <apex:outputPanel styleClass="popupBackground" layout="block" />
+            <apex:outputPanel styleClass="custPopup" layout="block" >
+                
+                <!--<apex:outputlink onclick="hideElement('{!$Component.ShipmentDetails.ShipmentDetailsPopup}'); return false;">Tilbake</apex:outputlink>-->
+                <apex:outputlink onclick="hideElement('{!$Component.ShipmentDetails.ShipmentDetailsPopup}'); return false;">{!$Label.cs_Back}</apex:outputlink>
+                &nbsp;&nbsp;
+                <apex:actionStatus id="shipmentDetailsPopupStatus" onstart="isLoading(true)" onstop="isLoading(false)">
+                    <apex:facet name="start"><apex:image value="{!$Resource.spinner_icon}" /></apex:facet>
+                </apex:actionStatus>
+
+                <br /> 
+                
+                <apex:outputpanel id="shipmentDetailsContent">
+                    <apex:commandButton value="{!$Label.cs_Newrequestsender}" action="{!godoShipmentcase}" rerender="messages,ShipmentDetailsPopup,contacts_search_results,account_search_results" status="shipmentDetailsPopupStatus" /><!--
+                    <!--<apex:commandButton value="Oprett sak og søk kunde" action="{!godoShipmentcase}" rerender="messages,ShipmentDetailsPopup,contacts_search_results,account_search_results" status="shipmentDetailsPopupStatus" />-->
+                
+                    <c:ShipmentDetails EConnectWrapper_GetShipmentData="{!right_shipment}" />
+                </apex:outputpanel>
+                
+                
+            </apex:outputPanel>
+        </apex:outputPanel>
+    </apex:form> 
+              
+    <apex:form id="shipment_search_results">
+        <apex:pageblock rendered="{!has_shipment_search_results}" title="Shipments search results">
+    
+             <table class="KATS_table">
+                 <tr>
+                     <th>{!$Label.cs_Kollinumber}</th>
+                     <th>{!$Label.cs_Ident}</th>
+                     <th>{!$Label.cs_VAS}</th>
+                     <th>{!$Label.cs_Weight}</th>
+                     <th>{!$Label.cs_Product}</th>
+                     <th>{!$Label.cs_Sender_Name}</th>
+                     <th>{!$Label.cs_recipientName}</th>
+                     <th>{!$Label.cs_DeliverStreetAddress}</th>
+                     <th>{!$Label.cs_postcode}.</th>
+                 </tr>
+                 <apex:variable var="rowNum" value="0" />
+                 <apex:repeat value="{!shipment_search_results}" var="shipment_search_result">
+                     <tr>
+                         <td>
+                            <apex:commandLink onclick="clearElement('{!$Component.ShipmentDetails.shipmentDetailsContent}'); showElement('{!$Component.ShipmentDetails.ShipmentDetailsPopup}');" action="{!showShipmentDetails}" rerender="shipmentDetailsContent,shipmentDetailsPopupMessages" status="shipmentDetailsPopupStatus">
+                                <apex:outputText value="{!shipment_search_result.ShipmentUnitID}" />
+                                <apex:param value="{!rowNum}" assignTo="{!selected_shipment_search_result}" name="selected_shipment_search_result" />
+                            </apex:commandLink>
+                         </td>
+                         <td><apex:outputText value="{!shipment_search_result.ShipUnitSequenceID}" /></td>
+                         <td><apex:outputText value="{!shipment_search_result.ValueAddedService}" /></td>
+                         <td><apex:outputText value="{!shipment_search_result.LoadingWeightMeasure}" /></td>
+                         <td><apex:outputText value="{!shipment_search_result.Product}" /></td>
+                         <td><apex:outputText value="{!shipment_search_result.NameSender}" /></td>
+                         <td><apex:outputText value="{!shipment_search_result.NameRecipient}" /></td>
+                         <td><apex:outputText value="{!shipment_search_result.ShipToStreetAddress}" /></td>
+                         <td>
+                            <apex:outputText value="{!shipment_search_result.PostalCode}" /> 
+                            <apex:outputText value="{!shipment_search_result.City}" />
+                         </td>
+                     </tr>
+    
+                     <apex:variable var="rowNum" value="{!VALUE(rowNum) + 1}" />
+                 </apex:repeat>
+             </table>
+         
+        </apex:pageblock>
+     </apex:form>
+
+</apex:page>

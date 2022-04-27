@@ -1,0 +1,286 @@
+<template>
+  <div>
+<!-- <button onclick={testActualServiceId}>test actual service id</button> -->
+    <h1 style="text-align:center;font-size:30px;background-color:powderblue;"><b>{serviceName}</b></h1>
+    <!-- <lightning-datatable max-row-selection=1 data={progressValue}  columns={columns} key-field="Id"  onrowaction={handlerowaction} onrowselection={handleRowSelection} hide-checkbox-column > </lightning-datatable> -->
+  </div>
+  
+  <!-- <div class="slds-grid slds-gutters">
+    <div class="slds-col slds-size_1-of-3">
+<lightning-input type="checkbox" label="Norway" onchange={handleNorway}></lightning-input>
+    </div>
+    <div class="slds-col slds-size_1-of-3">
+<lightning-input type="checkbox" label="Sweden" onchange={handleSweden}></lightning-input>
+</div>
+<div class="slds-col slds-size_1-of-3">
+  <lightning-input type="checkbox" label="Other" onchange={handleOther}></lightning-input>
+  </div>
+</div> -->
+  
+  <!-- <lightning-combobox
+    name="progress"
+    label="Select a region"
+    value={value}
+    placeholder="Select Progress"
+    options={options}
+    onchange={handleChange} >
+  </lightning-combobox> -->
+    
+    <div class="slds-var-m-around_medium">
+      <div class="slds-grid slds-gutters">
+        <div class="slds-col slds-size_1-of-2">
+       <lightning-input
+
+          label="Discount %"
+
+            type="string"
+
+            value={stringValue}
+
+            name="Discount"
+
+            class="string-input"
+
+            onchange={discountChangedHandler}
+
+        ></lightning-input>
+        </div>
+
+        <div class="slds-col slds-size_1-of-2">
+        <lightning-input
+
+            label="Annual Service Value"
+
+            type="number"
+
+            name="AnnualServiceValue"
+
+            min="0"
+
+            max="100"
+
+            value={numberValue}
+
+            class="number-input"
+
+            onchange={asvChangedHandler}
+
+        ></lightning-input>
+        </div>
+        </div>
+        <lightning-input
+
+            label="Minimum Price"
+
+            type="number"
+
+            name="MinimumPrice"
+
+            min="0"
+
+            max="100"
+
+            value={numberValue}
+
+            class="number-input"
+
+            onchange={priceChangeHandler}
+
+        ></lightning-input>
+        <template if:true={isNorwaySelected}>
+<div class="slds-grid slds-gutters">
+        <div class="slds-col slds-size_1-of-2">
+        <lightning-input 
+
+            label="Weight from"
+
+            type="number"
+
+            name="crm_Min_Weight__c"
+
+            min="0"
+
+            max="100"
+
+            value={numberValue}
+
+            class="number-input"
+
+            onchange={minWeightChangedHandler}
+
+        ></lightning-input>
+      </div>
+      <div class="slds-col slds-size_1-of-2">
+        <lightning-input
+
+            label="Weight to"
+
+            type="number"
+
+            name="crm_Max_Weight__c"
+
+            min="0"
+
+            max="100"
+
+            value={numberValue}
+
+            class="number-input"
+
+            onchange={maxWeightChangedHandler}
+        ></lightning-input>
+      </div>
+      </div>
+      </template>
+
+      <template if:true={isSwedenSelected}>
+      <lightning-combobox
+      name="Terminals"
+      label="Terminals"
+      value={value}
+      placeholder="All"
+      options={options}
+      onchange={handleChange} >
+    </lightning-combobox>
+  
+
+  <lightning-combobox
+  name="rgType"
+  label="Local/Domestic"
+  value={value2}
+  placeholder="Local"
+  options={options2}
+  onchange={handleChange2} >
+</lightning-combobox>
+</template>
+
+<template if:true={isOtherSelected}>
+<lightning-combobox
+  name="CoversionFactor"
+  label="Conversion Factor"
+  value={value4}
+  placeholder="Standard"
+  options={options4}
+  onchange={handleChange4} >
+</lightning-combobox>
+
+<lightning-combobox
+  name="Direction"
+  label="Direction"
+  value={value5}
+  placeholder="Inbound"
+  options={options5}
+  onchange={handleChange5} >
+</lightning-combobox>
+</template>
+
+        <!-- //Terminals combobx Start -->
+        <!-- <div class="slds-form-element">
+          <label class="slds-form-element__label" for="combobox-id-3" id="combobox-label-id-131">Terminals</label>
+          <div class="slds-form-element__control">
+            <div class="slds-combobox_container">
+              <div class="slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click slds-is-open">
+                <div class="slds-combobox__form-element slds-input-has-icon slds-input-has-icon_right" role="none">
+                  <button type="button" class="slds-input_faux slds-combobox__input slds-has-focus" aria-labelledby="combobox-label-id-131 combobox-id-3-selected-value" id="combobox-id-3-selected-value" aria-controls="listbox-id-4" aria-expanded="true" aria-haspopup="listbox">
+                    <span class="slds-truncate" id="combobox-value-id-94">Select an Option…</span>
+                  </button>
+                  <span class="slds-icon_container slds-icon-utility-down slds-input__icon slds-input__icon_right">
+                    <svg class="slds-icon slds-icon slds-icon_x-small slds-icon-text-default" aria-hidden="true">
+                      <use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#down"></use>
+                    </svg>
+                  </span>
+                </div>
+                <div id="listbox-id-4" class="slds-dropdown slds-dropdown_length-5 slds-dropdown_fluid" role="listbox">
+                  <ul class="slds-listbox slds-listbox_vertical" role="presentation">
+                    <li role="presentation" class="slds-listbox__item">
+                      <div id="option1" class="slds-media slds-listbox__option slds-listbox__option_plain slds-media_small" role="option">
+                        <span class="slds-media__figure slds-listbox__option-icon"></span>
+                        <span class="slds-media__body">
+                          <span class="slds-truncate" title="Accounts">All</span>
+                        </span>
+                      </div>
+                    </li>
+                    <li role="presentation" class="slds-listbox__item">
+                      <div id="option2" class="slds-media slds-listbox__option slds-listbox__option_plain slds-media_small" role="option">
+                        <span class="slds-media__figure slds-listbox__option-icon"></span>
+                        <span class="slds-media__body">
+                          <span class="slds-truncate" title="Reports">Alta</span>
+                        </span>
+                      </div>
+                    </li>
+                    <li role="presentation" class="slds-listbox__item">
+                      <div id="option3" class="slds-media slds-listbox__option slds-listbox__option_plain slds-media_small" role="option">
+                        <span class="slds-media__figure slds-listbox__option-icon"></span>
+                        <span class="slds-media__body">
+                          <span class="slds-truncate" title="Contacts">Drammen</span>
+                        </span>
+                      </div>
+                    </li>
+                    <li role="presentation" class="slds-listbox__item">
+                      <div id="option4" class="slds-media slds-listbox__option slds-listbox__option_plain slds-media_small" role="option">
+                        <span class="slds-media__figure slds-listbox__option-icon"></span>
+                        <span class="slds-media__body">
+                          <span class="slds-truncate" title="Files">Fauske</span>
+                        </span>
+                      </div>
+                    </li>
+                    <li role="presentation" class="slds-listbox__item">
+                      <div id="option5" class="slds-media slds-listbox__option slds-listbox__option_plain slds-media_small" role="option">
+                        <span class="slds-media__figure slds-listbox__option-icon"></span>
+                        <span class="slds-media__body">
+                          <span class="slds-truncate" title="Groups">Gol</span>
+                        </span>
+                      </div>
+                    </li>
+                    <li role="presentation" class="slds-listbox__item">
+                      <div id="option6" class="slds-media slds-listbox__option slds-listbox__option_plain slds-media_small" role="option">
+                        <span class="slds-media__figure slds-listbox__option-icon"></span>
+                        <span class="slds-media__body">
+                          <span class="slds-truncate" title="Leads">Hamar</span>
+                        </span>
+                      </div>
+                    </li>
+                    <li role="presentation" class="slds-listbox__item">
+                      <div id="option7" class="slds-media slds-listbox__option slds-listbox__option_plain slds-media_small" role="option">
+                        <span class="slds-media__figure slds-listbox__option-icon"></span>
+                        <span class="slds-media__body">
+                          <span class="slds-truncate" title="Notes">Harstad</span>
+                        </span>
+                      </div>
+                    </li>
+                    <li role="presentation" class="slds-listbox__item">
+                      <div id="option8" class="slds-media slds-listbox__option slds-listbox__option_plain slds-media_small" role="option">
+                        <span class="slds-media__figure slds-listbox__option-icon"></span>
+                        <span class="slds-media__body">
+                          <span class="slds-truncate" title="Groups">Haugesund</span>
+                        </span>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div> -->
+        <!-- Terminals Combobx End -->
+
+
+        <br/>
+        
+        <lightning-button class="slds-m-left_x-small" label="Reset" variant="brand" 
+                    onclick={resetFields}></lightning-button>
+        <lightning-button class="slds-m-left_x-small" label="Add service" variant="brand" 
+                    onclick={addServices}></lightning-button>
+
+        <!-- <c-contact-tile contact={contact}></c-contact-tile> -->
+
+        <!-- <c-add-services></c-add-services> -->
+
+    </div>
+    <!-- <lightning-record-form
+      object-api-name={opportunityLineItemObject}
+      fields={fields}
+      onsuccess={handleServiceConfigured}>
+    </lightning-record-form>  -->
+
+</template>

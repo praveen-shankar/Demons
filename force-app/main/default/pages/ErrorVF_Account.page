@@ -1,0 +1,20 @@
+<apex:page standardController="Account">
+       <apex:includeScript value="/soap/ajax/35.0/connection.js"/>
+    <apex:includeLightning />
+    <div id="lightning" />
+    <script type="text/javascript">
+    
+    $Lightning.use("c:ErrorPopupApp", function(){
+    	$Lightning.createComponent("c:ErrorPopup",{
+            "recordId" : "{!Account.id}"
+        },
+        "lightning",
+        function(cmp){
+        	console.log('Component Created');
+        }
+      );
+    });
+        
+    </script>
+    
+</apex:page>

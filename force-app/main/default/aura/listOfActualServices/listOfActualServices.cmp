@@ -1,0 +1,19 @@
+<aura:component controller="crm_addServicesControllerLightning" access="public">
+    <aura:attribute name="product2options" type="Product2[]" />
+    <aura:attribute name="opportunityId" type="String" />
+    <aura:attribute name="noProdMsg" type="String" />
+    <aura:registerEvent name="listOfActualServiceEvent" type="c:listOfActualServiceCompEvent" />
+    <aura:handler name="init" value="{!this}" action="{!c.autoLoadActualServices}" />
+    <div>
+        <aura:if isTrue="{!!empty(v.product2options)}">
+        <lightning:select class="slds-m-bottom--medium" name="actualServices" label="List Of Actual Services Associated To This Service Family" aura:id="actualServicesList" onchange="{!c.handleSelectedActualService}" required="true" messageWhenValueMissing="Required Attribute">
+            <aura:iteration items="{!v.product2options}" var="item">
+                <option value="{!item.Id}" text="{!item.Name}"></option>
+            </aura:iteration>
+        </lightning:select>
+        </aura:if>    
+    </div>
+    <div class="slds-align_absolute-center slds-text-heading_small">
+        {!v.noProdMsg}
+    </div>
+</aura:component>

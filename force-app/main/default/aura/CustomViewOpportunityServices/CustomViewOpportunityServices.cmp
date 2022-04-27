@@ -1,0 +1,67 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickAction" controller="crm_customOpportunityServicesView">
+    <!-- Author: Rajeev Shekhar -->
+    <aura:attribute name="data" type="Object"/>
+    <aura:attribute name="pdata" type="Product2[]"/>
+    <aura:attribute name="selectedValue" type="String"/>
+    <aura:attribute name="columns" type="List"/>
+    <aura:attribute name="showspinner" type="Boolean" default="false" />
+    <aura:attribute name="noservicesadded" type="Boolean" default="false" />
+    <aura:attribute name="saveData" type="Map" default="{}"/>
+    <aura:attribute name="recordId" type="String" access="public" />
+    <aura:attribute name="Discount" type="String" access="public" />
+    <aura:attribute name="UnitPrice" type="String" access="public" />
+    <aura:attribute name="childasId" type="String" access="public" />
+    <aura:attribute name="childasgroupId" type="String" access="public" />
+    <aura:attribute name="openModal" type="boolean" default="false"/>
+    <aura:handler name="CustomViewOpportunityAddEvent" event="c:CustomViewOpportunityAddEvent" action="{!c.handleAddEvent}"/>
+    <aura:handler name="init" value="{! this }" action="{! c.init }"/>
+    <aura:handler event="force:refreshView" action="{!c.init}"/>
+    <aura:attribute name="saveerror" type="String" />
+    <div class="slds-grid slds-grid_vertical">
+        <aura:if isTrue="{!v.noservicesadded}">
+            <div class="slds-text-align_center slds-text-color_error slds-text-title_caps">{!$Label.c.ltng_noOpp_customViewOpp}</div>
+        </aura:if>
+        <aura:iteration items="{!v.data}" var="item">
+            <div class="slds-col slds-box">
+                <c:CustomViewOpportunityServicesDatatable data="{!item}"/>
+            </div>
+        </aura:iteration>
+        <aura:if isTrue="{!equals(v.openModal,true)}">
+            <div role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open slds-modal_large">
+                <div class="slds-modal__container">
+                    <header class="slds-modal__header">
+                        <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close">
+                        <span class="slds-assistive-text">Close</span>
+                        </button>
+                        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">{!$Label.c.ltng_modaHeader_customViewOpp}</h2>
+                    </header>
+                    <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                        <aura:if isTrue="{!v.showspinner}">
+                            <div style="height: 6rem;">
+                                <lightning:spinner variant="brand" size="large"/>
+                            </div>
+                        </aura:if>
+                        <aura:if isTrue="{!v.saveerror.length > 0 }">
+                            <ui:message title="Error" severity="error" closable="false">
+                                {!v.saveerror}
+                            </ui:message>
+                        </aura:if>
+                        <lightning:select name="selectItem" label="Select an item" onchange="{!c.selectOnChange}">
+                            <option value="">{!$Label.c.ltng_selectOne_customViewOpp}</option>
+                            <aura:iteration items="{!v.pdata}" var="i">
+                                <option text="{!i.Name + ' (' + i.crm_Service_Type__c + ')-' + i.ProductCode}" value="{!i.Id}"/>
+                            </aura:iteration>
+                        </lightning:select>
+                        <lightning:input type="number" name="Discount" label="Discount %" aura:id="discount" value="{!v.Discount}" min="0" max="100"  onchange="{!c.trackInput}"/>
+                        <lightning:input type="number" name="Unit Price" label="Unit Price" aura:id="unitprice" value="{!v.UnitPrice}" min="0" onchange="{!c.trackInput}"/>      
+                    </div>
+                    <footer class="slds-modal__footer slds-modal__footer_directional">
+                    <lightning:button name="Cancel" label="Cancel" iconName="utility:close" onclick="{!c.cancelModal}"/>
+                    <lightning:button name="Save" label="Save" iconName="utility:save" onclick="{!c.save}"/>    
+                    </footer>
+                </div>
+            </div>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+        </aura:if>
+    </div>
+</aura:component>

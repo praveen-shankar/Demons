@@ -1,0 +1,198 @@
+<apex:page controller="MainSearchController">
+<!--CSphase2, Akash, 26122016-->
+            <apex:tabPanel switchType="client" value="{!activeSearchTab}" id="searchParams" style="width: 278px;">
+                <apex:tab ontabenter="currentSearchTab='tabPrivate';" style="padding: 0px;" label="Privat" name="tabPrivate" id="tabPrivate" status="general_load_status">
+                    <apex:form >
+                    <apex:pageblock tabStyle="ProcessSupport__c" mode="edit">
+                            <apex:pageblockbuttons >
+                                <apex:image value="{!$Resource.spinner_icon}" styleClass="KATS_spinner" style="visibility: hidden;" />
+                                <apex:commandbutton value="{!$Label.cs_Search} {!$Label.cs_Customer}" onclick="doSearch(); return false;" />
+                                <!--<apex:commandbutton value="Søk kunde" onclick="doSearch(); return false;" />-->
+                                <!--<apex:outputLink onclick="clearAllInputs(getForm(this)); return false;" >Nullstill felter</apex:outputLink>-->
+                                <apex:outputLink onclick="clearAllInputs(getForm(this)); return false;" >{!$Label.cs_Reset}</apex:outputLink>
+                            </apex:pageblockbuttons>
+                            
+                            <apex:actionFunction status="general_load_status" name="searchPersonAccount" action="{!searchPersonAccounts}" rerender="contacts_search_results,account_search_results,shipment_search_results,messages" >
+                                <apex:param value="" assignTo="{!currentSearchModus}" name="currentSearchModus" />
+                                <apex:param value="tabPrivate" assignTo="{!activeSearchTab}" name="activeSearchTab" />
+                            </apex:actionFunction>
+                        
+                            <apex:pageblockSection columns="1">
+                                
+                                <apex:pageblockSectionItem labelStyleClass="KATS_odd" dataStyleClass="KATS_odd"><apex:outputLabel value="{!$Label.cs_First_Name}" />
+                                <apex:inputText value="{!person_first_name}"  onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" styleClass="searchParam_FOT" />
+                                </apex:pageblockSectionItem>
+                                <apex:pageblockSectionItem labelStyleClass="KATS_odd" dataStyleClass="KATS_odd"><apex:outputLabel value="{!$Label.cs_Surname}" />
+                                <apex:inputText value="{!person_last_name}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" styleClass="searchParam_FOT" />
+                                </apex:pageblockSectionItem>
+                                <!--<apex:pageblockSectionItem labelStyleClass="KATS_odd" dataStyleClass="KATS_odd"><apex:outputLabel value="Mellomnavn" />
+                                <apex:inputText value="{!person_middle_name}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" styleClass="searchParam_FOT"/>
+                                </apex:pageblockSectionItem>-->
+                                <apex:pageblockSectionItem labelStyleClass="KATS_even" dataStyleClass="KATS_even" helptext="{!$Label.cs_NationalidentityHT}"><apex:outputLabel value="{!$Label.cs_Nationalidentity}." />
+                                <apex:inputText value="{!person_national_identification_number}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" styleClass="searchParam_FOT" />
+                                </apex:pageblockSectionItem>
+                                <apex:pageblockSectionItem labelStyleClass="KATS_odd" dataStyleClass="KATS_odd"><apex:outputLabel value="{!$Label.cs_performerNumber}." />
+                                <apex:inputText value="{!party_number}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" styleClass="searchParam_FOT" />
+                                </apex:pageblockSectionItem>
+                                <!--<apex:pageblockSectionItem labelStyleClass="KATS_odd" dataStyleClass="KATS_odd" helptext="Telefonnummer"><apex:outputLabel value="Tlf." />
+                                <apex:inputText value="{!phone}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" styleClass="searchParam_FOT" />
+                                </apex:pageblockSectionItem>-->
+                                <!--<apex:pageblockSectionItem labelStyleClass="KATS_odd" dataStyleClass="KATS_odd"><apex:outputLabel value="Email" />
+                                <apex:inputText value="{!email}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" styleClass="searchParam_FOT" />
+                                </apex:pageblockSectionItem>-->
+                                <apex:pageblockSectionItem labelStyleClass="KATS_even" dataStyleClass="KATS_even" helptext="{!$Label.cs_CtreetAddHT}"><apex:outputLabel value="{!$Label.cs_Postadr}" />
+                                <apex:inputText value="{!address_street_name}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" styleClass="searchParam_FOT" />
+                                </apex:pageblockSectionItem>
+                                <apex:pageblockSectionItem labelStyleClass="KATS_even" dataStyleClass="KATS_even"><apex:outputLabel value="{!$Label.cs_House_number}." />
+                                <apex:inputText value="{!address_house_number}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" styleClass="searchParam_FOT" />
+                                </apex:pageblockSectionItem>
+                                <apex:pageblockSectionItem labelStyleClass="KATS_even" dataStyleClass="KATS_even" helptext="Husbokstav"><apex:outputLabel value="Husbkst." />
+                                <apex:inputText value="{!address_house_letter}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" styleClass="searchParam_FOT" />
+                                </apex:pageblockSectionItem>
+                                <apex:pageblockSectionItem labelStyleClass="KATS_even" dataStyleClass="KATS_even"><apex:outputLabel value="{!$Label.cs_postcode}" />
+                                <apex:inputText value="{!address_postal_code}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" styleClass="searchParam_FOT" />
+                                </apex:pageblockSectionItem>
+                                <apex:pageblockSectionItem labelStyleClass="KATS_even" dataStyleClass="KATS_even"><apex:outputLabel value="{!$Label.cs_City}" />
+                                <apex:inputText value="{!address_city}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" styleClass="searchParam_FOT" />
+                                </apex:pageblockSectionItem>
+                                <apex:pageblockSectionItem labelStyleClass="KATS_odd" dataStyleClass="KATS_odd" helptext="{!$Label.cs_OrderNum}"><apex:outputLabel value="{!$Label.cs_Order_no}" />
+                                <apex:inputText value="{!order_number}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" styleClass="searchParam_OM" />
+                                </apex:pageblockSectionItem>
+                                <apex:pageblockSectionItem labelStyleClass="KATS_odd" dataStyleClass="KATS_odd"><apex:outputLabel value="{!$Label.cs_customerNo}" />
+                                <apex:inputText value="{!account_number}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" styleClass="searchParam_FOT" />
+                                </apex:pageblockSectionItem>
+                                <apex:pageblockSectionItem labelStyleClass="KATS_odd" dataStyleClass="KATS_odd" helptext="{!$Label.cs_addresschangeNumber}"><apex:outputLabel value="{!$Label.cs_AdrchanNo}" />
+                                <apex:inputText value="{!forwardingnumber}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" styleClass="searchParam_FW" />
+                                </apex:pageblockSectionItem>
+                                <apex:pageblockSectionItem labelStyleClass="KATS_odd" dataStyleClass="KATS_odd" helptext="{!$Label.cs_invoice_number}"><apex:outputLabel value="{!$Label.cs_Invoice}." />
+                                <apex:inputText value="{!receivable_number}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" styleClass="searchParam_AR" />
+                                </apex:pageblockSectionItem>
+                            
+                            </apex:pageblockSection>
+                        
+                        </apex:pageblock>
+                        
+                    </apex:form>
+                        
+                </apex:tab>
+                <apex:tab ontabenter="currentSearchTab='tabBusiness';" style="padding: 0px;" label="Bedrift" name="tabBusiness" id="tabBusiness" status="general_load_status">
+                    <apex:form >
+                    <apex:pageblock tabstyle="QueueDetails__c" mode="edit">
+                            <apex:pageblockbuttons >
+                                <apex:image value="{!$Resource.spinner_icon}" styleClass="KATS_spinner" style="visibility: hidden;" />
+                                <!--<apex:commandbutton value="Søk kunde" onclick="doSearch(); return false;" />-->
+                                <apex:commandbutton value="{!$Label.cs_Search} {!$Label.cs_Customer}" onclick="doSearch(); return false;" />
+                                <!--<apex:outputLink onclick="clearAllInputs(getForm(this)); return false;" >Nullstill felter</apex:outputLink>-->
+                                <apex:outputLink onclick="clearAllInputs(getForm(this)); return false;" >{!$Label.cs_Reset}</apex:outputLink>
+                            </apex:pageblockbuttons>
+                            <apex:actionFunction status="general_load_status" name="searchBusinessAccounts" action="{!searchBusinessAccounts}" rerender="contacts_search_results,account_search_results,shipment_search_results,messages">
+                                <apex:param value="" assignTo="{!currentSearchModus}" name="currentSearchModus" />
+                                <apex:param value="tabBusiness" assignTo="{!activeSearchTab}" name="activeSearchTab" />                         
+                            </apex:actionFunction>
+                        
+                            <apex:pageblocksection columns="1" >
+                                <apex:pageblockSectionItem labelStyleClass="KATS_even" dataStyleClass="KATS_even" helptext="{!$Label.cs_cmpnyName}"><apex:outputLabel value="{!$Label.cs_bedrift}" />
+                                <apex:inputText value="{!org_name}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" styleClass="searchParam_CAESAR" />
+                                </apex:pageblockSectionItem>
+                                <apex:pageblockSectionItem labelStyleClass="KATS_even" dataStyleClass="KATS_even" helptext="{!$Label.cs_OrgNumber}"><apex:outputLabel value="{!$Label.cs_org_no}" />
+                                <apex:inputText value="{!org_fiscal_reference}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" styleClass="searchParam_CAESAR" />
+                                </apex:pageblockSectionItem>
+                                <apex:pageblockSectionItem labelStyleClass="KATS_even" dataStyleClass="KATS_even"><apex:outputLabel value="{!$Label.cs_performerNumber}" />
+                                <apex:inputText value="{!party_number}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" styleClass="searchParam_CAESAR" />
+                                </apex:pageblockSectionItem>
+                                <apex:pageblockSectionItem labelStyleClass="KATS_odd" dataStyleClass="KATS_odd" helptext="{!$Label.cs_phone}"><apex:outputLabel value="{!$Label.cs_phone}." />
+                                <apex:inputText value="{!phone}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" styleClass="searchParam_CAESAR" />
+                                </apex:pageblockSectionItem>
+                                <apex:pageblockSectionItem labelStyleClass="KATS_odd" dataStyleClass="KATS_odd"><apex:outputLabel value="{!$Label.cs_email}" />
+                                <apex:inputText value="{!email}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" styleClass="searchParam_CAESAR" />
+                                </apex:pageblockSectionItem>
+                                <apex:pageblockSectionItem labelStyleClass="KATS_even" dataStyleClass="KATS_even" helptext="{!$Label.cs_CtreetAddHT}"><apex:outputLabel value="{!$Label.cs_Postadr}" />
+                                <apex:inputText value="{!address_street_name}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" styleClass="searchParam_CAESAR" />
+                                </apex:pageblockSectionItem>
+                                <apex:pageblockSectionItem labelStyleClass="KATS_even" dataStyleClass="KATS_even"><apex:outputLabel value="{!$Label.cs_House_number}." />
+                                <apex:inputText value="{!address_house_number}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" styleClass="searchParam_CAESAR" />
+                                </apex:pageblockSectionItem>
+                                <apex:pageblockSectionItem labelStyleClass="KATS_even" dataStyleClass="KATS_even" helptext="Husbokstav"><apex:outputLabel value="Husbkst." />
+                                <apex:inputText value="{!address_house_letter}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" styleClass="searchParam_CAESAR" />
+                                </apex:pageblockSectionItem>
+                                <apex:pageblockSectionItem labelStyleClass="KATS_even" dataStyleClass="KATS_even"><apex:outputLabel value="{!$Label.cs_postcode}" />
+                                <apex:inputText value="{!address_postal_code}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" styleClass="searchParam_CAESAR" />
+                                </apex:pageblockSectionItem>
+                                <apex:pageblockSectionItem labelStyleClass="KATS_even" dataStyleClass="KATS_even"><apex:outputLabel value="{!$Label.cs_City}" />
+                                <apex:inputText value="{!address_city}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" styleClass="searchParam_CAESAR" />
+                                </apex:pageblockSectionItem>
+                                <apex:pageblockSectionItem labelStyleClass="KATS_odd" dataStyleClass="KATS_odd" helptext="{!$Label.cs_OrderNum}"><apex:outputLabel value="{!$Label.cs_Order_no}" />
+                                <apex:inputText value="{!order_number}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" styleClass="searchParam_OM" />
+                                </apex:pageblockSectionItem>
+                                <apex:pageblockSectionItem labelStyleClass="KATS_odd" dataStyleClass="KATS_odd"><apex:outputLabel value="{!$Label.cs_customerNo}" />
+                                <apex:inputText value="{!account_number}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" styleClass="searchParam_CAESAR" />
+                                </apex:pageblockSectionItem>
+                                <apex:pageblockSectionItem labelStyleClass="KATS_odd" dataStyleClass="KATS_odd" helptext="{!$Label.cs_addresschangeNumber}"><apex:outputLabel value="{!$Label.cs_addressChag}" />
+                                <apex:inputText value="{!forwardingnumber}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" styleClass="searchParam_FW" />
+                                </apex:pageblockSectionItem>
+                                <apex:pageblockSectionItem labelStyleClass="KATS_odd" dataStyleClass="KATS_odd" helptext="{!$Label.cs_City}cs_invoice_number"><apex:outputLabel value="{!$Label.cs_Invoice}." />
+                                <apex:inputText value="{!receivable_number}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" styleClass="searchParam_AR" />
+                                </apex:pageblockSectionItem>
+                                <apex:pageblockSectionItem labelStyleClass="KATS_even" dataStyleClass="KATS_even" helptext="{!$Label.cs_contactFrstN}"><apex:outputLabel value="{!$Label.cs_contactFN}" />
+                                <apex:inputText value="{!org_contactFirstName}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" styleClass="searchParam_CAESAR" />
+                                </apex:pageblockSectionItem>
+                                <apex:pageblockSectionItem labelStyleClass="KATS_even" dataStyleClass="KATS_even" helptext="{!$Label.cs_contactLstN}"><apex:outputLabel value="{!$Label.cs_Contact_E_N}" />
+                                <apex:inputText value="{!org_contactLastName}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" styleClass="searchParam_CAESAR" />
+                                </apex:pageblockSectionItem>
+                                
+                            </apex:pageblocksection>
+                    </apex:pageblock>
+                    </apex:form>
+                </apex:tab>
+                <apex:tab ontabenter="currentSearchTab='tabShipment';" style="padding: 0px;" label="Sending" name="tabShipment" id="tabShipment" status="general_load_status">
+                    <apex:form >
+                    <apex:pageblock mode="edit" tabstyle="Account">
+                            <apex:pageblockbuttons >
+                                <apex:image value="{!$Resource.spinner_icon}" styleClass="KATS_spinner" style="visibility: hidden;" />
+                                <apex:commandbutton value="{!$Label.cs_SearchTransmission}" onclick="doSearch(); return false;" />
+                                <apex:outputLink onclick="clearAllInputs(getForm(this)); return false;" >{!$Label.cs_Reset}</apex:outputLink>
+                            </apex:pageblockbuttons>
+                            <apex:actionFunction status="general_load_status" name="searchShipments" action="{!searchShipments}" rerender="messages,contacts_search_results,account_search_results,shipment_search_results">
+                                <apex:param value="" assignTo="{!currentSearchModus}" name="currentSearchModus" />
+                                <apex:param value="tabShipment" assignTo="{!activeSearchTab}" name="activeSearchTab" />                         
+                            </apex:actionFunction>
+                            
+                            <apex:pageblocksection columns="1"> 
+                                <apex:pageblockSectionItem labelStyleClass="KATS_even" dataStyleClass="KATS_even"><apex:outputLabel value="{!$Label.cs_TransNo}" /><apex:inputText value="{!ShipmentID}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" styleClass="searchParam_LM_ID" /></apex:pageblockSectionItem> 
+                                <apex:pageblockSectionItem labelStyleClass="KATS_even" dataStyleClass="KATS_even"><apex:outputLabel value="{!$Label.cs_Kollinumber}." /><apex:inputText value="{!ShipmentUnitID}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" styleClass="searchParam_LM_UNITID" /></apex:pageblockSectionItem>
+                                <apex:pageblockSectionItem labelStyleClass="KATS_even" dataStyleClass="KATS_even"><apex:outputLabel value="{!$Label.cs_performerNumber}" /><apex:inputText value="{!ShipmentPartyNumber}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" styleClass="searchParam_LM_GENERAL_PARTYNO" /></apex:pageblockSectionItem>
+                                <apex:pageblockSectionItem labelStyleClass="KATS_even" dataStyleClass="KATS_even" helptext="{!$Label.cs_Shipperreferencenumber}" ><apex:outputLabel value="{!$Label.cs_Avsref}" /><apex:inputText value="{!SendersReferenceNumber}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" styleClass="searchParam_LM_GENERAL_REFNO" /></apex:pageblockSectionItem>
+                                <apex:pageblockSectionItem labelStyleClass="KATS_odd" dataStyleClass="KATS_odd">
+                                        <apex:outputLabel value="{!$Label.cs_date_from}" />
+                                        <apex:outputPanel styleClass="requiredInput" layout="block">  
+                                            <apex:outputPanel styleClass="requiredBlock" layout="block"/>
+                                            <apex:inputText value="{!ShipmentDateTimeFrom}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" styleClass="searchParam_LM_GENERAL" />
+                                        </apex:outputPanel>
+                                </apex:pageblockSectionItem>
+                                <apex:pageblockSectionItem labelStyleClass="KATS_odd" dataStyleClass="KATS_odd">
+                                    <apex:outputLabel value="{!$Label.cs_date_till}" />
+                                    <apex:outputPanel styleClass="requiredInput" layout="block">  
+                                        <apex:outputPanel styleClass="requiredBlock" layout="block"/>
+                                        <apex:inputText value="{!ShipmentDateTimeTo}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" styleClass="searchParam_LM_GENERAL" />
+                                    </apex:outputPanel>
+                                </apex:pageblockSectionItem>
+                                <!--<apex:pageblockSectionItem ><apex:outputLabel value="Aktørnavn" /><apex:inputText value="{!PartyName}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" styleClass="searchParam_LM" /></apex:pageblockSectionItem>-->
+                                <!--<apex:pageblockSectionItem ><apex:outputLabel value="Produkt" /><apex:inputText value="{!Product}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" styleClass="searchParam_LM" /></apex:pageblockSectionItem>-->
+                                <apex:pageblockSectionItem labelStyleClass="KATS_even" dataStyleClass="KATS_even"><apex:outputLabel value="{!$Label.cs_City}" /><apex:inputText value="{!ShipmentCity}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" styleClass="searchParam_LM_GENERAL" /></apex:pageblockSectionItem>
+                                <apex:pageblockSectionItem labelStyleClass="KATS_even" dataStyleClass="KATS_even" helptext="{!$Label.cs_SendersPostCode}" ><apex:outputLabel value="{!$Label.cs_SendersPostCode}" /><apex:inputText value="{!PostalCodeSource}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" styleClass="searchParam_LM_GENERAL" /></apex:pageblockSectionItem>
+                                <apex:pageblockSectionItem labelStyleClass="KATS_even" dataStyleClass="KATS_even" helptext="{!$Label.cs_Recipientpostcode}" ><apex:outputLabel value="{!$Label.cs_Postcode_mkt}" /><apex:inputText value="{!PostalCodeDestination}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" styleClass="searchParam_LM_GENERAL" /></apex:pageblockSectionItem>
+                                <apex:pageblockSectionItem labelStyleClass="KATS_even" dataStyleClass="KATS_even"><apex:outputLabel value="{!$Label.cs_weightof}" /><apex:inputText value="{!LoadingWeightMeasureFrom}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" styleClass="searchParam_LM_GENERAL" /></apex:pageblockSectionItem>
+                                <apex:pageblockSectionItem labelStyleClass="KATS_even" dataStyleClass="KATS_even"><apex:outputLabel value="{!$Label.cs_weightto}" /><apex:inputText value="{!LoadingWeightMeasureTo}" onclick="return searchFieldKeyUp(event, this);" onkeypress="return searchFieldKeyUp(event, this);" styleClass="searchParam_LM_GENERAL" /></apex:pageblockSectionItem>
+                            </apex:pageblocksection>
+                    </apex:pageblock>  
+                    
+                    </apex:form>
+                </apex:tab>
+            </apex:tabPanel>
+
+    
+    <script language="JavaScript">
+        currentSearchTab = '{!activeSearchTab}';
+    </script>
+
+</apex:page>

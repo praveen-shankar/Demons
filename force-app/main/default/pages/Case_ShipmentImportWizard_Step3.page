@@ -1,0 +1,157 @@
+<apex:page controller="Case_ShipmentImportWizardController" wizard="true" showHeader="false" sidebar="false">
+<apex:includeScript value="{!$Resource.jQuery}"/>
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+</head>
+   <apex:includeScript value="{!$Resource.jQuery}"/>
+<script src="/soap/ajax/45.0/connection.js" type="text/javascript"></script>
+<script src="/soap/ajax/45.0/apex.js" type="text/javascript"></script>
+    <script>
+    
+    var j$ = jQuery.noConflict(); // getting the jQuery object and declaring it as 
+                              // j$ to prevent it conflicting with standard Salesforce functionality
+                              
+    j$(document).ready(function() {
+        //var columnId = document.getElementById
+        //j$('div#debug').append('hello world');
+        //alert('{!$Component.mapForm.isMapped}');
+        j$('div#debug').append('{!$Component.mapForm.pageBlock.repeater.isMapped}');
+        
+        
+    });
+         function confirmCancel() {
+    <!--        var isCancel = confirm("Sikker på at du vil avbryte?"); Commented by Rajesh Singh as part of Object Translation -->
+         var Caseid= '{!caseId}';// document.getElementById('Caseid');
+           var isCancel = confirm("{!$Label.cs_isCancel}");
+        
+            if (isCancel) 
+            {
+             if (sforce.one != undefined) {
+                                    // Lightning
+                                    sforce.one.navigateToSObject(Caseid);
+                                } else {
+                                    // Classic
+                                     window.close();
+                                }
+            }
+            
+              
+            return false;
+        }
+
+    </script>
+    <apex:pageMessages />
+   <!-- <apex:sectionHeader title="Last opp sendinger" subtitle="Steg 3 av 3"/>
+    CSphase2, Supriya, 13122016 =>Added custom labels  -->
+    <apex:sectionHeader title="{!$Label.cs_Upload_broadcasts}" subtitle="{!$Label.cs_Step3of3}"/>
+   
+    <apex:form id="mapForm">
+        <apex:actionFunction name="saveShipmentCases" action="{!saveShipmentCases}" />
+        <!--<apex:pageBlock title="Verifiser saker" mode="edit" Id="pageBlock">-->
+        <apex:pageBlock title="{!$Label.cs_Verifymatters}" mode="edit" Id="pageBlock">
+            <apex:pageBlockButtons >
+               <!-- <apex:commandButton action="{!step2}" value="Forrige"/>
+                <apex:commandButton value="Avbryt" onclick="return confirmCancel()" immediate="true"/>
+                <apex:commandButton onComplete="window.close()" action="{!saveShipmentCases}" status="create" value="Lagre og lukk" immediate="true"/>
+                
+                  CSphase2, Supriya, 13122016 =>Added custom labels  -->
+                  
+                  <apex:commandButton action="{!step2}" value="{!$Label.cs_Previous}"/>
+                <apex:commandButton value="{!$Label.cs_Cancel}" onclick="return confirmCancel()" immediate="true"/>
+                <apex:commandButton onComplete="window.close()" action="{!saveShipmentCases}" status="create" value="{!$Label.cs_Save_and_close}" immediate="true"/>
+                
+                <apex:actionStatus id="create">
+                    <apex:facet name="start"><apex:image value="{!$Resource.spinner_icon}" /></apex:facet>
+                    <apex:facet name="stop"></apex:facet>
+                </apex:actionStatus>
+            </apex:pageBlockButtons>
+            <table border="black">
+            
+            <tr>
+                <th>Subject</th>
+                <th>Description</th>
+                <!--
+                <th>Sendingsnummer</th>
+                <th>Kollinummer</th>
+                <th>Avsender</th>
+                <th>Avsenders adresse</th>
+                <th>Avsender postnummer</th>
+                <th>Avsender poststed</th>
+                <th>Avsender land</th>
+                <th>Avsender Landkode</th>
+                <th>Mottaker</th>
+                <th>Mottakers adresse</th>
+                <th>Mottaker postnummer</th>
+                <th>Mottaker poststed</th>
+                <th>Mottaker land</th>
+                <th>Mottaker Landkode</th>
+                <th>Innleveringsdato</th>
+                <th>Sak relatert til enhet</th>
+                <th>Ytre/gjenstand Beskrivelse</th>
+                <th>Innholds Beskrivelse</th>
+                <th>Vekt pr. sending</th>
+                <th>PO-Beløp</th>
+                <th>Innleveringssted</th>
+                <th>Web Aktørnummer</th>     
+                 CSphase2, Supriya, 13122016 =>Added custom labels  -->
+                 
+                  <th>{!$Label.cs_Shipment_Number}</th>
+                <th>{!$Label.cs_Kollinummer}</th>
+                <th>{!$Label.cs_Sender}</th>
+                <th>{!$Label.cs_Sender_address}</th>
+                <th>{!$Label.cs_Sender_postal_code}</th>
+                <th>{!$Label.cs_Sender_city}</th>
+                <th>{!$Label.cs_Sender_country}</th>
+                <th>{!$Label.cs_Sender_country_code}</th>
+                <th>{!$Label.cs_Sender_reference}</th>
+                <th>{!$Label.cs_Recipient}  </th>
+                <th>{!$Label.cs_Recipient_Address}    </th>
+                <th>{!$Label.cs_Recipient_postal_code}</th>
+                <th>{!$Label.cs_Recipient_city}</th>
+                <th>{!$Label.cs_Recipient_Country_code} </th>
+                <th>{!$Label.cs_Recipient_Country_code} </th>
+                <th>{!$Label.cs_Filing_Date} </th>
+                <th>{!$Label.cs_Case_related_to_unit}  </th>
+                <th>{!$Label.cs_External_description}</th>
+                <th>{!$Label.cs_Content_Description} </th>
+                <th>{!$Label.cs_Weight_per_transmission}</th>
+                <th>{!$Label.cs_PO_Amount}</th>
+                <th>{!$Label.cs_Filing_Location}</th>
+                <th>{!$Label.cs_Web_party_number} </th>   
+                           
+            </tr>
+            <apex:repeat value="{!cases}" var="mycase">
+                <tr>
+                    <td><apex:inputField value="{!mycase.Subject}"/></td>
+                    <th><apex:inputField value="{!mycase.Description}"/></th>
+                    <th><apex:inputField value="{!mycase.Shipment_number__c}"/></th>
+                    <th><apex:inputField value="{!mycase.Shipment_identification__c}"/></th>
+                    <th><apex:inputField value="{!mycase.shipper_name__c}"/></th>
+                    <th><apex:inputField value="{!mycase.shipper_address__c}"/></th>
+                    <th><apex:inputField value="{!mycase.shipper_zip_code__c}"/></th>
+                    <th><apex:inputField value="{!mycase.shipper_postal_address__c}"/></th>
+                    <th><apex:inputField value="{!mycase.shipper_country__c}"/></th>
+                    <!--<th><apex:inputField value="{!mycase.Shipper_CountryCode__c}"/></th> -->
+                    <th><apex:inputField value="{!mycase.LM_sender_reference__c}"/></th>
+                    <th><apex:inputField value="{!mycase.reciever_name__c}"/></th>
+                    <th><apex:inputField value="{!mycase.reciever_address__c}"/></th>
+                    <th><apex:inputField value="{!mycase.reciever_zip_code__c}"/></th>
+                    <th><apex:inputField value="{!mycase.reciever_postal_address__c}"/></th>
+                    <th><apex:inputField value="{!mycase.reciever_country__c}"/></th>
+                    <!--<th><apex:inputField value="{!mycase.Reciever_CountryCode__c}"/></th>-->
+                    <th><apex:inputField value="{!mycase.Submission_date__c}"/></th>
+                    <th><apex:inputField value="{!mycase.unit_to_blame__c}"/></th>
+                    <th><apex:inputField value="{!mycase.external_description__c}"/></th>
+                    <th><apex:inputField value="{!mycase.content_description__c}"/></th>
+                    <th><apex:inputField value="{!mycase.Vekt_pr_sending__c}"/></th>
+                    <th><apex:inputField value="{!mycase.PO_Amount__c}"/></th>
+                    <th><apex:inputField value="{!mycase.Delivery_place__c}"/></th>
+                    <th><apex:inputField value="{!mycase.suppliedPartyNumber__c}"/></th>
+                </tr>
+            </apex:repeat>
+            </table>
+            <div id="debug"></div>
+         <apex:pageMessages />   
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

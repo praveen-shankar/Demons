@@ -1,0 +1,97 @@
+<apex:page Controller="Case_SearchUndeliverableController" tabStyle="S_k_ubes_rgelig__tab" sideBar="false">
+    <script>
+        function initiateSearch(){
+           var goBtn = document.getElementById('{!$Component.searchCustomer}');
+           if(window.event.keyCode == 13){
+               searchUndeliverable();
+           }
+        }
+    </script>
+    
+    <apex:form onkeydown="initiateSearch()">
+        <apex:actionFunction name="searchUndeliverable" action="{!searchUndeliverableShipment}" rerender="searchUndeliverable,messages,undeliverableList" status="search_status" />
+
+        <apex:PageBlock mode="edit">
+            <apex:PageBlockButtons > 
+               <!-- <apex:commandButton action="{!searchUndeliverableShipment}" value="Søk" reRender="searchUndeliverable, messages" status="search_status"/>
+                CSPhase2, 19122016, Supriya ->Added the labels 
+                 --> 
+                
+                 <apex:commandButton action="{!searchUndeliverableShipment}" value="{!$Label.cs_Search}" reRender="searchUndeliverable, messages" status="search_status"/>
+                <apex:actionStatus id="search_status">
+                    <apex:facet name="start"><apex:image value="{!$Resource.spinner_icon}" /></apex:facet>
+                    <apex:facet name="stop"></apex:facet>
+                </apex:actionStatus>
+               <!-- <apex:commandlink action="{!storeAndGoToCase}" value="Lagre sak" />
+                CSPhase2, 19122016, Supriya ->Added the labels 
+                 --> 
+                 <apex:commandlink action="{!storeAndGoToCase}" value="{!$Label.cs_save_case}" />
+               
+            </apex:PageBlockButtons>
+        
+        <apex:PageBlockSection >
+<!--            {!c.Shipment_identification__c}{!c.Shipment_number__c}{!c.Vekt_Min__c}{!c.Vekt_Maks__c}{!c.external_description__c}{!c.content_description__c}-->
+            <apex:PageBlockSectionItem >
+               <!-- <apex:outputLabel value="Type ubesørgelig" />
+                 CSPhase2, 16122016, Supriya ->Added the labels 
+                 --> 
+               <apex:outputLabel value="{!$Label.cs_undeliverable_type}" />
+                <apex:selectList value="{!record}" size="1">
+                    <apex:selectOptions value="{!records}"/>
+                </apex:selectList>
+            </apex:PageBlockSectionItem><apex:PageBlockSectionItem />
+            <apex:PageBlockSectionItem >
+            
+                <!--<apex:outputLabel value="Ubesørgelig status" />
+                 CSPhase2, 16122016, Supriya ->Added the labels 
+                 -->
+                <apex:outputLabel value="{!$Label.cs_undeliverable_Status}" />
+                <apex:selectList value="{!status}" size="1">
+                    <apex:selectOptions value="{!statuses}"/>
+                </apex:selectList>
+            </apex:PageBlockSectionItem><apex:PageBlockSectionItem />           
+            <apex:PageBlockSectionItem />
+            <apex:PageBlockSectionItem >
+               <!-- <apex:outputLabel value="Ubesørgelignummer" />
+                CSPhase2, 16122016, Supriya ->Added the labels 
+                 -->
+               <apex:outputLabel value="{!$Label.cs_Undeliverable_Number}" />
+                <apex:inputText value="{!undeliverableNumber}"  onkeyup="initiateSearch()" />
+            </apex:PageBlockSectionItem>
+            <apex:inputField value="{!c.Shipment_identification__c}"  onkeyup="initiateSearch()" /><apex:inputField value="{!c.Shipment_number__c}"  onkeyup="initiateSearch()" />
+            <apex:inputField value="{!c.Vekt_Min__c}"  onkeyup="initiateSearch()" /><apex:inputField value="{!c.Vekt_Maks__c}"  onkeyup="initiateSearch()" />
+            <apex:PageBlockSectionItem >
+                <!--<apex:OutputLabel value="Fra dato"/>
+                CSPhase2, 16122016, Supriya ->Added the labels 
+                 -->
+                <apex:OutputLabel value="{!$Label.cs_From_Date}"/>
+                 <apex:inputField value="{!ProxyObject.Booking_date__c}" required="false" />
+            </apex:PageBlockSectionItem>
+            <apex:PageBlockSectionItem >
+                <!--<apex:OutputLabel value="Til dato"/>
+                  CSPhase2, 16122016, Supriya ->Added the labels 
+                 -->
+                <apex:OutputLabel value="{!$Label.cs_To_Date}"/>
+                <apex:inputField value="{!ProxyObject.Distribution_date__c}" required="false" />
+            </apex:PageBlockSectionItem>
+            <apex:PageBlockSectionItem /><apex:PageBlockSectionItem />
+            <apex:inputField value="{!c.shipper_name__c}"  onkeyup="initiateSearch()" /><apex:inputField value="{!c.reciever_name__c}"  onkeyup="initiateSearch()" />
+            <apex:inputField value="{!c.shipper_address__c}"  onkeyup="initiateSearch()" /><apex:inputField value="{!c.reciever_address__c}"  onkeyup="initiateSearch()" />
+            <apex:inputField value="{!c.shipper_zip_code__c}"  onkeyup="initiateSearch()" /><apex:inputField value="{!c.reciever_zip_code__c}"  onkeyup="initiateSearch()" />
+            <apex:inputField value="{!c.shipper_postal_address__c}"  onkeyup="initiateSearch()" /><apex:inputField value="{!c.reciever_postal_address__c}"  onkeyup="initiateSearch()" />
+            <apex:inputField value="{!c.shipper_country__c}"  onkeyup="initiateSearch()" /><apex:inputField value="{!c.reciever_country__c}"  onkeyup="initiateSearch()" />
+            <apex:PageBlockSectionItem /><apex:PageBlockSectionItem />
+            <apex:inputField value="{!c.external_description__c}" /><apex:inputField value="{!c.content_description__c}" />
+            
+            
+        </apex:PageBlockSection>
+        </apex:PageBlock>
+    </apex:form>
+    
+    <apex:outputpanel id="messages">
+        <div id="messageblock" style="overflow:auto;">
+            <apex:messages layout="list" />
+        </div>
+    </apex:outputPanel>
+    <apex:include pageName="Case_SearchUndeliverableResults" id="searchUndeliverable"/>
+</apex:page>

@@ -1,0 +1,162 @@
+<apex:page standardcontroller="Letter__c" extensions="Letters_controllerExtension">
+
+    <script>
+        function searchFieldKeyUp(ev) {
+            if (window.event && window.event.keyCode == 13 || ev.which == 13) {
+                //If enter, call search function and return
+                searchTemplate();
+                return false;
+            }
+        }
+        function setFocusOnId(elementId) {
+            document.getElementById(elementId).focus();
+            document.getElementById(elementId).select();
+        }
+    </script>
+
+    
+    <apex:stylesheet value="{!URLFOR($Resource.kats_css)}" />
+    
+    <apex:sectionHeader title="{!$ObjectType.Letter__c.label}" subtitle="{!Letter.name}"/>
+    <apex:form >
+    
+<!-- INPUT FORM START -->
+        <apex:pageMessages />
+
+        <!--<apex:outputText value="Brevet er allerede trykt og kan derfor ikke endres." rendered="{!NOT(isLetterEditable)}" />
+        
+        CSPhase2 , Supriya , 19122016 ->Added the labels
+        -->
+        
+        <apex:outputText value="{!$Label.cs_Letter_already}" rendered="{!NOT(isLetterEditable)}" />
+            
+
+        <apex:pageBlock mode="edit" title="" rendered="{!isLetterEditable}">
+            <apex:pageBlockButtons >
+            <!--
+                <apex:commandButton value="Lagre" action="{!save}"/>
+                <apex:commandButton value="Avbryt" action="{!cancel}" />
+                <apex:commandButton value="Velg mal" status="status" rerender="TemplateSelectionPopup" action="{!showTemplateSelection}" oncomplete="setFocusOnId('{!$Component.TemplateSelection.TemplateSelectionButtons.templateSearchField}');" />
+               CSPhase2 , Supriya , 19122016 ->Added the labels
+        -->
+             
+             <apex:commandButton value="{!$Label.cs_Save}" action="{!save}"/>
+                <apex:commandButton value="{!$Label.cs_Cancel}" action="{!cancel}" />
+                <apex:commandButton value="{!$Label.cs_Choose_template}" status="status" rerender="TemplateSelectionPopup" action="{!showTemplateSelection}" oncomplete="setFocusOnId('{!$Component.TemplateSelection.TemplateSelectionButtons.templateSearchField}');" />   
+                
+                <apex:actionStatus id="status">
+                    <apex:facet name="start"><apex:image value="{!$Resource.spinner_icon}" /></apex:facet>
+                </apex:actionStatus>
+            </apex:pageBlockButtons>
+
+            <apex:pageBlockSection columns="2">
+
+                <apex:pageBlockSectionItem >
+                    <!--<apex:outputLabel value="Mottaker"/>
+                     CSPhase2 , Supriya , 19122016 ->Added the labels
+                    -->
+                <apex:outputLabel value="{!$Label.cs_Recipient}"/>
+                    <apex:inputField value="{!Letter.Recepient__c}" style="height: 55px; width: 300px;" />
+                </apex:pageBlockSectionItem>
+
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Status"/>
+                    <apex:outputField value="{!Letter.Status__c}"/>
+                </apex:pageBlockSectionItem>
+
+            </apex:pageBlockSection>
+
+            <apex:pageBlockSection columns="1">
+                
+                <apex:pageBlockSectionItem >
+                    <apex:inputField value="{!Letter.Letter_content__c}"/>
+                </apex:pageBlockSectionItem>
+
+            </apex:pageBlockSection>
+
+            <apex:pageBlockSection columns="2">
+
+                <apex:pageBlockSectionItem >
+                    <!--<apex:outputLabel value="Navn"/>
+                      CSPhase2 , Supriya , 19122016 ->Added the labels
+                    -->
+                     <apex:outputLabel value="{!$Label.cs_Name}"/>
+                    <apex:inputField value="{!Letter.Name}"/>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >
+                    <!--<apex:outputLabel value="Sak"/>
+                     CSPhase2 , Supriya , 19122016 ->Added the labels
+                    -->                    
+                    <apex:outputLabel value="{!$Label.cs_Case}"/>
+                    <apex:outputField value="{!Letter.Case__c}"/>
+                </apex:pageBlockSectionItem>
+
+            </apex:pageBlockSection>
+
+        </apex:pageBlock>
+<!-- INPUT FORM END --> 
+
+
+
+<!-- TEMPLATE SELECTION OVERLAY START -->
+        <apex:outputPanel id="TemplateSelectionPopup" layout="block">
+            <apex:outputpanel rendered="{!showTemplatePopup}">
+                <apex:outputPanel styleClass="popupBackground" layout="block" />
+                <apex:outputPanel id="popupContent" styleClass="custPopup" layout="block" >
+                    <apex:pageblock id="TemplateSelection">
+                        <apex:pageblockbuttons id="TemplateSelectionButtons">
+                            <apex:commandLink rerender="TemplateSelectionPopup" action="{!selectTemplate}">
+                                Tilbake
+                                <apex:param value="-1" assignTo="{!selectedTemplateIndex}" name="selectedTemplateIndex" />
+                            </apex:commandLink>
+                            &nbsp; | &nbsp;
+                            <apex:actionRegion id="aaa">
+                                <apex:actionFunction name="searchTemplate" action="{!searchTemplate}" rerender="TemplateSelection" status="templateSearchStatus" oncomplete="setFocusOnId('{!$Component.TemplateSelection.TemplateSelectionButtons.templateSearchField}');" />
+                                <apex:inputText id="templateSearchField" value="{!templateSearchParam}" onkeypress="return searchFieldKeyUp(event, this);" />
+                                <!--<apex:commandbutton value="Søk" onclick="searchTemplate(); return false;" />
+                                
+                                CSPhase2, Supriya , 19122016 , added the labels
+                                -->
+                                
+                                   <apex:commandbutton value="{!$Label.cs_Search}" onclick="searchTemplate(); return false;" />
+                                <apex:actionStatus id="templateSearchStatus">
+                                    <apex:facet name="start"><apex:image value="{!$Resource.spinner_icon}" /></apex:facet>
+                                </apex:actionStatus>
+                            </apex:actionRegion>
+                            
+                            
+                        </apex:pageblockbuttons>
+    
+                        <apex:variable var="rowNum" value="0" />
+                        <apex:pageBlockTable value="{!availableTemplates}" var="template">
+                            
+                            <apex:column >
+                                <!--<apex:facet name="header">Navn</apex:facet>
+                                 CSPhase2, Supriya , 19122016 , added the labels
+                                -->
+                                
+                                  <apex:facet name="header">{!$Label.cs_Name}</apex:facet>
+                                <apex:commandLink value="{!template.Name}" action="{!selectTemplate}">
+                                    <apex:param value="{!rowNum}" assignTo="{!selectedTemplateIndex}" name="selectedTemplateIndex" />
+                                </apex:commandLink>
+                                <apex:variable var="rowNum" value="{!VALUE(rowNum) + 1}" />
+                            </apex:column>
+                             
+                            <apex:column value="{!template.Category__c}"/> 
+                            <apex:column value="{!template.Description__c}"/>
+                        </apex:pageBlockTable>
+    
+                    </apex:pageblock>
+    
+                </apex:outputPanel>
+            </apex:outputPanel>
+        </apex:outputpanel>
+<!-- TEMPLATE SELECTION OVERLAY END --> 
+  
+        
+        
+        
+        
+    </apex:form>
+</apex:page>

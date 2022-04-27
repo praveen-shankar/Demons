@@ -1,0 +1,41 @@
+<apex:page Standardcontroller="Monetary_Transaction_Line_Item__c" extensions="Article_Extension" action="{!loadData}">
+                
+                <apex:form >
+                        <apex:pageMessages />
+                        <!-- <apex:detail relatedList="true"></apex:detail> -->
+                       <!-- //CSphase2, Akash, 19122016--> 
+                        <!--<apex:pageblock id="CustomList" title="Opprett motpost på transaksjonslinjer"  >-->
+                        <apex:pageblock id="CustomList" title="{!$Label.cs_createMotpostLineItemBlock}"  >
+                                <apex:pageBlockTable value="{!motpostItems}" var="o" rendered="{!NOT(ISNULL(motpostItems))}">
+                                        <!--//CSphase2, Akash, 19122016<apex:column headerValue="Velg">--><apex:column headerValue="{!$Label.cs_Select}">
+                                                <apex:inputCheckbox value="{!o.is_motpost__c}"/>
+                                        </apex:column>
+                                        <!--//CSphase2, Akash, 19122016<apex:column headerValue="Kommentar">--><apex:column headerValue="{!$Label.cs_Comment}">
+                            <apex:inputField value="{!o.Description__c}"/>
+                                        </apex:column>
+                                        <apex:column value="{!o.createddate}"/>
+                                    <apex:column value="{!o.name}"/>
+                                    <apex:column value="{!o.Type__c}"/>
+                                    <apex:column rendered="{!MTRecordTypeName!='Transaksjon Valuta'}" value="{!o.Line_Amount__c}"/>
+                                     <apex:column rendered="{!MTRecordTypeName=='Transaksjon Valuta'}" value="{!o.Amount_foreign_currency__c}"/>
+                                    <apex:column rendered="{!MTRecordTypeName=='Transaksjon Valuta'}" value="{!o.Valutakode__c}"/>
+                                        <apex:column value="{!o.Article_Number__c}"/>
+                                        <apex:column value="{!o.Invoice_number__c}"/>
+                                        <apex:column value="{!o.cargo_division_code__c}"/>
+                                        <apex:column value="{!o.cargo_product_code__c}"/>
+                                </apex:pageBlockTable>
+                           <!--//CSphase2, Akash, 19122016<apex:outputLabel value="Ingen transaksjonslinjer registrert" rendered="{!(ISNULL(items))}" styleClass="noRowsHeader"></apex:outputLabel>-->
+                           <apex:outputLabel value="{!$Label.cs_NoTransCreated}" rendered="{!(ISNULL(items))}" styleClass="noRowsHeader"></apex:outputLabel>
+
+                    <apex:pageBlockButtons location="bottom">
+                    <!--//CSphase2, Akash, 16122016-
+                        <apex:commandButton value="Tilbake" action="{!cancelAndBack}" immediate="true"/>
+                        <apex:commandButton value="Opprett motpost" action="{!validateAndSaveMotpost}"/>-->
+                        <apex:commandButton value="{!$Label.cs_Back}" action="{!cancelAndBack}" immediate="true"/>
+                        <apex:commandButton value="{!$Label.cs_MatchingLabel}" action="{!validateAndSaveMotpost}"/>
+                </apex:pageBlockButtons>
+                
+                </apex:pageblock>
+
+         </apex:form>
+</apex:page>

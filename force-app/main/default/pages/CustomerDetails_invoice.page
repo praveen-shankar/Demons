@@ -1,0 +1,34 @@
+<apex:page standardController="Account" extensions="CustomerDetailExtension" >
+    <div style="overflow:auto; height:350px;">
+    <table>
+        <tr>
+
+            <!----CS Phase 2 15122016, Akshata -Added the labels-->
+            <th width="200">{!$Label.cs_invoice_number}</th>
+            <th width="200">{!$Label.cs_invoice_date}</th>
+            <th width="200">{!$Label.cs_Invoice_maturity}</th>
+            <th width="200">{!$Label.cs_Invoice_type}</th>
+            <th width="100">{!$Label.cs_sum}</th>
+            <th width="100">{!$Label.cs_Status}</th>
+             <th width="50">Source</th>
+            <!----CS Phase 2 15122016, Akshata -Added the labels-->
+        </tr>
+        <apex:repeat value="{!invoiceElements.invoiceTypes}" var="invoice">
+            <tr>
+                <td>
+                    <apex:outputLink value="{!invoice.ItellaURI}" target="_blank" >{!invoice.InvoiceNumber}</apex:outputLink>
+<!--                    <apex:outputLabel rendered="({!invoice.ItellaURI}==''" value="{!invoice.Number_x}"/>-->
+                </td>
+                 
+                <td><apex:outputLabel value="{!invoice.DocumentDateTime}"/></td>
+                <td><apex:outputLabel value="{!invoice.TrxDueDateTime}"/></td>
+<!--                <td><apex:outputLabel value="{!invoice.Number_x}"/></td>-->
+                <td><apex:outputLabel value="{!invoice.InvoiceType}"/></td>
+                <td><apex:outputLabel value="{!invoice.Sum}"/></td>
+               <td><apex:outputLabel value="{!invoice.Status}"/></td> 
+               <td><apex:outputLabel value="{!invoice.sourceSys}"/></td>
+            </tr>
+        </apex:repeat>
+    </table>
+    </div>
+</apex:page>

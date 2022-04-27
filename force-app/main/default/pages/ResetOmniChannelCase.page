@@ -1,0 +1,31 @@
+<apex:page >
+        <apex:includeScript value="/support/console/41.0/integration.js" />
+        <apex:includeScript value="/soap/ajax/41.0/connection.js" />
+        <script type="text/javascript">
+                var onEnclosingPrimaryTabClose = function(result) {
+
+                        var omni;
+                        var res;
+                        var c = new sforce.SObject("Case");
+
+                        sforce.connection.sessionId = '{!GETSESSIONID()}';
+
+                        var qresult = sforce.connection.query("Select Id,Omni_Channel__c From Case Where Id = '" + result.objectId + "' Limit 1");
+
+                        if (qresult.getBoolean("done")) {
+                                res = qresult.getArray("records")[0];
+                        }
+
+                        omni = res.Omni_Channel__c;
+
+                        if (omni == "true") {
+                                c.id = res.Id;
+                                c.Omni_Channel__c = false;
+                                var updateres = sforce.connection.update([c]);
+                                console.log("ResetOmniChannelCase update result: " + updateres);
+                        }
+                };
+
+                sforce.console.addEventListener(sforce.console.ConsoleEvent.CLOSE_TAB, onEnclosingPrimaryTabClose);
+        </script>
+</apex:page>

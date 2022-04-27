@@ -1,0 +1,22 @@
+.THIS .slds-truncate
+{
+    white-space:normal !important;
+}
+
+.THIS .slds-table th, .THIS .slds-table td 
+{    
+    white-space: normal !important;
+    position: relative;
+}
+
+.THIS .header
+{
+    border: 1px solid #ccc; 
+    padding: 10px;
+    margin-top: 10px;
+}
+
+.THIS .header-container
+{
+	background: rgb(243, 242, 242);
+}

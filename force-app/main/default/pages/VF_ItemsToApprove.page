@@ -1,0 +1,117 @@
+<apex:page controller="ItemsToApproveController">
+    
+    <script type="text/javascript">
+    function SelectAllCheckboxes(obj,receivedInputID){
+        var inputCheckBox = document.getElementsByTagName("input");                  
+        for(var i=0; i<inputCheckBox.length; i++){          
+            if(inputCheckBox[i].id.indexOf(receivedInputID)!=-1){                                     
+                inputCheckBox[i].checked = obj.checked;
+            }
+        }
+    }
+    
+    function UncheckSelectAllChkbox(obj,selectAllChkBoxId){
+        var inputCheckBox = document.getElementsByTagName("input");
+        for(var i=0; i<inputCheckBox.length; i++){          
+            if(inputCheckBox[i].id.indexOf(selectAllChkBoxId)!=-1){                                     
+                if(!obj.checked)
+                    inputCheckBox[i].checked = false;break;
+            }
+        }      
+    }
+    
+    function checkselectedcheckboxes(){        
+        var checker= document.getElementsByTagName('input');
+        for (var i = 0; i < checker.length; i++) {
+            if(checker[i].checked){             
+                //window.location.href= '/apex/MassReassignApprovalRqst';
+                //window.open('/apex/MassReassignApprovalRqst','_top');
+                return true;
+                break;
+            }
+        }
+        alert("Please select atleast one row ");
+        return false;
+    }
+    
+    </script>
+    
+    <apex:form >    
+        <apex:pageBlock title="{! $Label.Items_To_Approve}">   
+            <apex:pageBlockButtons location="Top">
+                <apex:commandButton action="{!AssignAll}" value="{! $Label.Reassign}" id="BtnReassign" onclick="return checkselectedcheckboxes();"/> 
+                <apex:commandButton action="{!ApproveRejectAll}" value="{! $Label.Approve}/{! $Label.Reject}" id="BtnApprRej" onclick="return checkselectedcheckboxes();"/> 
+            </apex:pageBlockButtons>
+
+            <apex:pageBlockTable value="{!items_to_approve}" var="item_to_approve" border="0" id="ItemsToAppr">                
+                <apex:column >
+                    <apex:facet name="header">
+                        <apex:inputCheckbox onclick="SelectAllCheckboxes(this,'inputId')" id="SelectAllChkBox"/>
+                    </apex:facet>
+                    <apex:inputCheckbox value="{!item_to_approve.selected}" id="inputId" 
+                                        onclick="UncheckSelectAllChkbox(this,'SelectAllChkBox')"/>
+                </apex:column>
+                
+<!-- <apex:column>
+<apex:facet name="header">
+<apex:inputCheckbox value="{!selectAll}">
+<apex:actionSupport event="onclick" action="{!Select_All}" rerender="ItemsToAppr"/>
+</apex:inputCheckbox>
+</apex:facet>                    
+<apex:inputCheckbox value="{!item_to_approve.selected}"/>
+</apex:column>-->
+                
+                <apex:column headerValue="{! $Label.Action}" width="170 px" >
+                    <apex:commandLink target="_top" value="{! $Label.Reassign} |" action="{!ReassingNavigation}" style="text-decoration:none;color: #015ba7;" styleClass="cactionLink">
+                        <apex:param name="myParam" value="{!item_to_approve.approvalid }" />                        
+                    </apex:commandLink>
+                    
+                    <apex:commandLink target="_top" value=" {! $Label.Approve} / {! $Label.Reject}" action="{!ApproveRejectnavigation}" style="text-decoration:none;color: #015ba7;"  >                        
+                        <apex:param name="myParam" value="{!item_to_approve.approvalid }" />
+                    </apex:commandLink>               
+                </apex:column>
+                
+                <apex:column headerValue="{! $Label.Related_To}" >
+                    <apex:outputLink target="_top" value="/{!item_to_approve.id}">{!item_to_approve.name}
+                    </apex:outputLink>
+                </apex:column>               
+                
+                <apex:column headerValue="Account">
+                    <apex:outputText >{!item_to_approve.AccountName}
+                    </apex:outputText>
+                </apex:column>
+                
+                <apex:column headerValue="Total Sum">
+                    <apex:outputtext >{!item_to_approve.TotalSum}
+                    </apex:outputtext>
+                </apex:column>
+                
+                <apex:column headerValue="Claimed Amount">
+                    <apex:outputtext >{!item_to_approve.ClaimedAmount}
+                    </apex:outputtext>
+                </apex:column>
+                
+                <apex:column headerValue="Recourse">
+                    <apex:outputtext >{!item_to_approve.Recourse}
+                    </apex:outputtext>
+                </apex:column>
+                
+                <apex:column headerValue="{! $Label.Date_Submitted}" >
+                    <apex:outputtext >{!item_to_approve.DateSubmited }
+                    </apex:outputtext>
+                </apex:column>
+                
+<!-- <apex:column headerValue="Custom Approve" width="160 px" >
+<apex:commandLink target="_top" value="Appr |" action="{!ApproveItems}" style="text-decoration:none;color: #015ba7;" styleClass="cactionLink">
+<apex:param name="workItemId" value="{!item_to_approve.approvalid }" />
+<apex:param name="originalActorId" value="{!item_to_approve.originalActorId }" />
+</apex:commandLink>
+<apex:commandLink target="_top" value="Rej" action="{!RejectItems}" style="text-decoration:none;color: #015ba7;" styleClass="cactionLink">
+<apex:param name="myParam" value="{!item_to_approve.approvalid }" />
+</apex:commandLink>
+</apex:column>-->
+                
+            </apex:pageBlockTable>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

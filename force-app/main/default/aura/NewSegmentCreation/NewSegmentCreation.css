@@ -1,0 +1,39 @@
+.THIS .seller-label
+{
+    font-size: 18px;
+    padding-left: 10px;
+}
+
+.THIS .header-container
+{
+    border: 1px solid #ccc; 
+    padding: 10px;
+}
+
+.THIS .footer-container
+{
+    padding-top: 10px;
+}
+
+.THIS .error-container
+{
+    margin-bottom: 10px; 
+}
+
+.THIS .record-table
+{
+    border: 1px solid #ccc;
+    background-color: #F5F5F5;
+}
+
+.THIS h2
+{
+    font-weight: bold; 
+    margin-bottom: 5px;
+}
+
+.THIS .modal-body.scrollable.slds-modal__content.slds-p-around--medium 
+{
+    height: auto !important;
+    max-height: 550px !important;
+}

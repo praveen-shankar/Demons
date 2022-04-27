@@ -1,0 +1,7 @@
+<apex:page >
+  <apex:form >
+   <apex:pageMessages id="showmsg"></apex:pageMessages>
+  <h1>{!$Label.Customer_Converted_error}</h1>
+  <apex:commandButton action="/{!$Currentpage.parameters.acc}" value="Back To Customer"/>
+  </apex:form>
+</apex:page>

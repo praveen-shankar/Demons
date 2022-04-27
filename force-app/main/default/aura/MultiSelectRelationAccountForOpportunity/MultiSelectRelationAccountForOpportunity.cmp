@@ -1,0 +1,58 @@
+<aura:component implements="flexipage:availableForAllPageTypes,force:hasRecordId" access="global" controller="MultiSelectRelationAccountForOpp" >
+    <aura:handler name="init" action="{!c.doInit}" value="{!this}" description="Call doInit function on component load to get picklist values"/>
+    <aura:attribute name="listUnselectedRelationCustomers" type="List" default="[]" description="Genre Picklist Values"/>
+    <aura:attribute name="listSelectedRelationCustomers" type="List" default="[]" description="Selected Genre Picklist Values"/>
+    <aura:attribute name="sectionVisible" type="String" default="false" description="Section is visble only if the Opp record is created"/>
+	 <aura:attribute name="isClosedWon" type="Boolean" default="" description="When the Opportunity stage is closed won , disabled the multi selectlist"/>
+	 <aura:attribute name="spinner" type="Boolean" default="false" description="spinner"/>
+
+    <div>
+        <aura:if isTrue="{!v.sectionVisible}">
+            <div class="slds-section slds-is-open">
+                <h3 class="slds-section__title">
+                    <button aria-controls="expando-unique-id" aria-expanded="true" class="slds-button slds-section__title-action">
+                        <lightning:Icon  style="margin-top: 10px;" class="slds-icon slds-input__icon slds-input__icon_center slds-icon-text-default" aria-hidden="true" iconName="utility:switch" size="x-small"/>
+                        <span class="slds-truncate" title="Section Title">Customer Numbers For Agreement</span>
+                    </button>
+          		</h3>
+            </div>
+           
+            <!--div class="customerTextBox slds-p-around_small" aura:id="idSearchDiv">
+                <div class="slds-form-element">
+                  <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_right">
+                    <lightning:buttonIcon  class="slds-icon slds-input__icon slds-input__icon_left slds-icon-text-default" iconName="utility:edit" size="x-small" alternativeText="Edit" onclick="{!c.getRelationCustomers}"/>
+                      <lightning:textarea name="myTextArea"  label="Customer Numbers For Agreement" value="{!v.listSelectedRelationCustomers}" disabled="true"/>
+                  </div>
+                </div>
+            </div-->
+            <aura:if isTrue="{!v.oppStageName != 'Closed Won'}">
+                <div class="multiSelectDiv slds-m-around_small"> 
+                    {!v.listSelectedRelationCustomers}
+                    <lightning:dualListbox aura:id="selectGenre"
+                                           name="Genre"
+                                           label="Select Customers"
+                                           sourceLabel="Available "
+                                           selectedLabel="Selected "
+                                           options="{!v.listUnselectedRelationCustomers }"
+                                           value="{!v.listSelectedRelationCustomers}"
+                                           onchange="{!c.handleGenreChange}" 
+                                           disabled = "{!v.isClosedWon}" />
+                
+                    <div class="slds-m-top_x-small">
+                        <lightning:button variant="brand" label="Save" onclick="{!c.fnGetSelectedCustomers}" disabled = "{!v.isClosedWon}"/>
+                        <!--lightning:button variant="Neutral" label="Cancel" onclick="{!c.fnCancel}" disabled = "{!v.isClosedWon}" /-->
+    
+                    </div>
+                    <aura:if isTrue="{!v.spinner}">
+                        <div>
+                            <lightning:spinner alternativeText="Loading" size="medium" aura:id="opportunityUpdateSpinner"/>
+                        </div>
+                    </aura:if>
+                    
+                </div>
+            </aura:if>
+            
+            
+        </aura:if>
+    </div>
+</aura:component>

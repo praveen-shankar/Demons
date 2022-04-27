@@ -1,0 +1,12 @@
+<apex:page >
+
+
+
+{!$Label.cs_Testcomponent}
+
+
+<c:Shipment_Event_EmailTemplateComponent eventType="Utlevert" />
+
+
+
+</apex:page>

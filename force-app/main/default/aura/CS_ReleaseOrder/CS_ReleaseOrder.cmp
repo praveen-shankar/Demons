@@ -1,0 +1,106 @@
+<aura:component implements="force:hasRecordId,force:lightningQuickActionwithoutHeader" access="global" controller="CS_ReleaseOrder">
+     <aura:attribute name="recordId" type="String" />
+    <aura:attribute name="caseToBeReleased" type="Case" />
+    <aura:attribute name="showContainer2" type="Boolean" default="false" />
+     
+    <aura:attribute name="caseComments" type="CaseComment[]"/>
+     <aura:attribute name="nocaseComments" type="Boolean" default="false"/>
+     <aura:attribute name="nocase" type="Boolean" default="false"/>
+    
+    <lightning:navigation aura:id="navService" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+     <div class="slds-grid slds-grid_vertical">
+       
+     	
+        <div class="slds-p-top_large"></div>
+       <div aura:id="container1">
+         <div class="slds-text-title_caps slds-align_absolute-center slds-border_bottom">
+            <lightning:icon iconName="standard:product_item_transaction" size="small" alternativeText="Add Services to Opportunity" /> &nbsp;
+            <strong>{!$Label.c.cs_ReleaseandEnd}</strong></div>
+           
+       <aura:if isTrue="{!v.nocase}">  
+       <ui:message title="Information" severity="info" closable="false">
+      {!$Label.c.cs_Case_release_order1} 
+      </ui:message>
+    </aura:if>
+     <aura:if isTrue="{!!v.nocase}">    
+      <h3 class="slds-section__title slds-theme_offline">
+    <span class="slds-truncate slds-p-horizontal_small" title="{!$Label.c.cs_releaseReason}">{!$Label.c.cs_releaseReason}</span>
+  </h3>
+         
+     
+		<div class="slds-form--stacked slds-p-around--medium slds-m-bottom--x-small">
+            <div class="slds-form-element">
+		      <lightning:textarea aura:id="reason" required="true" label="{!$Label.c.cs_releaseReason}" name="reason"
+        messageWhenValueMissing="{!$Label.c.cs_Required_field}"  maxlength="255" value="{!v.caseToBeReleased.OEBS_order_release_reason__c}" />
+                <span style="font-size: 8px ">({!$Label.c.cs_max_length_255_chars})</span>  
+            </div>
+        
+            
+   </div>
+          <h3 class="slds-section__title slds-theme_offline">
+    <span class="slds-truncate slds-p-horizontal_small" title="{!$Label.c.cs_CaseComnt}">{!$Label.c.cs_CaseComnt}</span>
+  </h3>
+		<div class="slds-form--stacked slds-p-around--medium slds-m-bottom--x-small">
+            <div class="slds-form-element">
+    <aura:if isTrue="{!!v.nocaseComments}">             
+     <ui:scrollerWrapper class="wrapui"> 
+   
+      <div class="slds-card ">
+          <table class="slds-table slds-table_bordered slds-table_striped slds-table_cell-buffer slds-table_fixed-layout">
+  <thead>
+    <tr class="slds-line-height_reset">
+      <th class="" scope="col">
+        <div class="" title="Case Body"> {!$Label.c.cs_Case_Comment_Body}</div>
+      </th>
+      <th class="" scope="col">
+        <div class="" title="CreatedBy">{!$Label.c.cs_Created_Date}</div>
+      </th>
+      <th class="" scope="col">
+        <div class="" title="Created Date">{!$Label.c.cs_created_by}</div>
+      </th>
+      </tr>
+        </thead>
+            <aura:iteration items="{!v.caseComments}" var ="obj">
+          <tbody>
+               
+                   <td><div class="slds-truncate">{!obj.CommentBody}</div></td>
+                   <td> <div class="slds-truncate">{!obj.CreatedDate}</div></td>
+                   <td> <div class="slds-truncate">{!obj.CreatedBy.Name}</div></td>
+             
+          </tbody>
+                   </aura:iteration>
+    </table>
+    </div>
+        
+   
+          
+    </ui:scrollerWrapper>
+                </aura:if>
+       <aura:if isTrue="{!v.nocaseComments}">
+      <ui:message title="Information" severity="info" closable="false">
+         {!$Label.c.cs_NoComment}
+      </ui:message>
+        
+                </aura:if>
+            </div>
+            </div>
+    
+     <footer class="slds-modal__footer slds-modal__footer_directional slds-align_absolute-center"> 
+               <lightning:buttonGroup  aura:id="btngroup">
+                   <lightning:button variant="neutral" label="{!$Label.c.cs_release}" iconName="utility:save"  aura:id="releaseorder" onclick="{!c.releaseorderAction}"/>
+                   <lightning:button variant="neutral" label="{!$Label.c.cs_ReleaseandEnd}" iconName="utility:save"  aura:id="releaseclose" onclick="{!c.releasecloseAction}"/>
+                   <lightning:button variant="neutral" label="{!$Label.c.cs_Cancel}" iconName="utility:close" onclick="{!c.closeQuickAction}"/>   <!--     iconName="utility:close" iconPosition="left"-->
+                </lightning:buttonGroup> 
+            </footer>
+    </aura:if>
+    </div>
+    </div>
+     <div aura:id="container2">
+        
+           <aura:if isTrue="{!v.showContainer2}">
+                <c:cs_CloseCase recordId="{!v.recordId}"></c:cs_CloseCase>
+         </aura:if>
+    </div>
+  
+</aura:component>

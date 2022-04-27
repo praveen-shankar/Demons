@@ -1,0 +1,4 @@
+<apex:page standardcontroller="Case" recordSetVar="Cases"  extensions="CS_DeleteSelected" showHeader="false" sidebar="true" action="{!getselectedCases}">
+  <apex:pagemessages />
+  <a href='javascript:history.go(-1)'>Go Back </a>
+  </apex:page>

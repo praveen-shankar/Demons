@@ -1,0 +1,99 @@
+<aura:component controller="crm_edi_LightningIntegrationController">
+   <!-- Author: Rajeev Shekhar --> 
+   <aura:attribute name="recordId" type="String"/>
+   <aura:attribute name="noSystemConfigured" type="Boolean" default="false"/>
+   <aura:attribute name="importedData" type="Boolean" default="false"/>
+   <aura:attribute name="phasedOutRecordLM" type="Boolean" default="false"/> 
+   <aura:attribute name="systemLM" type="String" default="LM"/>
+   <aura:attribute name="systemMB" type="String" default="MB"/>
+   <aura:attribute name="showsystemLM" type="Boolean"/>
+   <aura:attribute name="showsystemMB" type="Boolean"/> 
+   <aura:attribute name="errormessage" type="String"/> 
+   <aura:attribute name="systemselected" type="String"/>
+   <aura:attribute name="systemsmap" type="Object"/> 
+   <aura:attribute name="showspinner" type="Boolean" default="false"/>
+   <aura:attribute name="highlighterCondition" type="Boolean" default="false"/> 
+   <aura:attribute name="showerror" type="Boolean" default="false"/>  
+   <aura:attribute name="edirecord" type="Edi_Information__c"/>
+   <aura:attribute name="modalPromise" type="Aura.Action"/>
+   <lightning:empApi aura:id="empApi"/>
+   <aura:attribute name="openModal" type="boolean" default="false"/> 
+   <aura:attribute name="subscription" type="Map" />
+    
+   <aura:handler event="c:edi_integrationConfirmation_event" action="{!c.handleedimodelevent}"/>
+   <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+   <aura:handler event="force:refreshView" action="{!c.doInit}"/>
+   
+   <lightning:overlayLibrary aura:id="overlayLib"/>
+   <aura:dependency resource="markup://c:edi_integrationConfirmation_model"/>
+   <aura:dependency resource="markup://force:refreshView" type="EVENT"/>
+ 
+   <aura:if isTrue="{!v.showspinner}">
+       <lightning:spinner alternativeText="Loading" size="medium" aura:id="spinner" variant="brand"/> 
+   </aura:if>    
+   <aura:if isTrue="{!v.highlighterCondition}">
+        <ui:message title="{!$Label.c.edi_InformationTranslate}" severity="error" closable="false">
+            {!$Label.c.edi_transferMsgEndSystem}
+        </ui:message>    
+   </aura:if>
+   <aura:if isTrue="{!v.noSystemConfigured}">
+        <ui:message title="{!$Label.c.edi_InformationTranslate}" severity="error" closable="false">
+            {!$Label.c.edi_noSystemAddedMsg}
+        </ui:message>    
+   </aura:if>
+   <aura:if isTrue="{!v.importedData}">
+        <ui:message title="{!$Label.c.edi_InformationTranslate}" severity="error" closable="false">
+            {!$Label.c.edi_importedDataMsg}
+        </ui:message>    
+   </aura:if>
+   <!-- 
+   <aura:if isTrue="{!v.phasedOutRecordLM}">
+        <ui:message title="{!$Label.c.edi_InformationTranslate}" severity="error" closable="false">
+            {!$Label.c.edi_phasedOutMsgLM}
+        </ui:message>    
+   </aura:if>
+   --> 
+   <div class="c-container">
+      <lightning:layout verticalAlign="stretch" multipleRows="true" class="x-large">
+         <lightning:layoutItem flexibility="auto" padding="around-small" size="12">
+            <lightning:select aura:id="selectcomp" name="select" label="{!$Label.c.edi_selectSystem}" onchange="{! c.onSelectChange }">
+               <option value="">{!$Label.c.edi_chooseOneSystem}</option>
+               <option disabled="{!!v.showsystemLM}" value="{!v.systemLM}">{!v.systemLM}</option>
+               <option disabled="{!!v.showsystemMB}" value="{!v.systemMB}">{!v.systemMB}</option>
+            </lightning:select>    
+         </lightning:layoutItem>
+         <lightning:layoutItem flexibility="auto" padding="around-small" size="12">
+            <lightning:buttonGroup class="slds-align_absolute-center">
+               <lightning:button label="{!$Label.c.edi_transferButton}" name="transfer" onclick="{! c.showConfirmationModel }" aura:id="transferbutton" disabled="true"/>
+            </lightning:buttonGroup>   
+         </lightning:layoutItem>	  
+         <lightning:layoutItem flexibility="auto" padding="around-small" size="12">
+            <aura:if isTrue="{!v.showerror}"> 
+            <ui:message title="Error" severity="error" closable="true">
+                {!v.errormessage}
+            </ui:message>    
+            </aura:if>    
+         </lightning:layoutItem> 
+      </lightning:layout>
+      <aura:if isTrue="{!equals(v.openModal,true)}">
+        <div role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <header class="slds-modal__header">
+                    <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close">
+                    <span class="slds-assistive-text">Close</span>
+                    </button>
+                    <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">{!$Label.c.edi_integrationAreYouSure}</h2>
+                </header>
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                    <p><strong>{!$Label.c.edi_msgBeforeCallout}</strong></p>    
+                </div>
+                <footer class="slds-modal__footer slds-modal__footer_directional">
+                    <lightning:button name="cancelProcess" iconName="action:close" onclick="{!c.confirmationAction}"/>
+                    <lightning:button name="approveProcess" iconName="action:approval" onclick="{!c.confirmationAction}"/>
+                </footer>
+            </div>
+        </div>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </aura:if>
+   </div>
+</aura:component>

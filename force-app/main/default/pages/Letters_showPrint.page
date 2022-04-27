@@ -1,0 +1,53 @@
+<apex:page standardController="Letter__c" extensions="Letters_controllerExtension" showHeader="false" renderAs="PDF">
+<html>
+ 
+    <head>
+        <style>
+            body {
+                margin: 0px;
+                padding: 0px;
+            }
+            #wrapper {
+                position: relative;
+                top: {!CSSTopMargin};   /*Physical aim is 4.5cm;*/
+                left: {!CSSLeftMargin}; /*Physical aim is 1.8cm;*/
+                /*border: solid 1px green;*/
+            }
+            #recepient {
+                clear: both;
+                /*border: solid 1px blue;*/
+            }
+            #content {
+                clear: both;
+                margin-top: {!CSSContentAddressSpacing};
+                /*border: solid 1px red;*/      
+            }
+            div.pagebreak {
+                page-break-after:always;            
+            }
+        </style>
+    </head>
+
+    <body>
+        <apex:variable var="rowNum" value="0" />
+        <apex:repeat value="{!LettersForPrint}" var="l">
+            <div id="wrapper">
+                <div id="recepient">
+                    <apex:outputfield value="{!l.Recepient__c}" />
+                </div>
+        
+                <div id="content">
+                    <apex:outputfield value="{!l.Letter_content__c}" />
+                </div>
+                
+                <apex:outputpanel rendered="{!VALUE(rowNum)+1 < LettersForPrint.size}">
+                    <div class="pagebreak"></div>
+                </apex:outputpanel>
+            </div>
+            <apex:variable var="rowNum" value="{!VALUE(rowNum) + 1}" />
+        </apex:repeat>
+        
+    </body>
+  
+</html>
+</apex:page>

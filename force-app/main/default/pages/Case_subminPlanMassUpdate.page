@@ -1,0 +1,153 @@
+<apex:page standardController="Case" extensions="Case_SubmitPlanMassUpdateController" showHeader="false" sidebar="false">
+
+    <script src="/soap/ajax/28.0/connection.js" type="text/javascript"></script>
+<script src="/soap/ajax/28.0/apex.js" type="text/javascript"></script>
+<script>
+function confirmCancel() {
+var Caseid= '{!caseId}';// document.getElementById('Caseid');
+
+
+           // var isCancel = confirm("Sikker på at du vil avbryte?");
+           //CSphase2, Supriya, 13122016 =>Added custom labels 
+           var isCancel = confirm("{!$Label.cs_isCancel}");
+          
+            if (isCancel) 
+            {
+             if (sforce.one != undefined) {
+                                    // Lightning
+                                    sforce.one.navigateToSObject(Caseid);
+                                } else {
+                                    // Classic
+                                     window.close();
+                                }
+            }
+            
+            
+            return false;
+        }
+</script>
+    <!--<apex:sectionHeader title="Oppdater Planlagte Sendeplaner"/>-->
+    <apex:sectionHeader title="{!$Label.cs_UpdateScheduledSendingPlans}"/>
+    
+<!--    id: <apex:outputText value="{!caseId}" />-->
+<!--    record: <apex:outputText value="{!record}" />-->
+    
+    <apex:form >
+        <apex:pageBlock mode="edit">
+            <apex:pageBlockButtons >
+            
+             <!--
+             
+             <apex:commandButton action="{!updatePlannedShipments}" value="Oppdater" rerender="plannedShipments"/>
+                <apex:commandButton value="Lukk" onclick="return confirmCancel()" immediate="true"/>
+            CSphase2, Supriya, 13122016 =>Added custom labels cs_Update, cs_Close
+
+             -->
+                <apex:commandButton action="{!updatePlannedShipments}" value="{!$Label.cs_Update}" rerender="plannedShipments"/>
+                <apex:commandButton value="{!$Label.cs_Close}" onclick="return confirmCancel()" immediate="true"/>
+                
+                <apex:actionStatus id="load">
+                    <apex:facet name="start"><apex:image value="{!$Resource.spinner_icon}" /></apex:facet>
+                    <apex:facet name="stop"></apex:facet>
+                </apex:actionStatus>
+            </apex:pageBlockButtons>
+        
+            <apex:outputpanel id="messages">
+                <apex:pageMessages />
+            </apex:outputpanel>
+            
+            <apex:pageBlockSection columns="4">
+                <apex:pageBlockSectionItem >
+                    <!--<apex:outputLabel value="Innleveringssted"/>
+                    CSphase2, Supriya, 13122016 =>Added custom labels cs_Filing_Location
+                    -->
+                    <apex:outputLabel value="{!$Label.cs_Filing_Location}"/>                    
+                    <apex:inputText value="{!Case.Submission_place_TEXTONLY__c}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <!--<apex:outputLabel value="Opplag"/>
+                    CSphase2, Supriya, 13122016 =>Added custom labels cs_Number_of_edition 
+                    -->
+                    <apex:outputLabel value="{!$Label.cs_Number_of_edition}"/>  
+                    <apex:inputText value="{!Case.Number_of_circulation__c}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <!--<apex:outputLabel value="Kunde"/>
+                     CSphase2, Supriya, 13122016 =>Added custom labels cs_Customer 
+                    -->
+                    <apex:outputLabel value="{!$Label.cs_Customer}"/>
+                    <apex:inputField value="{!Case.AccountId}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <!--<apex:outputLabel value="Prioritet"/>
+                    CSphase2, Supriya, 13122016 =>Added custom labels cs_Priority
+                    -->
+                    
+                    <apex:outputLabel value="{!$Label.cs_Priority}"/>
+                    <apex:inputField value="{!Case.Priority}"/>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >
+                    <!--<apex:outputLabel value="Vekt"/>
+                    
+                   CSphase2, Supriya, 13122016 =>Added custom labels cs_Weight -->
+                   
+                    <apex:outputLabel value="{!$Label.cs_Weight}"/>
+                    <apex:inputText value="{!Case.Vekt_pr_sending__c}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <!--<apex:outputLabel value="Bestillings dato"/>
+                     CSphase2, Supriya, 13122016 =>Added custom labels cs_Booking_date -->
+                    
+                    <apex:outputLabel value="{!$Label.cs_Booking_Date}"/>
+                    <apex:inputField value="{!Case.Booking_date__c}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <!--<apex:outputLabel value="Kontakt"/>
+                     CSphase2, Supriya, 13122016 =>Added custom labels cs_Number_of_edition -->
+                     
+                    <apex:outputLabel value="{!$Label.cs_Contact}"/> 
+                    <apex:inputField value="{!Case.ContactId}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Status"/>
+                    <apex:inputField value="{!Case.Status}"/>
+                </apex:pageBlockSectionItem>
+                
+            </apex:pageBlockSection>
+            
+            <apex:pageBlockSection columns="1">
+                <apex:pageBlockTable value="{!plannedShipments}" var="ps" id="plannedShipments">
+                    <apex:column ><apex:inputCheckbox value="{!ps.isSelected}"/></apex:column>
+                    <apex:column headerValue="{!$Label.cs_Case_number}" value="{!ps.shipment.caseNumber}"/>
+                    <apex:column headerValue="{!$Label.cs_Subject}" value="{!ps.shipment.Subject}"/>
+                    <apex:column headerValue="{!$Label.cs_Customer}" width="200px" value="{!ps.shipment.AccountId}"/>
+                    <apex:column headerValue="{!$Label.cs_Contact}" value="{!ps.shipment.ContactId}"/>
+                    <apex:column headerValue="{!$Label.cs_Filing_Location}" value="{!ps.shipment.Submission_place_TEXTONLY__c}"/>
+                    <apex:column headerValue="{!$Label.cs_Booking_Date}" value="{!ps.shipment.Booking_date__c}"/>
+                    <apex:column headerValue="{!$Label.cs_Weight}" value="{!ps.shipment.Vekt_pr_sending__c}"/>
+                    <apex:column headerValue="{!$Label.cs_Number_of_edition}" value="{!ps.shipment.Number_of_circulation__c}"/>
+                    <apex:column headerValue="{!$Label.cs_Status}" value="{!ps.shipment.Status}"/>
+                    <apex:column headerValue="{!$Label.cs_Priority}" value="{!ps.shipment.Priority}"/>
+                
+                    
+                    <!--apex:column headerValue="Saksnummer" value="{!ps.shipment.caseNumber}"/>
+                    <apex:column headerValue="Emne" value="{!ps.shipment.Subject}"/>
+                    <apex:column headerValue="Kunde" width="200px" value="{!ps.shipment.AccountId}"/>
+                    <apex:column headerValue="Kontakt" value="{!ps.shipment.ContactId}"/>
+                    <apex:column headerValue="Innleveringssted" value="{!ps.shipment.Submission_place_TEXTONLY__c}"/>
+                    <apex:column headerValue="Bestillingssato" value="{!ps.shipment.Booking_date__c}"/>
+                    <apex:column headerValue="Vekt" value="{!ps.shipment.Vekt_pr_sending__c}"/>
+                    <apex:column headerValue="Opplag" value="{!ps.shipment.Number_of_circulation__c}"/>
+                    <apex:column headerValue="Status" value="{!ps.shipment.Status}"/>
+                    <apex:column headerValue="Prioritet" value="{!ps.shipment.Priority}"/>
+                       CSphase2, Supriya, 13122016 =>Added custom labels   
+                    
+                    
+                    -->
+                    
+                </apex:pageBlockTable>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

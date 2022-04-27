@@ -1,0 +1,202 @@
+<apex:page standardController="cs_case_pib_messages__c" extensions="Case_PIB_Message_Controller" tabStyle="Letter_Template__c" sidebar="false"  showHeader="false" title="PIB Messages" >
+ 
+
+  
+ <apex:sectionHeader title="{!postalUnitName}" />
+ 
+ <apex:pageMessages >
+ </apex:pageMessages>
+  <div style="padding-left:20px;padding-right:20px">  
+  <apex:form id="pibform"  >
+  
+ <script>
+ function pageScroll() {
+        window.scrollBy(0,400); // horizontal and vertical scroll increments
+        
+    }
+    
+ var count = 0;
+ count= '{!Countofnew}';  
+ //document.getElementById('{!$Component.pibform}').elements['{!$Component.PibNewMessageCount}'].value = count;
+     
+ </script>  
+ 
+ <apex:commandButton value="Refresh" onclick="refreshPageSize()" reRender="pibpageblock1"/>
+ <br/>
+ <br/>
+  
+  
+  <apex:inputHidden value="{!Countofnew}" id="PibNewMessageCount"/>
+  <apex:actionPoller action="{!countNewMessages}" reRender="PibNewMessageCount" interval="120"/>
+  
+  <apex:actionFunction name="refreshPageSize" action="{!refreshPageSize}" reRender="pibpageblock1"/>
+     
+      <apex:outputPanel id="MessageOutputPanel">
+      <apex:pageBlock id="pibpageblock1" rendered="{!showRecords}">
+      
+          
+          <apex:pageBlockTable value="{!pibDetail}" var="pib" rules="groups" id="pibpageblocktable1">
+          
+              <apex:column headerValue="Meldingstittel">
+                  <apex:outputpanel > 
+                       <apex:commandlink value="{!pib.cs_subject__c}" oncomplete="pageScroll()" action="{!querypibDetails}" rerender="pibdetails"  >
+                           <apex:param name="pibid" id="pibid" value="{!pib.id}"/>
+                       </apex:commandlink>
+                  </apex:outputpanel>
+              </apex:column> 
+              
+               <apex:column headerValue="Postet Av" value="{!pib.CreatedBy.Name}" id="pibpostedby"/>
+               
+               <apex:column headerValue="Postet Dato Tid" value="{!pib.CreatedDate}" id="pibpostdate"/>
+               
+               <apex:column headerValue="Status" value="{!pib.category__c}"  id="pibstatus"/>
+               
+                 
+                
+            
+         
+           </apex:pageBlockTable>
+           
+            <apex:panelGrid columns="6"> 
+                 
+                <apex:selectList value="{!size}" multiselect="false" size="1" onchange="refreshPageSize();">
+                    <apex:selectOptions value="{!paginationSizeOptions}"/>
+                </apex:selectList>
+                
+                
+                 
+                <apex:commandButton reRender="pibpageblock1" value="{!$Label.cs_First}" action="{!setCon.first}" disabled="{!!setCon.hasPrevious}" title="First Page"/> 
+  
+                <apex:commandButton reRender="pibpageblock1" value="{!$Label.cs_Previous}" action="{!setCon.previous}" disabled="{!!setCon.hasPrevious}" title="Previous Page"/> 
+  
+                <apex:commandButton reRender="pibpageblock1" value="{!$Label.cs_Next}" action="{!setCon.next}" disabled="{!!setCon.hasNext}" title="Next Page"/> 
+  
+                <apex:commandButton reRender="pibpageblock1" value="{!$Label.cs_Last}" action="{!setCon.last}" disabled="{!!setCon.hasNext}" title="Last Page"/> 
+  
+               <apex:outputText >{!(setCon.pageNumber * size)+1-size}-{!IF((setCon.pageNumber * size)>noOfRecords, noOfRecords,
+                     (setCon.pageNumber * size))} of {!noOfRecords}
+                     
+                     
+                </apex:outputText> 
+                
+                
+           </apex:panelGrid>  
+         
+        </apex:pageBlock> 
+        
+        </apex:outputPanel>
+              
+      
+      <apex:outputPanel id="pibdetails">
+       <apex:pageBlock id="thePanel" rendered="{!messagedetailflag}" > 
+      <apex:outputpanel id="pibdetails1" > 
+       
+      <apex:pageMessage summary="Vennligst velg Status" severity="warning" strength="3" rendered="{!showerror}" />
+        
+        
+       <center>  
+        <apex:commandbutton value="Lagre" action="{!savepib}" rerender="pibdetails,MessageOutputPanel" oncomplete="refreshPageSize();" />
+          &nbsp; &nbsp;
+        <apex:commandbutton value="Lukk" action="{!closepib}" rerender="pibdetails" /> 
+        </center>     
+        
+        </apex:outputpanel><br/>
+        <apex:actionStatus id="refreshstatus">
+        <apex:facet name="start">
+        <img src="/img/loading.gif"/>&nbsp;Processing, Please wait...    
+        </apex:facet>                               
+        </apex:actionStatus>                   
+    
+  
+            
+      <apex:pageBlocksection >
+                 
+      <apex:outputField label="Meldingstittel" value="{!pibmessage.cs_subject__c}"/>
+      
+     <!-- <apex:inputField label="Status" value="{!pibmessage.category__c}"/> -->
+     
+        <apex:PageBlockSectionItem >
+       <apex:outputLabel value="status" />
+       <apex:selectList value="{!selectedCategory}" size="1">
+       <apex:selectOptions value="{!Category}"/>
+       </apex:selectList>
+       </apex:PageBlockSectionItem>
+      
+                                  
+      <apex:outputField label="Beskrivelse" value="{!pibmessage.cs_description__c}"/>
+                 
+      <apex:outputField label="Postet Dato Tid" value="{!pibmessage.CreatedDate}"/>
+      
+       <apex:outputField label="Postet Av" value="{!pibmessage.CreatedBy.Name}"/>
+
+                                           
+      </apex:pageBlocksection>
+       <br/>
+     <br/>
+     
+
+   
+     <apex:pageBlockTable value="{!childPibmessages}" var="cpib1" style="border:0 ; " rendered="{!(childmessageflag && (childPibmessages.size != 0)) }" >
+     <apex:column headerValue="Kommentarer" value="{!cpib1.cs_description__c}" />
+     
+      <apex:column headerValue="Postet Av" value="{!cpib1.CreatedBy.Name}"   id="cpibpostedby"/>
+               
+      <apex:column headerValue="Postet Dato Tid" value="{!cpib1.CreatedDate}" id="cpibpostdate"/>
+     
+     <br/>
+     <br/>
+     </apex:pageBlockTable>
+     
+        <br/>
+        <br/>       
+       Post Kommentar:<br/>
+       <apex:inputTextarea id="comment" label="kommentar" title="Comment" value="{!inputTextMessage}" style="width: 90%;height: 100px;"/> 
+       <div class="errorMsg" id="nameError" style="display:none">Vennligst skriv inn tekst</div>
+      
+      <br/>
+      <br/>
+      <br/>
+      <apex:outputPanel >
+        <center>  
+        <apex:commandbutton value="Lagre" action="{!savepib}" rerender="pibdetails"   />  
+      <!--  <apex:commandbutton value="Lagre" action="{!savepib}" rerender="pibdetails,MessageOutputPanel" oncomplete="refreshPageSize();" /> -->
+       
+          &nbsp; &nbsp;
+        <apex:commandbutton value="Lukk" action="{!closepib}" rerender="pibdetails" /> 
+        </center> 
+        </apex:outputPanel>
+        
+      
+      
+              
+     </apex:pageBlock>
+                 
+     </apex:outputPanel> 
+     
+ 
+    
+  </apex:form>
+   </div>
+   
+   <script type="text/javascript">
+
+function validateForm()
+{
+    var name = document.forms["pibform"]["comment"].value;
+     if(name == null || name == '')
+    {
+        document.getElementById("comment").style.border ="3px solid #fdbb2f";
+        document.getElementById("nameError").style.display = "block";
+        check = false;
+    }
+    else
+    {
+        document.getElementById("cName").style.border = "3px solid #c1c1c1";
+        document.getElementById("nameError").style.display = "none";   
+    }
+    
+  }  
+    
+   </script> 
+ 
+</apex:page>

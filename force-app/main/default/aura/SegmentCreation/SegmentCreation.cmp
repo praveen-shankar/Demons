@@ -1,0 +1,52 @@
+<aura:component implements="force:lightningQuickActionWithoutHeader,force:hasRecordId,force:hasSObjectName" access="public" controller="crm_CreateSegment">
+    <aura:attribute name="serviceGroups" type="List"/>
+    <aura:attribute name="recordId" type="String"/>
+    <aura:attribute name="errorLogs" type="List"/>
+    <aura:attribute name="showerror" type="Boolean"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    
+    <form>
+     
+    <div style="width:100%;">  
+        
+        <div class="slds-text-color_error" style="width:100%; color:red;">
+          <aura:if isTrue="{!v.errorLogs.length>0}"> 
+        
+             Segment already created for service group 
+          <aura:iteration items="{!v.errorLogs}" var="error">
+              <div class="slds-text-color_error" style="color:red;">
+                  {!error}
+              </div>
+            </aura:iteration>
+        
+        </aura:if>
+         </div>
+        <div>
+        <h3 class="slds-section-title--divider">Select Service Group </h3>
+           
+      <table class="slds-table slds-table--bordered" style="width:100%" > 
+           
+            
+            <aura:iteration items="{!v.serviceGroups}" var="sg">
+                 <tr class="slds-text-heading--label"> <td>
+                    <ui:inputCheckbox aura:id="Servicegrp" name="{!sg}" value="{!sg.selected}"/> 
+                    </td>
+                     <td><ui:outputText value="{!sg.sgroup}"/></td>
+                </tr>
+                
+            </aura:iteration> 
+        </table>
+      </div> 
+       
+        <footer class="slds-modal__footer slds-modal__footer_directional"> 
+                <lightning:buttonGroup >
+                <lightning:button variant="neutral" label="Cancel" iconName="utility:close" onclick="{!c.closeQuickAction}"/>    
+                <lightning:button variant="neutral" label="Save" iconName="utility:save" onclick="{!c.submit}"/>
+       </lightning:buttonGroup> 
+            </footer>
+        </div>
+       
+      
+</form>
+    
+</aura:component>

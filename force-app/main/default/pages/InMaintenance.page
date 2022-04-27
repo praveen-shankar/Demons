@@ -1,0 +1,12 @@
+<apex:page showHeader="false" title="{!$Label.site.in_maintenance}" cache="false">
+ <div  style="align:center; width:500px;padding:50px">
+    
+     <apex:outputText >
+       Lightuser er ikke lenger i bruk.
+      </apex:outputText>
+      <br/>
+     
+     Har du behov for tilgang til Salesforce ber du om tilgang i 
+     <a href="https://iam.posten.no/" target="_blank">IAM</a>
+     </div>
+</apex:page>

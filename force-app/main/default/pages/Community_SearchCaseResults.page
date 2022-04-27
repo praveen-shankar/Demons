@@ -1,0 +1,81 @@
+<apex:page standardController="Case" extensions="Community_SearchCaseController"  >
+    <apex:form >
+
+
+    <!--CSphase2, Akash, 21122016-->
+        <!--
+        <apex:pageBlock mode="mainDetail" title="Saker" rendered="{!caseSearchResults.size>1}"  >
+        <apex:outputText >Saker funnet: {!totalCases}</apex:outputText>
+        <apex:outputText rendered="{!IF((totalCases>200), TRUE, FALSE)}">
+        Viser 200/{!totalCases} - Last ned i Excel for å se hele resultatet
+        </apex:outputText>
+
+         <apex:commandButton action="{!exportResultToExcel}" value="Last ned i excel" status="spin"/>
+         
+        <apex:pageBlockTable value="{!caseSearchResults}" var="case" id="results">
+            <apex:column headervalue="Saksnr.">
+            <apex:outputLink value="/case.id" target="_blank" >
+                {!case.caseNumber}                           
+                </apex:outputLink>
+            </apex:column>                  
+            <apex:column value="{!case.subject}" headervalue="Emne"/>
+            <apex:column value="{!case.Created_by_Unit__r.Name}" headervalue="Reg. av enhet"/>
+            <apex:column value="{!case.unit_to_blame__r.Name}" headervalue="Sak relatert til enhet"/>
+            <apex:column value="{!case.Status}" headervalue="Status"/>
+            <apex:column value="{!case.CreatedDate}" headervalue="Opprettet"/>
+            <apex:column value="{!case.deviation_time_of_incident__c}" headervalue="Tid for hendelse"/>
+            <apex:column value="{!case.recordType.name}" headervalue="Sakstype"/>
+            <apex:column value="{!case.Category__c}" headervalue="Henvendelsestype"/> 
+            <apex:column value="{!case.Produkt__c}" headervalue="Produkt"/>
+            <apex:column value="{!case.Code_Reason1__r.name}" headervalue="Årsak1"/>
+            <apex:column value="{!case.Code_Reason2__r.name}" headervalue="Årsak2"/>
+            <apex:column value="{!case.Account.Name}" headervalue="Kunde"/>
+            <apex:column value="{!case.Account.ShippingPostalCode}" headerValue="Postnummer"/>
+            <apex:column headervalue="Beskrivelse">
+             <apex:outputText value="{!LEFT(case.description,200)}" />
+             <apex:outputLink rendered="{!LEN(case.description)>200}" value="/Lightuser_CaseDetailView?id={!case.id}" target="_blank" >
+                [mer..]                          
+                </apex:outputLink>
+            </apex:column>   
+        </apex:pageBlockTable>
+    </apex:pageBlock>-->
+    
+   
+    <apex:pageBlock mode="mainDetail" title="{!$Label.cs_Favors}" rendered="{!caseSearchResults.size>1}"  >
+        <apex:outputText >{!$Label.cs_casefound}{!totalCases}</apex:outputText>
+        <apex:outputText rendered="{!IF((totalCases>200), TRUE, FALSE)}">
+        Viser 200/{!totalCases} - {!$Label.cs_downlaodExcelResult}
+        </apex:outputText>
+
+         <apex:commandButton action="{!exportResultToExcel}" value="{!$Label.cs_downlaodExcel}" status="spin"/>
+         
+        <apex:pageBlockTable value="{!caseSearchResults}" var="case" id="results">
+            <apex:column headervalue="{!$Label.cs_Case_number_mising}.">
+            <apex:outputLink value="/{!case.id}" target="_blank" >
+                {!case.caseNumber}                           
+                </apex:outputLink>
+            </apex:column>                  
+            <apex:column value="{!case.subject}" headervalue="{!$Label.cs_Subject}"/>
+            <apex:column value="{!case.Created_by_Unit__r.Name}" headervalue="{!$Label.cs_reg_Device}"/>
+            <apex:column value="{!case.unit_to_blame__r.Name}" headervalue="{!$Label.cs_Case_related_to_unit}"/>
+            <apex:column value="{!case.Status}" headervalue="{!$Label.cs_Status}"/>
+            <apex:column value="{!case.CreatedDate}" headervalue="{!$Label.cs_Created}"/>
+            <apex:column value="{!case.deviation_time_of_incident__c}" headervalue="{!$Label.cs_Time_Event}"/>
+            <apex:column value="{!case.recordType.name}" headervalue="{!$Label.cs_Case_Type}"/>
+            <apex:column value="{!case.Category__c}" headervalue="{!$Label.cs_EnquiryType}"/> 
+            <apex:column value="{!case.Produkt__c}" headervalue="{!$Label.cs_Product}"/>
+            <apex:column value="{!case.Code_Reason1__r.name}" headervalue="{!$Label.cs_Cause}1"/>
+            <apex:column value="{!case.Code_Reason2__r.name}" headervalue="{!$Label.cs_Cause}2"/>
+            <apex:column value="{!case.Account.Name}" headervalue="{!$Label.cs_Customer}"/>
+            <apex:column value="{!case.Account.ShippingPostalCode}" headerValue="{!$Label.cs_Zipcode}"/>
+            <apex:column headervalue="{!$Label.cs_describe}">
+             <apex:outputText value="{!LEFT(case.description,200)}" />
+             <apex:outputLink rendered="{!LEN(case.description)>200}" value="/{!case.id}" target="_blank" >
+                           {!$Label.cs_more}             
+                </apex:outputLink>
+            </apex:column>   
+        </apex:pageBlockTable>
+    </apex:pageBlock>
+   
+    </apex:form>
+</apex:page>

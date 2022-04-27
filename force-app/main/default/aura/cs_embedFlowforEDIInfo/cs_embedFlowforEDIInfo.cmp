@@ -1,0 +1,36 @@
+<aura:component implements="lightning:availableForFlowActions,flexipage:availableForAllPageTypes,force:hasRecordId" controller="cs_getEDIDetails" access="global">
+    <lightning:workspaceAPI aura:id="workspace"/>
+    
+    <aura:dependency resource="markup://force:editRecord" type="EVENT" />
+    
+    <aura:handler event="force:refreshView" action="{!c.init}" />
+    <aura:handler name="init" value="{!this}" action="{!c.init}"/>
+    <aura:attribute name="ediInfo" type="string"/>
+    
+    <aura:attribute name="isFlowStarted" type="boolean"/>
+    <aura:attribute name="flowStatus" type="string"/>
+    <!--<aura:attribute name="caseid" type="String" /> -->
+    
+            
+    <div class="slds-section slds-is-open" aura:id="ediSection">
+        <!--section header-->
+        <h3 class="slds-section__title">
+            <button aria-controls="ediInfo" class="slds-button slds-section__title-action">
+                <span onclick="{!c.toggleSection}" data-auraId="ediSection">
+                    <lightning:icon iconName="utility:switch"
+                                    size="x-small"
+                                    class="slds-section__title-action-icon slds-button__icon_left"
+                                    alternativeText="button icon"
+                                    />
+                </span>
+                <span class="slds-truncate" title="EDIInfoNames">EDI Information</span>
+            </button>
+        </h3>
+        <!--section body-->
+        <div class="slds-section__content" id="ediInfo">                                          
+   				<!--<p><lightning:formattedText value="{!v.caseid}" /></p>-->        
+    			<lightning:flow aura:id="flowData" onstatuschange="{!c.handleStatusChange}"/>
+        </div>
+    </div>
+    
+</aura:component>

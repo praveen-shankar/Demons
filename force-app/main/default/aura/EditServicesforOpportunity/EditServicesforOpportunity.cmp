@@ -1,0 +1,245 @@
+<aura:component implements="force:appHostable,lightning:isUrlAddressable,force:hasRecordId,force:lightningQuickActionWithoutHeader,force:hasSObjectName" access="global" controller="crm_editServicesControllerLightning">
+    <aura:attribute name="recordId" type="String" access="public"/>
+    <aura:attribute name="opplineitemId" type="String" access="public"/>
+    <aura:attribute name="oppId" type="String" access="public"/>
+     <aura:attribute name="rid" type="String" access="global"/>
+    <aura:attribute name="actualServiceValue" type="OpportunityLineItem[]" />
+    <aura:attribute name="additionalServiceValue" type="OpportunityLineItem[]" />
+    <aura:attribute name="servicesColumns" type="crm_Dynamic_Columns_Add_Opp_Services__c[]"/>
+    <aura:attribute name="additionalServicesColumns" type="crm_Dynamic_Columns_Add_Opp_Services__c[]"/> 
+    <aura:attribute name="actualServiceTerminalValue" type="String[]" />
+    <aura:attribute name="saveerror" type="String" />
+    <aura:attribute name="conversionFactor"  type="String"/>
+    <aura:registerEvent name="disableSave" type="c:addServicesOppDisableSave" />
+    <aura:handler name="disableSave" event="c:addServicesOppDisableSave" action="{!c.disableNextButton}"/>
+    
+   	<lightning:navigation aura:id="navService"/>
+    <aura:attribute name="showMinimumPrice" type="Boolean" default="false"/> 
+    <aura:attribute name="showMininumPricePercent" type="Boolean" default="false"/> 
+    <aura:attribute name="showConversionFactor" type="Boolean" default="false"/> 
+    <aura:attribute name="showDirection" type="Boolean" default="false"/> 
+    <aura:attribute name="showLocal" type="Boolean" default="false"/> 
+    <aura:attribute name="showPriceList" type="Boolean" default="false"/> 
+    <aura:attribute name="showPriceUnit" type="Boolean" default="false"/> 
+    <aura:attribute name="showTerminal" type="Boolean" default="false"/> 
+    <aura:attribute name="showUnitPrice" type="Boolean" default="false"/> 
+    <aura:attribute name="showDiscount" type="Boolean" default="false"/>
+    <aura:attribute name="showIsPayerReceiverorSender" type="Boolean" default="false"/>
+    
+    <aura:attribute name="showContainer2" type="Boolean" default="false" />
+    <aura:attribute name="showContainer1" type="Boolean" default="true" />
+    
+    
+    <aura:attribute name="ConversionFactorOptions" type="List"/>  
+    <aura:attribute name="DirectionOptions" type="List"/>
+    <aura:attribute name="LocalOptions" type="List"/>
+    <aura:attribute name="Passivereturnoptions" type="List"/>
+    <aura:attribute name="PricelistOptions" type="List"/>
+    <aura:attribute name="PriceUnitOptions" type="List"/>
+    <aura:attribute name="TerminalOptions" type="List"/>
+    <aura:attribute name="IsPayerReceiverorSenderOptions" type="List"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <!-- <aura:if isTrue="{!v.showContainer1}">-->
+     <div class="slds"  style="padding-left : 350px;slds-table--bordered;width:1030px;" aura:id="EditServicesforOpp">
+          <div class="slds-grid slds-grid_vertical" style="background-color:white;">
+              <div aura:id="container1">
+              <br/>
+           <div class="slds-text-title_caps slds-align_absolute-center slds-border_bottom">
+            <lightning:icon iconName="standard:product_item_transaction" size="small" alternativeText="Edit Services to Opportunity" /> &nbsp;
+            <strong>Edit Services</strong></div>
+              <br/>
+      <div class="slds-page-header">
+        <div class="slds-text-heading_medium slds-text-align_center slds-text-title_caps">
+            <strong>Actual Service  Edit : {!v.actualServiceValue[0].Product2.Name}</strong></div>
+    </div>
+    <div class="slds-p-top_medium"></div>
+    <form>
+    <div class="c-container">
+        <div class="slds-scrollable--x">
+            <lightning:layout verticalAlign="center">
+                <table class="slds-table slds-table--bordered slds-table--striped" style="padding-left:25px;padding-right:25px;">
+                    <tr>
+                         <lightning:layoutItem flexibility="auto" padding="around-small">
+                             
+                              <aura:if isTrue="{!v.showDiscount}" >
+                     <lightning:input type="number" name="crm_Discount__c" label="{!$Label.c.Discount_percentage}" aura:id="crm_Discount__c"  value="{!v.actualServiceValue[0].crm_Discount__c}"  min="0" max="100" onchange="{!c.handleInputError}"/>
+                      
+            </aura:if>  
+                  <aura:if isTrue="{!v.showMinimumPrice}" >
+                             <lightning:input type="number" label="{!$Label.c.Minimum_Price}" name="crm_Minimum_Price__c" aura:id="crm_Minimum_Price__c" value="{!v.actualServiceValue[0].crm_Minimum_Price__c}" onchange="{!c.handleInputError}"  min="0"/>
+                     
+            </aura:if>  
+            
+                            <lightning:input type="number" required="true" label="{!$Label.c.Annual_Service_Value}" name="Annual Service Value" aura:id="UnitPrice" value="{!v.actualServiceValue[0].UnitPrice}"  onchange="{!c.handleInputError}"/> 
+                       <div style="padding-top:10px"></div>
+                             
+          
+             <lightning:input type="checkbox" label="{!$Label.c.Free_PickUp}" name="freepickupflag" aura:id="freepickupflag" checked="{!v.actualServiceValue[0].crm_Free_Pickup__c}"/>
+            <!-- <lightning:input type="checkbox" label="Passive Return" name="passivereturnflag" aura:id="passivereturnflag" checked="{!v.actualServiceValue[0].crm_Passive_Return__c}"/>-->
+                            
+                               <ui:inputSelect aura:id="crm_Passive_Return__c" label="{!$Label.c.Passive_Return}" value="{!v.actualServiceValue[0].crm_Passive_Return__c}">
+                                
+                                <aura:iteration items="{!v.Passivereturnoptions}" var="cus" indexVar="key">
+                                    <ui:inputSelectOption label="{!cus.key}" text="{!cus.value}" value="{!cus.value == v.actualServiceValue[0].crm_Passive_Return__c}"/>
+                                    
+                                </aura:iteration>
+                                    </ui:inputSelect>
+                              <div style="padding-top:10px"></div>
+                             <div class="slds-grid slds-wrap">
+                                <div class="slds-size_1-of-2">
+                                    <lightning:input type="number" name="WeightIntervalFrom" label="{!$Label.c.Weight_Interval_From}" aura:id="minweight" min="0" value="{!v.actualServiceValue[0].crm_Min_Weight__c}" onchange="{!c.handleInputError}" />
+                                </div>
+                                <div class="slds-size_1-of-2">
+                                    <lightning:input type="number" name="WeightIntervalTo" label="{!$Label.c.Weight_Interval_To}" aura:id="maxweight" min="0"  value="{!v.actualServiceValue[0].crm_Max_Weight__c}" onchange="{!c.handleInputError}"/>
+                                </div>
+                            </div>
+               
+            <div style="padding-top:10px"></div>
+             <aura:if isTrue="{!v.showLocal}">
+               
+                 <ui:inputSelect aura:id="crm_Local__c" label="{!$Label.c.Local_Domestic}" value="{!v.actualServiceValue[0].crm_Local__c}">
+                                
+                                <aura:iteration items="{!v.LocalOptions}" var="cus" indexVar="key">
+                                    <ui:inputSelectOption label="{!cus.key}" text="{!cus.value}" value="{!cus.value == v.actualServiceValue[0].crm_Local__c}"/>
+                                    
+                                </aura:iteration>
+                                
+                            </ui:inputSelect>
+                      
+            </aura:if>  
+            <div style="padding-top:10px"></div>
+            <aura:if isTrue="{!v.showConversionFactor}">
+               
+                        <ui:inputSelect aura:id="crm_Conversion_Factor__c"  value="{!v.actualServiceValue[0].crm_Conversion_Factor__c}" label="{!$Label.c.Conversion_Factor}">
+                            <aura:iteration items="{!v.ConversionFactorOptions}" var="cus" indexVar="key">
+                                  <ui:inputSelectOption label="{!cus.key}" text="{!cus.value}" value="{!cus.value == v.actualServiceValue[0].crm_Conversion_Factor__c}"  />
+                                                      
+                            </aura:iteration>
+                            
+                        </ui:inputSelect>
+                       
+            </aura:if>  
+                             
+            <aura:if isTrue="{!$Label.c.isPayerReceiverorSenderSwitch == 'True'}">                 
+            <div style="padding-top:10px"></div>       
+                             
+            <aura:if isTrue="{!v.showIsPayerReceiverorSender}">
+                   
+                <ui:inputSelect aura:id="IsPayerReceiverorSender__c" value="{!v.actualServiceValue[0].IsPayerReceiverorSender__c}" label="{!$Label.c.IsPayerReceiverorSender}" >
+                                
+                    <aura:iteration items="{!v.IsPayerReceiverorSenderOptions}" var="cus" indexVar="key">
+                        
+                        <ui:inputSelectOption label="{!cus.key}" text="{!cus.value}" value="{!cus.value == v.actualServiceValue[0].IsPayerReceiverorSender__c}" />
+                        
+                    </aura:iteration>
+                    
+                </ui:inputSelect>
+                
+            </aura:if>
+            </aura:if>
+           
+                           
+                    <div style="padding-top:10px"></div>
+            <aura:if isTrue="{!v.showTerminal}">
+                                         
+                            <ui:inputSelect aura:id="crm_Terminals__c"  multiple="true" label="{!$Label.c.Terminals}" value="{!v.actualServiceValue[0].crm_Terminals__c}">
+                                <aura:iteration items="{!v.TerminalOptions}" var="cus" indexVar="key">
+                                    <c:auraIfContains items="{!v.actualServiceTerminalValue}"  element="{!cus.value}"> 
+                                    </c:auraIfContains>
+                                </aura:iteration>
+                            </ui:inputSelect>
+                        
+            </aura:if>
+                             <div style="padding-top:10px"></div>   
+             <aura:if isTrue="{!v.showDirection}">
+                
+                            <ui:inputSelect aura:id="crm_Direction__c" value="{!v.actualServiceValue[0].crm_Direction__c}" label="{!$Label.c.Direction_Terminals}" >
+                                
+                                <aura:iteration items="{!v.DirectionOptions}" var="cus" indexVar="key">
+                                    
+                                    <ui:inputSelectOption label="{!cus.key}" text="{!cus.value}" value="{!cus.value == v.actualServiceValue[0].crm_Direction__c}" />
+                                     
+                                </aura:iteration>
+                                
+                            </ui:inputSelect>
+                       
+            </aura:if>                 
+            
+           
+                        </lightning:layoutItem>
+                    </tr>
+                </table>
+            </lightning:layout>
+            
+        </div>
+    </div>
+                
+            <div style="width:682px">   
+            <footer class="slds-modal__footer slds-modal__footer_directional"> 
+               <lightning:buttonGroup  aura:id="btngroup">
+                    <lightning:button variant="neutral" label="Cancel" iconName="utility:close" onclick="{!c.closeQuickAction}"/>   <!--     iconName="utility:close" iconPosition="left"-->
+                    <lightning:button variant="neutral" label="Next" iconName="utility:forward" onclick="{!c.Next}" aura:id="nextbutton"/>
+                </lightning:buttonGroup> 
+            </footer>
+            </div>  
+                  </form>
+       
+              </div>
+   
+    <div class="slds">
+      <div class="slds" style="width:690px;background-color: white;">
+        <div aura:id="container2" class="slds" style="background-color: white;padding-top:20px;" >
+             <div class="slds-text-title_caps slds-align_absolute-center slds-border_bottom">
+            <lightning:icon iconName="standard:product_item_transaction" size="small" alternativeText="Edit Services to Opportunity" /> &nbsp;
+            <strong>Edit Services</strong></div>
+              <br/>
+             <aura:if isTrue="{!v.additionalServiceValue.length>0}">
+            <div class="slds-page-header">
+        <div class="slds-text-heading_medium slds-text-align_center slds-text-title_caps">
+					<strong>Additional Services</strong>
+				</div>
+            </div>
+            <aura:if isTrue="{!!empty(v.saveerror)}">
+					<ui:message title="Error While Saving" severity="error" closable="false">
+						<p><strong>{!v.saveerror}</strong></p>
+					</ui:message>
+				</aura:if>
+           <aura:iteration items="{!v.additionalServiceValue}" var="item">
+                      <div class="slds-box">
+                             <c:EditAdditionalServices oppaddLineitemId="{!item.Id}" aura:id="EditAdditionalServices" />
+                      </div>
+                        </aura:iteration>
+            </aura:if>
+               
+           <aura:if isTrue="{!v.additionalServiceValue.length==0}">
+                <div class="slds-text-heading_medium slds-text-align_center slds-text-title_caps">
+					<strong>No Additional Services</strong>
+				</div>
+            </aura:if>
+               
+             
+          <div style="width:690px">   
+            <footer class="slds-modal__footer slds-modal__footer_directional"> 
+       
+            <lightning:button variant="neutral" label="Cancel" iconName="utility:close" onclick="{!c.closeQuickAction}"/> 
+          <lightning:buttonGroup aura:id="btngroup">
+            <lightning:button variant="neutral" label="Back" iconName="utility:back" onclick="{!c.back}"/> 
+            <lightning:button variant="neutral" label="Save" iconName="utility:save" onclick="{!c.saveAll}" aura:id="savebutton"/>
+        </lightning:buttonGroup> 
+        </footer>   
+    
+                
+       
+            </div>
+       
+            
+            </div>
+               </div>
+
+    </div>
+              </div>
+    </div> 
+    <!--</aura:if>-->
+    
+</aura:component>

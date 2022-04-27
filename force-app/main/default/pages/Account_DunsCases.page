@@ -1,0 +1,44 @@
+<apex:page standardController="Account" extensions="Account_DunsCasesController">
+    <div style="position:relative;left:-10px">
+   <!-- <apex:sectionHeader title="Saker på DUNS-nummer {!currentAccount.DUNS_number__c}" rendered="{!(!isInlinePage)}"/>  
+   CSPhase2, 15122016, Supriya ->Added the labels cs_DUNS_Cases
+    -->
+   <apex:sectionHeader title="{!$Label.cs_DUNS_Cases} {!currentAccount.DUNS_number__c}" rendered="{!(!isInlinePage)}"/> 
+           <apex:form id="latestDunsCasesList">
+            <apex:PageBlock id="listBlock" rendered="{!numberOfCasesOnAccounts != 0}">
+                <apex:PageBlockTable id="latestDunsCasesTable" value="{!latestDunsCases}" var="c" rows="{!numberOfRowsInView}">
+                
+                <!--<apex:column headerValue="Kundenavn" value="{!c.Account.Name}" onClick="window.open('{!$Site.Domain}/{!c.AccountId}', '_parent');" onmouseover="this.style.cursor='pointer'"/>
+                    <apex:column headerValue="Aktørnummer" value="{!c.Account.Party_number__c}" onClick="window.open('{!$Site.Domain}/{!c.AccountId}', '_parent');" onmouseover="this.style.cursor='pointer'"/>
+                    <apex:column headerValue="Saksnummer" value="{!c.CaseNumber}" onClick="window.open('{!$Site.Domain}/{!c.id}', '_parent');" onmouseover="this.style.cursor='pointer'"/>
+                    <apex:column headerValue="Tittel" value="{!c.subject}" onClick="window.open('{!$Site.Domain}/{!c.id}', '_parent');" onmouseover="this.style.cursor='pointer'"/>
+                    <apex:column headerValue="Sakstype" value="{!c.RecordType.Name}" onClick="window.open('{!$Site.Domain}/{!c.id}', '_parent');" onmouseover="this.style.cursor='pointer'"/>
+                    CSPhase2, 15122016, Supriya ->Added the labels 
+                -->
+                <!-- // CS-Phase2- 03/01/2017- Akshata Asukar-Replaced all occurances of Account.party_number__c with Account.crm_customer_number__c -->
+                    <apex:column headerValue="{!$Label.cs_Customer_Name}" value="{!c.Account.Name}" onClick="window.open('{!$Site.Domain}/{!c.AccountId}', '_parent');" onmouseover="this.style.cursor='pointer'"/>
+                    <apex:column headerValue="{!$Label.cs_Actor_number}" value="{!c.Account.crm_Customer_Number__c}" onClick="window.open('{!$Site.Domain}/{!c.AccountId}', '_parent');" onmouseover="this.style.cursor='pointer'"/>
+                    <apex:column headerValue="{!$Label.cs_Case_number}" value="{!c.CaseNumber}" onClick="window.open('{!$Site.Domain}/{!c.id}', '_parent');" onmouseover="this.style.cursor='pointer'"/>
+                    <apex:column headerValue="{!$Label.cs_Title}" value="{!c.subject}" onClick="window.open('{!$Site.Domain}/{!c.id}', '_parent');" onmouseover="this.style.cursor='pointer'"/>
+                    <apex:column headerValue="{!$Label.cs_Case_Type}" value="{!c.RecordType.Name}" onClick="window.open('{!$Site.Domain}/{!c.id}', '_parent');" onmouseover="this.style.cursor='pointer'"/>
+                    <apex:column headerValue="Status" value="{!c.status}" onClick="window.open('{!$Site.Domain}/{!c.id}', '_parent');" onmouseover="this.style.cursor='pointer'"/>
+                </apex:PageBlockTable>
+                <!--<apex:commandLink value="Se alle {!numberOfCasesOnAccounts} saker på dette DUNS-nummeret" onClick="window.open('{!$Site.Domain}/apex/Account_DunsCases?id={!currentAccount.id}', '_parent');" rendered="{!isInlinePage && numberOfCasesOnAccounts > 10}"/>
+                 CSPhase2, 20122016, Supriya ->Added the labels 
+        -->
+        
+        <apex:commandLink value="{!$Label.cs_Other} {!numberOfCasesOnAccounts} {!$Label.cs_Matters}" onClick="window.open('{!$Site.Domain}/apex/Account_DunsCases?id={!currentAccount.id}', '_parent');" rendered="{!isInlinePage && numberOfCasesOnAccounts > 10}"/>
+            </apex:PageBlock>
+        </apex:form>
+        
+        <!--<apex:outputText value="Det finnes ingen saker på denne kunden, eller på andre kunder med samme DUNS-nummer." rendered="{!numberOfCasesOnAccounts = 0 && isDunsNumberOnAccount}"/>
+        <apex:outputText value="Det er ikke registrert noe DUNS-nummer på kunden." rendered="{!(!isDunsNumberOnAccount)}"/>
+         CSPhase2, 16122016, Supriya ->Added the labels 
+        -->
+        
+        <apex:outputText value="{!$Label.cs_No_DUNS_Cases}" rendered="{!numberOfCasesOnAccounts = 0 && isDunsNumberOnAccount}"/>
+        <apex:outputText value="{!$Label.cs_DUNS_no_not_recorded}" rendered="{!(!isDunsNumberOnAccount)}"/>
+        
+        
+    </div>
+</apex:page>

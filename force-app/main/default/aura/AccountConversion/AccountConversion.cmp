@@ -1,0 +1,481 @@
+<aura:component controller="AccountCoversionProcessController" implements="force:lightningQuickAction,force:hasRecordId,flexipage:availableForRecordHome" >
+    <aura:attribute name="recordId" type="id" />
+    <aura:attribute name="Acc" type="Account"/>  
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" /> 
+    <aura:attribute name="BrandOptions" type="List" />
+    <aura:attribute name="CustomerGroup" type="List" />
+    <aura:attribute name="ConvHeatOptions" type="List" />
+    <aura:attribute name="OrderChannelOptions" type="List" />
+    <aura:attribute name="ConversionProcessOptions" type="List" />
+    <aura:attribute name="ConversionStateOptions" type="List" />
+    <aura:attribute name="CustomerStatus" type="List" />
+    <aura:attribute name="Connectedagreement" type="List" />
+    <aura:attribute name="EdiStatus" type="List" />
+    <aura:attribute name="ApiStatus" type="List" />
+    <aura:attribute name="flag" type="Boolean" default="False" />
+    <aura:attribute name="profileflag" type="Boolean" default="False" />
+    <aura:attribute name="show" type="Boolean" default="False" />
+    <aura:attribute name="Error" type="Boolean" default="False" />
+    <aura:attribute name="message" type="String"/>
+    
+    <aura:handler event="force:refreshView" action="{!c.doInit}" />
+    
+    <aura:if isTrue="{!v.Error}">
+        <div role="alertdialog" tabindex="-1" aria-labelledby="prompt-heading-id" aria-describedby="prompt-message-wrapper" class="slds-modal slds-fade-in-open slds-modal--prompt">
+            <div class="slds-modal__container">
+                <div class="slds-modal__header slds-theme--error slds-theme--alert-texture">
+                    <h2 class="slds-text-heading--medium" id="prompt-heading-id">Error</h2>
+                </div>
+                <div class="slds-modal__content slds-p-around--medium">
+                    <div>
+                        <p>Error: {!v.message}</p>
+                    </div>
+                </div>
+                <div class="slds-modal__footer slds-theme--default">
+                    <button class="slds-button slds-button--brand" onclick="{!c.closeMessage}">Close</button>
+                </div>
+            </div>
+        </div>
+        <div class="slds-backdrop slds-backdrop--open"></div>
+    </aura:if> 
+    
+    <aura:if isTrue="{!v.show}">  
+        <p style ="font-size:15px">  {!v.Acc.Name} Customer is not in scope for conversion now </p>
+        <aura:set attribute="else"> 
+            
+            <div class="slds" aura:id="container">
+                
+                <table class="slds-table slds-table--bordered" style="width:800px;"> 
+                 
+                    <tr class="slds-text-heading--label">
+                        <td colspan="2">
+                            
+                            <div class="slds-page-header">
+                                <div class="slds-text-heading_large slds-text-align_center slds-text-title_caps " >
+                                    <strong class="txtsize"> {!$Label.c.crm_CustomerConversionTitle} </strong></div>
+                            </div>
+                            
+                        </td>
+                    </tr>
+                    
+                    <!--- conversion status -->
+                    <tr>
+                        <td class="left-align ">{!$Label.c.Conversion_Status}
+                        </td>
+                        <td class ="left-align"><div  style="width:500px">
+                            <aura:if isTrue="{!or(v.flag, v.profileflag)}">
+                                <ui:inputSelect aura:id="CustomerStatus"  value="{!v.Acc.Customer_Converted__c}" disabled ="true">
+                                    
+                                    
+                                    <aura:iteration items="{!v.CustomerStatus}" var="cus" indexVar="key">
+                                        <ui:inputSelectOption label="{!cus.key}" text="{!cus.value}" value="{!cus.value == v.Acc.Customer_Converted__c}"  />
+                                    </aura:iteration>
+                                </ui:inputSelect>
+                                <aura:set attribute="else">
+                                    
+                                    <ui:inputSelect aura:id="CustomerStatus"  value="{!v.Acc.Customer_Converted__c}" >
+                                        
+                                        <aura:iteration items="{!v.CustomerStatus}" var="cus" indexVar="key">
+                                            
+                                            <ui:inputSelectOption label="{!cus.key}" text="{!cus.value}" value="{!cus.value == v.Acc.Customer_Converted__c}"  />
+                                        </aura:iteration>
+                                    </ui:inputSelect>
+                                </aura:set>
+                            </aura:if>
+                            
+                            </div>
+                        </td>
+                    </tr> 
+             <!---Customer converted date -->
+                    
+                    <tr>
+                        <td class="left-align">{!$Label.c.crm_customer_converted_date_c}
+                        </td>
+                        <td class ="left-align"> <div  style="width:500px">
+                            <aura:if isTrue="{!v.flag}">   
+                                <ui:inputDate aura:id="Converteddate" 
+                                              label="" displayDatePicker="true" 
+                                              value="{!v.Acc.crm_customer_converted_date__c}"
+                                              disabled ="true"/>
+                                <aura:set attribute="else">
+                                    <ui:inputDate aura:id="startdate" 
+                                                  label="" displayDatePicker="true" 
+                                                  value="{!v.Acc.crm_customer_converted_date__c}"/>
+                                    
+                                </aura:set>
+                            </aura:if>   
+                            
+                            </div>
+                        </td>
+                    </tr>	
+                    
+                    <!-- Conversion Heat-->
+                    
+                    <tr>
+                        <td class="left-align">{!$Label.c.crm_ConversionHeat}
+                        </td>
+                        <td class ="left-align"> <div  style="width:500px"> 
+                            <aura:if isTrue="{!or(v.flag, v.profileflag)}">
+                                <ui:inputSelect aura:id="ConverisonHeat"  value="{!v.Acc.crm_Conv_Converison_Heat__c}" disabled="true">
+                                    <aura:iteration items="{!v.ConvHeatOptions}" var="cus" indexVar="key">
+                                        <ui:inputSelectOption label="{!cus.key}" text="{!cus.value}" value="{!cus.value == v.Acc.crm_Conv_Converison_Heat__c}"  />                           
+                                    </aura:iteration>
+                                </ui:inputSelect>
+                                <aura:set attribute="else">
+                                    <ui:inputSelect aura:id="ConverisonHeat"  value="{!v.Acc.crm_Conv_Converison_Heat__c}">
+                                        <aura:iteration items="{!v.ConvHeatOptions}" var="cus" indexVar="key">
+                                            <ui:inputSelectOption label="{!cus.key}" text="{!cus.value}" value="{!cus.value == v.Acc.crm_Conv_Converison_Heat__c}"  />                           
+                                        </aura:iteration>                        
+                                    </ui:inputSelect>
+                                </aura:set>
+                            </aura:if>  
+                            </div>
+                        </td>
+                    </tr>    
+                    
+                    <!-- Conversion Process-->
+                    
+                    <tr>
+                        <td class="left-align">{!$Label.c.crm_ConversionProcess}  
+                        </td>
+                        <td class ="left-align"> <div  style="width:500px"> 
+                            <aura:if isTrue="{!or(v.flag, v.profileflag)}">
+                                <ui:inputSelect aura:id="ConversionProcess"  value="{!v.Acc.crm_Conv_Conversion_Process__c}" disabled ="true">
+                                    <aura:iteration items="{!v.ConversionProcessOptions}" var="cus" indexVar="key">
+                                        <ui:inputSelectOption label="{!cus.key}" text="{!cus.value}" value="{!cus.value == v.Acc.crm_Conv_Conversion_Process__c}"  />
+                                    </aura:iteration>
+                                </ui:inputSelect>
+                                <aura:set attribute="else">
+                                    <ui:inputSelect aura:id="ConversionProcess"  value="{!v.Acc.crm_Conv_Conversion_Process__c}">
+                                        <aura:iteration items="{!v.ConversionProcessOptions}" var="cus" indexVar="key">
+                                            <ui:inputSelectOption label="{!cus.key}" text="{!cus.value}" value="{!cus.value == v.Acc.crm_Conv_Conversion_Process__c}"  />
+                                        </aura:iteration>
+                                    </ui:inputSelect>
+                                </aura:set>
+                            </aura:if>     
+                            </div>
+                        </td>
+                    </tr>
+                    
+                    <!-- Customer State-->
+                    
+                     <tr>
+                        <td class="left-align">{!$Label.c.crm_CustomerState}
+                        </td>
+                        <td class ="left-align"> <div  style="width:500px"> 
+                            <aura:if isTrue="{!or(v.flag, v.profileflag)}">
+                                <ui:inputSelect aura:id="CustomerState"  value="{!v.Acc.crm_conv_Customer_state__c}" disabled="true">
+                                    <aura:iteration items="{!v.ConversionStateOptions}" var="cus" indexVar="key">
+                                        <ui:inputSelectOption label="{!cus.key}" text="{!cus.value}" value="{!cus.value == v.Acc.crm_conv_Customer_state__c}"  />                           
+                                    </aura:iteration>
+                                </ui:inputSelect>
+                                <aura:set attribute="else">
+                                    <ui:inputSelect aura:id="CustomerState"  value="{!v.Acc.crm_conv_Customer_state__c}">
+                                        <aura:iteration items="{!v.ConversionStateOptions}" var="cus" indexVar="key">
+                                            <ui:inputSelectOption label="{!cus.key}" text="{!cus.value}" value="{!cus.value == v.Acc.crm_conv_Customer_state__c}"  />                           
+                                        </aura:iteration>                        
+                                    </ui:inputSelect>
+                                </aura:set>
+                            </aura:if>  
+                            </div>
+                        </td>
+                    </tr>	
+                    
+                    <!-- Connected agreements-->
+                    
+                    <tr>
+                        <td class="left-align">{!$Label.c.Connected_agreement}
+                        </td>
+                         <td class ="left-align"> <div  style="width:500px"> 
+                            <aura:if isTrue="{!or(v.flag, v.profileflag)}">
+                                <ui:inputSelect aura:id="ConnectedAgreement"  value="{!v.Acc.Connected_Agreements__c}" disabled ="true">
+                                    <aura:iteration items="{!v.Connectedagreement}" var="cus" indexVar="key">
+                                        <ui:inputSelectOption label="{!cus.key}" text="{!cus.value}" value="{!cus.value == v.Acc.Connected_Agreements__c}"  />
+                                    </aura:iteration>
+                                </ui:inputSelect>
+                                <aura:set attribute="else">
+                                    <ui:inputSelect aura:id="ConnectedAgreement"  value="{!v.Acc.Connected_Agreements__c}">
+                                        <aura:iteration items="{!v.Connectedagreement}" var="cus" indexVar="key">
+                                            <ui:inputSelectOption label="{!cus.key}" text="{!cus.value}" value="{!cus.value == v.Acc.Connected_Agreements__c}"  />
+                                        </aura:iteration>
+                                    </ui:inputSelect>
+                                </aura:set>
+                            </aura:if>     
+                            </div>
+                        </td>
+                    </tr>
+                    
+                    <!--EDI Status-->
+                    
+                    <tr>
+                        <td class="left-align">{!$Label.c.EDI_API_Status}
+                        </td>
+                         <td class ="left-align"> <div  style="width:500px"> 
+                            <aura:if isTrue="{!or(v.flag, v.profileflag)}">
+                                <ui:inputSelect aura:id="EDIStatus"  value="{!v.Acc.crm_EDI_API_status__c}" disabled ="true">
+                                    <aura:iteration items="{!v.EdiStatus}" var="cus" indexVar="key">
+                                        <ui:inputSelectOption label="{!cus.key}" text="{!cus.value}" value="{!cus.value == v.Acc.crm_EDI_API_status__c}"  />
+                                    </aura:iteration>
+                                </ui:inputSelect>
+                                <aura:set attribute="else">
+                                    <ui:inputSelect aura:id="EDIStatus"  value="{!v.Acc.crm_EDI_API_status__c}">
+                                        <aura:iteration items="{!v.EdiStatus}" var="cus" indexVar="key">
+                                            <ui:inputSelectOption label="{!cus.key}" text="{!cus.value}" value="{!cus.value == v.Acc.crm_EDI_API_status__c}" />
+                                        </aura:iteration>
+                                    </ui:inputSelect>
+                                </aura:set>
+                            </aura:if>     
+                            </div>
+                        </td>
+                    </tr>
+                    
+                    <!--API Status-->
+                    
+                    <tr>
+                        <td class="left-align">{!$Label.c.API_Status}
+                        </td>
+                         <td class ="left-align"> <div  style="width:500px"> 
+                            <aura:if isTrue="{!or(v.flag, v.profileflag)}">
+                                <ui:inputSelect aura:id="APIStatus"  value="{!v.Acc.API_Status__c}" disabled ="true">
+                                    <aura:iteration items="{!v.ApiStatus}" var="cus" indexVar="key">
+                                        <ui:inputSelectOption label="{!cus.key}" text="{!cus.value}" value="{!cus.value == v.Acc.API_Status__c}"  />
+                                    </aura:iteration>
+                                </ui:inputSelect>
+                                <aura:set attribute="else">
+                                    <ui:inputSelect aura:id="APIStatus"  value="{!v.Acc.API_Status__c}">
+                                        <aura:iteration items="{!v.ApiStatus}" var="cus" indexVar="key">
+                                            <ui:inputSelectOption label="{!cus.key}" text="{!cus.value}" value="{!cus.value == v.Acc.API_Status__c}" />
+                                        </aura:iteration>
+                                    </ui:inputSelect>
+                                </aura:set>
+                            </aura:if>     
+                            </div>
+                        </td>
+                    </tr>
+                    <!-- List of connected agreements -->
+                    
+                     <tr>
+                        <td class="left-align">{!$Label.c.List_of_connected_agreements}   
+                        </td>
+                        <td class ="left-align"> <div  style="width:500px"> 
+                            <aura:if isTrue="{!v.flag}">
+                                <lightning:textarea name="connectedAgreement" value="{!v.Acc.List_of_connected_agreements__c}" disabled ="true"/>
+                                <aura:set attribute="else">
+                                    <lightning:textarea name="connectedAgreement" value="{!v.Acc.List_of_connected_agreements__c}" />
+                                </aura:set>
+                            </aura:if>   
+                            </div>
+                        </td>
+                    </tr>	
+                    
+                    
+                     <!--<tr>
+                        <td class="left-align">{!$Label.c.crm_ListOrgNoinGroup}  
+                        </td>
+                        <td class ="left-align"> <div  style="width:500px"> 
+                            <aura:if isTrue="{!or(v.flag, v.profileflag)}">
+                                <ui:inputText aura:id="ListOrgNo" value="{!v.Acc.crm_cov_ListOrg_no_in_group__c}" disabled ="true"/>
+                                <aura:set attribute="else">
+                                    <ui:inputText aura:id="ListOrgNo" value="{!v.Acc.crm_cov_ListOrg_no_in_group__c}" />
+                                </aura:set>
+                            </aura:if>   
+                            </div>
+                        </td>
+                    </tr>
+
+                   
+                    
+                    <tr>
+                        <td class="left-align ">{!$Label.c.crm_CustomerConversionGroup}
+                        </td>
+                        <td class ="left-align"><div  style="width:500px">
+                            <aura:if isTrue="{!or(v.flag, v.profileflag)}">
+                                <ui:inputSelect aura:id="CustomerGroup"  value="{!v.Acc.crm_Conv_Customer_Conversion_Group__c}" disabled ="true">
+                                    
+                                    
+                                    <aura:iteration items="{!v.CustomerGroup}" var="cus" indexVar="key">
+                                        <ui:inputSelectOption label="{!cus.key}" text="{!cus.value}" value="{!cus.value == v.Acc.crm_Conv_Customer_Conversion_Group__c}"  />
+                                    </aura:iteration>
+                                </ui:inputSelect>
+                                <aura:set attribute="else">
+                                    
+                                    <ui:inputSelect aura:id="CustomerGroup"  value="{!v.Acc.crm_Conv_Customer_Conversion_Group__c}" >
+                                        
+                                        <aura:iteration items="{!v.CustomerGroup}" var="cus" indexVar="key">
+                                            
+                                            <ui:inputSelectOption label="{!cus.key}" text="{!cus.value}" value="{!cus.value == v.Acc.crm_Conv_Customer_Conversion_Group__c}"  />
+                                        </aura:iteration>
+                                    </ui:inputSelect>
+                                </aura:set>
+                            </aura:if>
+                            
+                            </div>
+                        </td>
+                    </tr> 
+                    
+                    <tr>
+                        <td class="left-align">{!$Label.c.crm_TotalRevenue}  
+                        </td>
+                        <td class ="left-align"> <div  style="width:500px"> 
+                            <aura:if isTrue="{!or(v.flag, v.profileflag)}">
+                                <ui:inputCurrency label="" aura:id="Totalrevenue" format="#,##0,000.00#" value="{!v.Acc.crm_Conv_Total_Revenue__c}" disabled ="true"/>
+                                <aura:set attribute="else">
+                                    <ui:inputCurrency  label="" aura:id="Totalrevenue" format="#,##0,000.00#" value="{!v.Acc.crm_Conv_Total_Revenue__c}" required ="true"/>   
+                                </aura:set>
+                            </aura:if>  
+                            </div>
+                        </td>
+                    </tr>
+					
+                    <tr>
+                        <td class=" left-align">{!$Label.c.crm_OrderChannel}  
+                        </td>
+                        <td class ="left-align"> <div  style="width:500px">
+                            <aura:if isTrue="{!or(v.flag, v.profileflag)}">
+                                <ui:inputText class="slds-input" aura:id="Orderchannel"  value="{!v.Acc.crm_Conv_Order_Channel__c}" disabled="true"/>
+                                <aura:set attribute="else">
+                                    <ui:inputText class="slds-input" aura:id="Orderchannel"  value="{!v.Acc.crm_Conv_Order_Channel__c}" />
+                                </aura:set>
+                            </aura:if>       
+                            </div>
+                        </td>
+                    </tr>	
+
+                    <tr>
+                        <td class="left-align">{!$Label.c.crm_CountOrgNoinGroup}	 
+                        </td>
+                        <td class ="left-align"> <div  style="width:500px"> 
+                            <aura:if isTrue="{!or(v.flag, v.profileflag)}">
+                                <ui:inputNumber aura:id="count" label="" value="{!v.Acc.crm_conv_Count_Org_No_in_group__c}" disabled ="true"/>
+                                
+                                <aura:set attribute="else">
+                                    <ui:inputNumber aura:id="count" label="" value="{!v.Acc.crm_conv_Count_Org_No_in_group__c}" />
+                                </aura:set>
+                            </aura:if>   
+                            </div>
+                        </td>
+                    </tr>
+                    
+                   
+                    
+                    
+                                       
+                    
+                    <tr>
+                        <td class="left-align">{!$Label.c.crm_StartDate}
+                        </td>
+                        <td class ="left-align"> <div  style="width:500px">
+                            <aura:if isTrue="{!v.flag}">   
+                                <ui:inputDate aura:id="startdate" 
+                                              label="" displayDatePicker="true" 
+                                              value="{!v.Acc.crm_Conv_Start_Date__c}"
+                                              disabled ="true"/>
+                                <aura:set attribute="else">
+                                    <ui:inputDate aura:id="startdate" 
+                                                  label="" displayDatePicker="true" 
+                                                  value="{!v.Acc.crm_Conv_Start_Date__c}"/>
+                                    
+                                </aura:set>
+                            </aura:if>   
+                            
+                            </div>
+                        </td>
+                    </tr>	            
+                    -->
+                    
+                    <tr>
+                        <td class="left-align">{!$Label.c.Customer_Price_Ready}
+                        </td>
+                        <td class ="left-align"> <div  style="width:500px"> 
+                            <aura:if isTrue="{!v.flag}">
+                            	<lightning:input type="checkbox-button" label="Customer Price Ready" name="CustomerPriceReady" checked="{!v.Acc.Customer_Price_Ready__c}" disabled ="true"/>    
+                            	<aura:set attribute="else">
+                                    <lightning:input type="checkbox-button" label="Customer Price Ready" name="CustomerPriceReady" checked="{!v.Acc.Customer_Price_Ready__c}"/>
+                                </aura:set>
+                            </aura:if>  
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="left-align">{!$Label.c.Agreement_Proposition_Ready}
+                        </td>
+                        <td class ="left-align"> <div  style="width:500px"> 
+                            <aura:if isTrue="{!v.flag}">
+                            	<lightning:input type="checkbox-button" label="Agreement Proposition Ready" name="AgreementPropositionReady" checked="{!v.Acc.Agreement_Proposition_Ready__c}" disabled ="true"/>    
+                            	<aura:set attribute="else">
+                                    <lightning:input type="checkbox-button" label="Agreement Proposition Ready" name="AgreementPropositionReady" checked="{!v.Acc.Agreement_Proposition_Ready__c}"/>
+                                </aura:set>
+                            </aura:if>  
+                            </div>
+                        </td>
+                    </tr> 
+                    <tr>
+                        <td class="left-align">{!$Label.c.Conversion_Ready}
+                        </td>
+                        <td class ="left-align"> <div  style="width:500px"> 
+                            <aura:if isTrue="{!v.flag}">
+                            	<lightning:input type="checkbox-button" label="Conversion Ready" name="ConversionReady" checked="{!v.Acc.Conversion_Ready__c}" disabled ="true"/>    
+                            	<aura:set attribute="else">
+                                    <lightning:input type="checkbox-button" label="Conversion Ready" name="ConversionReady" checked="{!v.Acc.Conversion_Ready__c}"/>
+                                </aura:set>
+                            </aura:if>  
+                            </div>
+                        </td>
+                    </tr> 
+                    <tr>
+                        <td class="left-align">{!$Label.c.crm_ConversionComment}   
+                        </td>
+                        <td class ="left-align"> <div  style="width:500px"> 
+                            <aura:if isTrue="{!v.flag}">
+                                <lightning:textarea name="ConversionComment" value="{!v.Acc.crm_conv_Conversion_comment__c}" disabled ="true"/>
+                                <aura:set attribute="else">
+                                    <lightning:textarea name="ConversionComment" value="{!v.Acc.crm_conv_Conversion_comment__c}" />
+                                </aura:set>
+                            </aura:if>   
+                            </div>
+                        </td>
+                    </tr>	
+                      <tr>
+                        <td class=" left-align">{!$Label.c.Username}  
+                        </td>
+                        <td class ="left-align"> <div  style="width:500px">
+                            <aura:if isTrue="{!or(v.flag, v.profileflag)}">
+                                <ui:inputText class="slds-input" aura:id="Username"  value="{!v.Acc.Username__c}" disabled="true"/>
+                                <aura:set attribute="else">
+                                    <ui:inputText class="slds-input" aura:id="Username"  value="{!v.Acc.Username__c}" />
+                                </aura:set>
+                            </aura:if>       
+                            </div>
+                        </td>
+                    </tr>
+                    
+                      <tr>
+                        <td class=" left-align">{!$Label.c.Passsword}  
+                        </td>
+                        <td class ="left-align"> <div  style="width:500px">
+                            <aura:if isTrue="{!or(v.flag, v.profileflag)}">
+                                <ui:inputText class="slds-input" aura:id="Password"  value="{!v.Acc.Password__c}" disabled="true"/>
+                                <aura:set attribute="else">
+                                    <ui:inputText class="slds-input" aura:id="Password"  value="{!v.Acc.Password__c}" />
+                                </aura:set>
+                            </aura:if>       
+                            </div>
+                        </td>
+                    </tr>
+                    
+                </table>
+                
+                
+                <div class="slds-form-element slds-align_absolute-center left-align" style ="padding:10px;">
+                    <aura:if isTrue="{!v.flag}">  
+                        <button class="slds-button slds-button_destructive" disabled="true">Save</button>
+                        <aura:set attribute="else">
+                            <button class="slds-button slds-button--brand" onclick="{!c.UpdateAccount}">Save</button> 
+                        </aura:set>
+                    </aura:if>     
+                </div>
+                
+            </div> 
+        </aura:set>
+    </aura:if>     
+</aura:component>

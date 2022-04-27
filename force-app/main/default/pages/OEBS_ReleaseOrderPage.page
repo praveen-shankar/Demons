@@ -1,0 +1,65 @@
+<apex:page standardController="Case" extensions="OEBS_ReleaseOrderPageController" tabStyle="Case" showHeader="false" sidebar="false">
+    <apex:form >
+    <!--CSphase2, Akash, 20122016-->
+    <!--
+        <apex:pageBlock title="Frigi ordre {!caseToBeReleased.OEBS_order_number__c}" mode="edit">
+            <apex:pageBlockButtons location="top">
+                <apex:commandButton action="{!releaseOrderGoToCase}" value="Frigi"/>
+                <apex:commandButton action="{!releaseOrderCloseCase}" value="Frigi og avslutt sak"/>
+                <apex:commandButton action="{!saveAndGoToCase}" value="Lagre og gå til sak" rendered="{!hasReleaseFailed}"/>
+                <apex:commandButton action="{!abort}" value="Avbryt"/>
+            </apex:pageBlockButtons>
+            -->
+            <apex:pageBlock title="{!$Label.cs_releaseorder} {!caseToBeReleased.OEBS_order_number__c}" mode="edit">
+            <apex:pageBlockButtons location="top">
+                <apex:commandButton action="{!releaseOrderGoToCase}" value="{!$Label.cs_release}"/>
+                <apex:commandButton action="{!releaseOrderCloseCase}" value="{!$Label.cs_ReleaseandEnd}"/>
+                <apex:commandButton action="{!saveAndGoToCase}" value="{!$Label.cs_saveCase}" rendered="{!hasReleaseFailed}"/>
+                <apex:commandButton action="{!abort}" value="{!$Label.cs_Cancel}"/>
+            </apex:pageBlockButtons>
+            <apex:pageBlockSection columns="2">
+                <apex:outputField value="{!caseToBeReleased.Origin}"/>
+                <apex:outputField value="{!caseToBeReleased.OEBS_order_number__c}"/>
+                <apex:outputField value="{!caseToBeReleased.OEBS_order_URL__c}"/>
+                <apex:outputField value="{!caseToBeReleased.OEBS_order_line_id__c}"/>
+                <apex:outputField value="{!caseToBeReleased.OEBS_top_article__c}"/>
+                <apex:outputField value="{!caseToBeReleased.OEBS_contract_name__c}"/>
+                <apex:outputField value="{!caseToBeReleased.OEBS_contract_number__c}"/>
+                <apex:outputField value="{!caseToBeReleased.OEBS_producer__c}"/>
+                <apex:outputField value="{!caseToBeReleased.Submission_place__c}"/>
+                <apex:outputField value="{!caseToBeReleased.OEBS_Order_Status__c}"/>
+            </apex:pageBlockSection>
+            <apex:pageBlockSection columns="1">
+                <apex:pageBlockSectionItem >
+                <!--CSphase2, Akash, 20122016-->
+                    <!--<apex:outputLabel value="Frigivelsesgrunn"/>-->
+                    <apex:outputLabel value="{!$Label.cs_releaseReason}"/>
+                    <apex:inputTextArea value="{!orderReleaseReason}" cols="50" rows="3"/>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+        <!--CSphase2, Akash, 20122016-->
+        <!--<apex:pageBlock title="Beskrivelse" mode="detail">-->
+        <apex:pageBlock title="{!$Label.cs_describe}" mode="detail">
+            <apex:pageBlockSection columns="1" collapsible="true">
+                <apex:outputField value="{!caseToBeReleased.Description}"/>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+        <!--CSphase2, Akash, 20122016-->
+        <!--<apex:pageBlock title="Sakskommentarer" mode="detail">-->
+        <apex:pageBlock title="{!$Label.cs_CaseComnt}" mode="detail">
+        
+            <apex:pageBlockTable value="{!case.casecomments}" var="c" rendered="{!hasCaseComments}">
+                <apex:column value="{!c.CommentBody}"/>
+                <apex:column value="{!c.CreatedDate}"/>
+                <apex:column value="{!c.CreatedBy.Name}"/>
+            </apex:pageBlockTable>
+            <!--CSphase2, Akash, 20122016-->
+            <!--<apex:outputText value="Det ligger ingen sakskommentarer på denne saken" rendered="{!(!hasCaseComments)}"/>-->
+            <apex:outputText value="{!$Label.cs_NoComment}" rendered="{!(!hasCaseComments)}"/>
+        </apex:pageBlock>
+    </apex:form>
+    <apex:outputpanel id="messages">
+        <apex:pagemessages />   
+    </apex:outputpanel>
+</apex:page>

@@ -1,0 +1,3 @@
+<apex:page standardController="Case" extensions="markAttachmentAsFixedController" action="{!loaddata}">
+    <h1>{!$Label.cs_MarkingAttach}</h1>
+</apex:page>

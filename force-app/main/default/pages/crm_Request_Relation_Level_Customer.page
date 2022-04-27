@@ -1,0 +1,123 @@
+<apex:page standardController="Account" extensions="crm_ReqRelationLevelCustomerContoller" sidebar="false" tabStyle="Account" showHeader="false" title="Request Customer" >
+    <script>
+    function validateJS(){
+        if(document.getElementsByClassName("blcountry")[0].value == '')
+            document.getElementsByClassName("displaybilClass")[0].removeAttribute("style");
+        if(document.getElementsByClassName("shcountry")[0].value == '')
+            document.getElementsByClassName("displayshipClass")[0].removeAttribute("style");
+    }
+    </script>
+    <apex:form id="form">
+        <apex:pageMessages escape="false" rendered="true" ></apex:pageMessages>
+        <apex:pageBlock title="Request Customer">
+            <apex:pageBlockSection title="Customer Details">
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Customer Name"/>
+                    <apex:inputField value="{!customerObj.Name}" required="true"/>
+                </apex:pageBlockSectionItem>
+                
+                <br/>
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="{!$ObjectType.crm_Request_RelationCustomer__c.fields.crm_Addresse__c.Label}" />
+                    <apex:inputField value="{!customerObj.crm_Addresse__c}"/>
+                </apex:pageBlockSectionItem>
+                
+                <br/>
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="{!$ObjectType.crm_Request_RelationCustomer__c.fields.crm_OnBehalfOf__c.Label}" />
+                    <apex:inputField value="{!customerObj.crm_OnBehalfOf__c}"/>
+                </apex:pageBlockSectionItem>
+                
+                <br/>
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="{!$ObjectType.crm_Request_RelationCustomer__c.fields.crm_Billing_Street__c.Label}" />
+                    <apex:inputField value="{!customerObj.crm_Billing_Street__c}" required="true"/>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="{!$ObjectType.crm_Request_RelationCustomer__c.fields.crm_Shipping_Street__c.Label}" />
+                    <apex:inputField value="{!customerObj.crm_Shipping_Street__c}" required="true"/>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="{!$ObjectType.crm_Request_RelationCustomer__c.fields.crm_Billing_City__c.Label}" />
+                    <apex:inputField value="{!customerObj.crm_Billing_City__c}" required="true"/>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="{!$ObjectType.crm_Request_RelationCustomer__c.fields.crm_Shipping_City__c.Label}" />
+                    <apex:inputField value="{!customerObj.crm_Shipping_City__c}" required="true"/>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="{!$ObjectType.crm_Request_RelationCustomer__c.fields.crm_Billing_Country__c.Label}" />
+                    <apex:outputPanel styleClass="requiredInput" layout="block" id="pwPanel1" > 
+                        <apex:outputPanel styleClass="requiredBlock"/>
+                        <apex:selectList styleClass="blcountry" value="{!billingCountry}"  multiselect="false" size="5" label="{!$ObjectType.crm_Request_RelationCustomer__c.fields.crm_Billing_Country__c.Label}" required="true" >
+                            <apex:selectOptions value="{!options}"/>
+                        </apex:selectList>
+                        <apex:outputPanel id="displaybil" styleClass="displaybilClass" style="display:none;">
+                            <span style="color:#d74c3b;" ><br/><b>Error:</b> You must enter a value</span>
+                        </apex:outputPanel>
+                    </apex:outputPanel>
+
+                </apex:pageBlockSectionItem>
+                
+
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="{!$ObjectType.crm_Request_RelationCustomer__c.fields.crm_Shipping_Country__c.Label}" />
+                    <apex:outputPanel styleClass="requiredInput" layout="block" id="pwPanel2" > 
+                        <apex:outputPanel styleClass="requiredBlock"/>
+                        <apex:selectList styleClass="shcountry" value="{!shippingCountry}"  multiselect="false" size="5" label="{!$ObjectType.crm_Request_RelationCustomer__c.fields.crm_Shipping_Country__c.Label}" required="true" >
+                            <apex:selectOptions value="{!options}"/>
+                        </apex:selectList>
+                        <apex:outputPanel id="displayship" styleClass="displayshipClass" style="display:none;">
+                            <span style="color:#d74c3b;" ><br/><b>Error:</b> You must enter a value</span>
+                        </apex:outputPanel>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="{!$ObjectType.crm_Request_RelationCustomer__c.fields.crm_Billing_Postal_Code__c.Label}" />
+                    <apex:inputField value="{!customerObj.crm_Billing_Postal_Code__c}" required="true"/>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="{!$ObjectType.crm_Request_RelationCustomer__c.fields.crm_Shipping_Postal_Code__c.Label}" />
+                    <apex:inputField value="{!customerObj.crm_Shipping_Postal_Code__c}" required="true"/>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="{!$ObjectType.crm_Request_RelationCustomer__c.fields.crm_InvoiceReference__c.Label}" />
+                    <apex:inputField value="{!customerObj.crm_InvoiceReference__c}"/>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="{!$ObjectType.crm_Request_RelationCustomer__c.fields.crm_AdditionalInformation__c.Label}" />
+                    <apex:outputField value="{!customerObj.crm_AdditionalInformation__c}"/>
+                </apex:pageBlockSectionItem>
+                
+                
+            </apex:pageBlockSection>
+            
+            <apex:pageBlockButtons location="bottom">
+                <apex:commandButton value="Send Request" oncomplete="validateJS()" action="{!requestcustomer}" rerender="form" status="status"/>
+                <apex:actionStatus id="status">
+                    <apex:facet name="start">
+                        <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; opacity: 0.75; z-index: 1000; background-color: black;">
+                            &nbsp;
+                        </div>
+                        <div style="position: fixed; left: 0; top: 0; bottom: 0; right: 0; z-index: 1001; margin: 20% 50%">
+                            <img src="{!$Resource.crmWaiting}" />
+                        </div>
+                    </apex:facet>
+                </apex:actionStatus>
+                <apex:commandButton value="Go Back" action="{!Cancel}"/>
+            </apex:pageBlockButtons>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

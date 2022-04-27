@@ -1,0 +1,88 @@
+<aura:component controller="CS_RegressCustomer">  
+     <aura:attribute Name="selItem" type="object" access="public" 
+                     description="This attribute can be used by parent component to read selected record"/>  
+     <aura:attribute Name="server_result" type="object[]" access="private" /> 
+     
+     <aura:attribute name="lookupIcon" type="String" access="public" default="standard:contact"/>
+    
+    <aura:attribute name="objectName" type="String" access="public" 
+                    description="Name of Object to be searched"/>
+    <aura:attribute name="field_API_text" type="String" access="public" 
+                    description="API Name of field, to be used to show text"/>
+    <aura:attribute name="field_API_val" type="String" access="public" 
+                    description="API Name of field, to be returned from component"/>
+    <aura:attribute name="field_API_search" type="String" access="public" 
+                    description="API Name of field to be searched"/>
+    <aura:attribute name="limit" type="Integer" access="public" default="5" 
+                    description="Total number of record to be returned"/>
+    <aura:attribute name="placeholder" type="String" access="public" 
+                    default="Space character is used to search" />
+    
+    <aura:attribute name="last_SearchText" type="String" />
+    <aura:attribute name="last_ServerResult" type="object[]"  /> 
+	 <div class="slds-grid">
+   
+    <div class="slds" style ="width:100%">      
+        <div class="slds-form-element"> 
+            <div class="slds-form-element__control">
+                
+                    <div class="slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click slds-is-open" 
+                         aria-expanded="true" aria-haspopup="listbox" role="combobox" style="width:100%, border:1px solid red">
+                        <div class="slds-combobox__form-element slds-input-has-icon slds-input-has-icon_right">
+                            <div> 
+                                <aura:if isTrue="{! empty(v.selItem) }"> 
+                                         <input type="text" id="combobox-unique-id" 
+                                                aria-activedescendant="listbox-option-unique-id-01" aria-autocomplete="list" 
+                                                aria-controls="listbox-unique-id" autocomplete="off" role="combobox" 
+                                                placeholder="{!v.placeholder}" 
+                                                onkeyup="{!c.serverCall}" style="width:246px" class="input uiInput uiInputText uiInput--default uiInput--input"/>
+                                        <aura:set attribute="else"> 
+                                                <span> Selected Customer:
+                                                  <a href="javascript:void(0);" 
+                                                      title="{#v.selItem.text}">
+                                                     <span class="slds-pill__label slds-p-left_x-small">{#v.selItem.text}</span>
+                                                  </a>
+                                                  <button onclick="{!c.clearSelection}" 
+                                                          class="slds-button slds-button_icon slds-button_icon slds-pill__remove" 
+                                                          title="Remove">
+                                                    <lightning:icon iconName="utility:close" size="small" 
+                                                                    alternativeText="Press delete or backspace to remove"/>
+                                                    <span class="slds-assistive-text" >Remove</span>
+                                                  </button>
+                                                </span> 
+                                        </aura:set>
+                                    </aura:if> 
+                           	 	</div> 
+                            </div>
+                       <div class="slds-grid slds-gutters">
+                        <aura:if isTrue="{! greaterthanorequal(v.server_result.length,1) }"> 
+                                  <div class="slds-col">
+                                    <ul >
+                                        <aura:iteration items="{!v.server_result}" var="item" indexVar="i">
+                                            <li role="presentation" style="display: block; min-width: auto; max-width: 100% ; width: 100%;" data-selectedIndex="{#i}" 
+                                                onclick="{!c.itemSelected}">
+                                                <span id="{#'listbox-option-unique-id-'+i+1}"  
+                                                                       role="option">
+                                                              
+                                                    <span class="slds-media__body singleRow">
+                                                    
+                                                        <span> {#item.text}</span>
+                                                   
+                                                    </span>
+                                                </span>
+                                            </li>
+                                        </aura:iteration> 
+                                    </ul>
+                                </div>
+
+ 						
+                            
+                            </aura:if> 
+                        </div>
+         </div>
+    </div>
+        </div>
+           </div>
+         </div>
+   
+</aura:component>

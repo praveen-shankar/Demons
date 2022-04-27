@@ -1,0 +1,104 @@
+<apex:page standardController="QueueDetails__c" extensions="QDetail_SelectHenvendelsestypeController" showHeader="false" sidebar="false">
+
+    <apex:form id="picklist" >
+    
+    <apex:pageBlock mode="maindetail" id="viewKodeverk" rendered="{!viewCatSec}">
+                
+        <apex:pageBlockButtons location="top">
+        <!--CSphase2, Akash, 19122016-->
+            <!--<apex:commandButton value="Rediger" action="{!toggleCategorySec}" rerender="picklist" /> -->   
+            <apex:commandButton value="{!$Label.cs_Edit}" action="{!toggleCategorySec}" rerender="picklist" /> 
+        </apex:pageBlockButtons>
+        
+
+        <apex:pageBlockSection columns="1">
+            <apex:outputField value="{!qd.Code_Event__c}"/>
+            <apex:outputField value="{!qd.Service_Product__c}"/>
+            <apex:outputField value="{!qd.Code_Reason1__c}"/>
+            <apex:outputField value="{!qd.Code_Reason2__c}"/>
+        </apex:pageBlockSection>
+         
+        <apex:pageMessages />
+    </apex:pageBlock>
+
+
+    <apex:pageBlock mode="maindetail" id="editKodeverk" rendered="{!NOT(viewCatSec)}">
+        <apex:pageBlockSection columns="1" showHeader="false" >
+
+            <apex:pageblockSectionItem >
+            <!--CSphase2, Akash, 19122016-->
+                <!--<apex:outputLabel value="Henvendelsestype"/>-->
+                <apex:outputLabel value="{!$Label.cs_EnquiryType}"/>
+                <apex:outputPanel styleClass="requiredInput" layout="block">
+                    <apex:selectList size="1" value="{!eventId}">
+                        <apex:selectoptions value="{!EventOpts}" />
+                        <apex:actionSupport event="onchange" reRender="productFam,product,reason1,reason2"/>
+                    </apex:selectList>
+                </apex:outputPanel>
+            </apex:pageblockSectionItem>
+            
+
+
+            <apex:pageblockSectionItem > 
+            <!--CSphase2, Akash, 19122016-->
+                <!--<apex:outputLabel value="Produktfamilie / Produkt"/>-->
+                <apex:outputLabel value="{!$Label.cs_ProductF}"/>
+                <apex:outputPanel styleClass="requiredInput" layout="block">
+                
+                <!-- Produkt familie -->
+                    <apex:selectList size="1" value="{!productFamily}" id="productFam">
+                        <apex:selectoptions value="{!productFamiliesOpts}" />
+                        <apex:actionSupport event="onchange" reRender="product,reason1,reason2"/>
+                    </apex:selectList>
+                    <!-- Produkt Navn -->
+                    <apex:selectList size="1" value="{!productId}" id="product">
+                        <apex:selectoptions value="{!productOpts}" />
+                        <apex:actionSupport event="onchange" reRender="reason1,reason2"/>
+                    </apex:selectList>
+                </apex:outputPanel>
+            </apex:pageblockSectionItem>
+            
+
+            <apex:pageblockSectionItem >
+            <!--CSphase2, Akash, 19122016-->
+                <!--<apex:outputLabel value="Årsak 1"/>-->
+                <apex:outputLabel value="{!$Label.cs_Cause} 1"/>
+                <apex:outputPanel styleClass="requiredInput" layout="block">
+                    <apex:selectList size="1" value="{!reason1Id}" id="reason1">
+                        <apex:selectoptions value="{!Reason1Opts}" />
+                        <apex:actionSupport event="onchange" reRender="reason2"/>
+                    </apex:selectList>
+                </apex:outputPanel>
+            </apex:pageblockSectionItem>
+            
+
+            <apex:pageblockSectionItem >
+            <!--CSphase2, Akash, 19122016-->
+                <!--<apex:outputLabel value="Årsak 2"/>-->
+                <apex:outputLabel value="{!$Label.cs_Cause} 2"/>
+                <apex:outputPanel styleClass="requiredInput" layout="block">
+                    <apex:selectList size="1" value="{!reason2Id}" id="reason2">
+                        <apex:selectoptions value="{!Reason2Opts}" />
+                    </apex:selectList>
+                </apex:outputPanel> 
+            </apex:pageblockSectionItem>
+           
+        </apex:pageBlockSection>
+        
+        <apex:pageBlockButtons location="Bottom">
+        <!--CSphase2, Akash, 19122016-->
+            <!--<apex:commandbutton value="Lagre" action="{!saveDefaults}" rerender="picklist"/>
+            <apex:commandbutton value="Avbryt" action="{!toggleCategorySec}" rerender="picklist" />-->
+            <apex:commandbutton value="{!$Label.cs_Save}" action="{!saveDefaults}" rerender="picklist"/>
+            <apex:commandbutton value="{!$Label.cs_Cancel}" action="{!toggleCategorySec}" rerender="picklist" />
+        </apex:pageBlockButtons>
+    </apex:pageBlock>
+
+
+
+
+    </apex:form>
+
+
+
+</apex:page>

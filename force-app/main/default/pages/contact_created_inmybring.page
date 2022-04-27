@@ -1,0 +1,7 @@
+<apex:page >
+  <apex:form >
+  <h1>The request cannot be processed as the Contact is already created in MyBring</h1>
+  
+  <apex:commandButton action="/{!$Currentpage.parameters.conid}" value="Back To Contact"/>
+  </apex:form>
+</apex:page>

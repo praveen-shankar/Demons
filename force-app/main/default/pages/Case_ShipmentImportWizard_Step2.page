@@ -1,0 +1,94 @@
+<apex:page controller="Case_ShipmentImportWizardController" wizard="true" showHeader="false" sidebar="false">
+<apex:includeScript value="{!$Resource.jQuery}"/>
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+</head>
+   <apex:includeScript value="{!$Resource.jQuery}"/>
+<script src="/soap/ajax/45.0/connection.js" type="text/javascript"></script>
+<script src="/soap/ajax/45.0/apex.js" type="text/javascript"></script>
+    <script>
+     var j$ = jQuery.noConflict(); // getting the jQuery object and declaring it as 
+                              // j$ to prevent it conflicting with standard Salesforce functionality
+                               
+    j$(document).ready(function() {
+        //var columnId = document.getElementById
+        //j$('div#debug').append('hello world');
+        //alert('{!$Component.mapForm.isMapped}');
+        //j$('div#debug').append('{!$Component.mapForm.pageBlock.repeater.isMapped}');
+        
+        
+    });
+        function confirmCancel() {
+    <!--        var isCancel = confirm("Sikker på at du vil avbryte?"); Commented by Rajesh Singh as part of Object Translation -->
+         var Caseid= '{!caseId}';// document.getElementById('Caseid');
+           var isCancel = confirm("{!$Label.cs_isCancel}");
+        
+            if (isCancel) 
+            {
+             if (sforce.one != undefined) {
+                                    // Lightning
+                                    sforce.one.navigateToSObject(Caseid);
+                                } else {
+                                    // Classic
+                                     window.close();
+                                }
+            }
+            
+              
+            return false;
+        }
+    </script>
+    
+    
+    <!--<apex:sectionHeader title="Last opp sendinger" subtitle="Steg 2 av 3"/>
+      CSphase2, Supriya, 13122016 =>Added custom labels  -->
+    <apex:sectionHeader title="{!$Label.cs_Upload_broadcasts}" subtitle="{!$Label.cs_Step2of3}"/>
+    
+    <apex:form id="mapForm">
+        <!--<apex:pageBlock title="Verifiser data" mode="edit" Id="pageBlock">
+          CSphase2, Supriya, 13122016 =>Added custom labels  -->
+        
+        <apex:pageBlock title="{!$Label.cs_Verify_Data}" mode="edit" Id="pageBlock">
+        
+            <apex:pageBlockButtons >
+              
+              <!--  <apex:commandButton action="{!step1}" value="Forrige"/>
+                <apex:commandButton value="Avbryt" onclick="return confirmCancel()" immediate="true"/>
+                <apex:commandButton action="{!step3}" status="create" value="Neste"/>
+                 CSphase2, Supriya, 13122016 =>Added custom labels  -->
+                
+                <apex:commandButton action="{!step1}" value="{!$Label.cs_Previous}"/>
+                <apex:commandButton value="{!$Label.cs_Cancel}" onclick="return confirmCancel()" immediate="true"/>
+                <apex:commandButton action="{!step3}" status="create" value="{!$Label.cs_Next}"/>
+                
+                
+                <apex:actionStatus id="create">
+                    <apex:facet name="start"><apex:image value="{!$Resource.spinner_icon}" /></apex:facet>
+                    <apex:facet name="stop"></apex:facet>
+                </apex:actionStatus>
+            </apex:pageBlockButtons>
+            <table border="black">
+            <tr>
+                <apex:repeat value="{!selectOptionHelpers}" var="fieldName" Id="repeater">
+                    <th id="{!fieldName.fieldNumber}">
+                    <apex:inputCheckbox value="{!fieldName.isMapped}" id="isMapped" style="display:none"/>
+                        <apex:selectList value="{!fieldName.selectedFieldName}" size="1">
+                            <apex:selectOptions value="{!fieldName.selectOptions}" />
+                        </apex:selectList>
+                    </th>
+                </apex:repeat>
+            </tr>
+            
+            <apex:repeat value="{!csvTextList}" var="list">
+                <tr>
+                    <apex:repeat value="{!list}" var="field">
+                        <td><apex:OutputText escape="false" value="{!field}"/></td>
+                    </apex:repeat>
+                </tr>
+            </apex:repeat>
+            </table>
+            <div id="debug"></div>
+            
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

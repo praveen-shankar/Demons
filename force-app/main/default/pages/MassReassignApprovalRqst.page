@@ -1,0 +1,25 @@
+<apex:page controller="MassReassignApprovalRqst">
+    
+    <img src="/img/s.gif" alt="Home" class="pageTitleIcon" title="Home" />
+    <h1 style="margin-top: 9px;margin-bottom: 0;color: #000;font-size: 2em;font-weight: normal;">
+        {! $Label.Mass_Reassign_Approval_Requests}
+    </h1>
+    <apex:form >
+        <apex:pageBlock mode="edit">
+            <apex:pageBlockButtons >                              
+                <apex:commandButton action="{!ReassignAll}" value="{! $Label.Save}" id="BtnAssignAll" />
+                <apex:commandButton action="{!Cancel}" value="{! $Label.Cancel}" id="BtnCancel" />
+            </apex:pageBlockButtons>
+            <apex:pageBlockSection id="sad" >
+                <apex:pageBlockSectionItem >
+                    {! $Label.Approvers} <apex:inputField value="{! Approver.OwnerId}" id="Approver" required="false"/>
+                </apex:pageBlockSectionItem>
+                <!--<apex:pageBlockSectionItem >
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    Comments <apex:inputTextarea /> 
+                </apex:pageBlockSectionItem>     -->
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

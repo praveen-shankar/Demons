@@ -1,0 +1,30 @@
+<apex:page standardController="Case" >
+    <apex:includeLightning />
+      
+    <div id="LcDisplayId" style="width:1083px"></div> 
+    
+ <script>
+      // Here 'VfApp' Is Lightning Application Name
+    $Lightning.use("c:Crm_CreditNoteapp", function() {
+      
+    $Lightning.createComponent("c:crm_CreditNoteCaseComponent",
+    { 
+        
+        "recordId" : "{!Case.Id}"
+      // Set Lightning Component Attributes Property before creating Lightning Component In Visualforce page 
+       // textColor : "Red",
+       // currentUserName : '{!$User.FirstName} {!$User.LastName}' 
+    },
+    "LcDisplayId",
+    function(component) {
+        // create component Callback, Lightning Component has been Created,
+        // Now you can set more lightning Component attributes here,
+        // and do more cool stuff here
+        // var currentRecordId = '{!$CurrentPage.parameters.id}';
+        
+        // component.set("v. " , currentRecordId);
+        // console.log('Test Now -----'+currentRecordId);
+   });
+ });
+ </script>
+</apex:page>

@@ -1,0 +1,208 @@
+<apex:page controller="CustomerSearch_business_controller" sidebar="false" cache="true" expires="300">
+	<apex:form >
+		<table width="100%" border="0">
+			<tr>
+				<td width="200" valign="top"> <div class="actionRegion">
+					<apex:actionRegion >
+					<apex:pageBlock mode="edit" id="search_param" >
+                       	<apex:pageblockbuttons >
+							<apex:actionStatus id="search_status">
+							    <apex:facet name="start"><apex:image value="{!$Resource.spinner_icon}" /></apex:facet>
+							    <apex:facet name="stop"></apex:facet>
+							</apex:actionStatus>
+							<apex:commandButton value="Søk kunde" onclick="searchAccount(currentSearchModus); return true;" rerender="searchPanel"/>
+							<apex:pageBlock id="hiddenBlock" rendered="false"></apex:pageBlock>
+							<apex:outputLink onclick="clearAllInputs(getActionRegion(this)); return false;" >Nullstill felter</apex:outputLink>
+						</apex:pageblockbuttons>
+						<apex:pageblocksection columns="1" >
+							<apex:pageblockSectionItem >
+								<apex:outputLabel value="Oms. område" />
+								<apex:selectList value="{!selectedRevenueArea}" size="1">
+									<apex:selectOptions value="{!revenueAreas}"/>
+								</apex:selectList>
+							</apex:pageblockSectionItem>
+							<apex:pageblockSectionItem >
+								<apex:outputLabel value="Bedrift" />
+								<apex:inputText value="{!org_name}" onclick="searchParameterEvent(event, 'CAESAR');" onkeypress="searchParameterEvent(event, 'CAESAR');" onchange="searchParameterEvent(event, 'CAESAR');"/>
+							</apex:pageblockSectionItem>
+							<apex:pageblockSectionItem >
+								<apex:outputLabel value="Org.nr." />
+								<apex:inputText value="{!org_fiscal_reference}" onclick="searchParameterEvent(event, 'CAESAR');" onkeypress="searchParameterEvent(event, 'CAESAR');" onchange="searchParameterEvent(event, 'CAESAR');"/>
+							</apex:pageblockSectionItem>
+							<apex:pageblockSectionItem >
+								<apex:outputLabel value="Aktørnr." />
+								<apex:inputText value="{!party_number}" onclick="searchParameterEvent(event, 'CAESAR');" onkeypress="searchParameterEvent(event, 'CAESAR');" onchange="searchParameterEvent(event, 'CAESAR');" />
+							</apex:pageblockSectionItem>
+							<apex:pageblockSectionItem >
+								<apex:outputLabel value="Kontakt f.n." />
+								<apex:inputText value="{!org_contactFirstName}" onclick="searchParameterEvent(event, 'CAESAR');" onkeypress="searchParameterEvent(event, 'CAESAR');" onchange="searchParameterEvent(event, 'CAESAR');" />
+							</apex:pageblockSectionItem>
+							<apex:pageblockSectionItem >
+								<apex:outputLabel value="Kontakt e.n." />
+								<apex:inputText value="{!org_contactLastName}" onclick="searchParameterEvent(event, 'CAESAR');" onkeypress="searchParameterEvent(event, 'CAESAR');" onchange="searchParameterEvent(event, 'CAESAR');" />
+							</apex:pageblockSectionItem>
+								<apex:pageblockSectionItem >
+									<apex:outputLabel value="Tlf." />
+							<apex:inputText value="{!phone}" onclick="searchParameterEvent(event, 'CAESAR');" onkeypress="searchParameterEvent(event, 'CAESAR');" onchange="searchParameterEvent(event, 'CAESAR');" />
+								</apex:pageblockSectionItem>
+							<apex:pageblockSectionItem >
+								<apex:outputLabel value="E-post" />
+								<apex:inputText value="{!email}" onclick="searchParameterEvent(event, 'CAESAR');" onkeypress="searchParameterEvent(event, 'CAESAR');" onchange="searchParameterEvent(event, 'CAESAR');" />
+							</apex:pageblockSectionItem>
+							<apex:pageblockSectionItem >
+								<apex:outputLabel value="Postadr." />
+								<apex:inputText value="{!address_street_name}" onclick="searchParameterEvent(event, 'CAESAR');" onkeypress="searchParameterEvent(event, 'CAESAR');" onchange="searchParameterEvent(event, 'CAESAR');" />
+							</apex:pageblockSectionItem>
+							<apex:pageblockSectionItem >
+								<apex:outputLabel value="Husnr." />
+								<apex:inputText value="{!address_house_number}" onclick="searchParameterEvent(event, 'CAESAR');" onkeypress="searchParameterEvent(event, 'CAESAR');" onchange="searchParameterEvent(event, 'CAESAR');" />
+							</apex:pageblockSectionItem>
+							<apex:pageblockSectionItem >
+								<apex:outputLabel value="Husbkst." />
+								<apex:inputText value="{!address_house_letter}" onclick="searchParameterEvent(event, 'CAESAR');" onkeypress="searchParameterEvent(event, 'CAESAR');" onchange="searchParameterEvent(event, 'CAESAR');" />
+							</apex:pageblockSectionItem>
+							<apex:pageblockSectionItem >
+								<apex:outputLabel value="Postboks" />
+								<apex:inputText value="{!address_po_box_number}" onclick="searchParameterEvent(event, 'CAESAR');" onkeypress="searchParameterEvent(event, 'CAESAR');" onchange="searchParameterEvent(event, 'CAESAR');" />
+							</apex:pageblockSectionItem>
+							<apex:pageblockSectionItem >
+								<apex:outputLabel value="Postnr." />
+								<apex:inputText value="{!address_postal_code}" onclick="searchParameterEvent(event, 'CAESAR');" onkeypress="searchParameterEvent(event, 'CAESAR');" onchange="searchParameterEvent(event, 'CAESAR');" />
+							</apex:pageblockSectionItem>
+							<apex:pageblockSectionItem >
+								<apex:outputLabel value="Poststed" />
+								<apex:inputText value="{!address_city}" onclick="searchParameterEvent(event, 'CAESAR');" onkeypress="searchParameterEvent(event, 'CAESAR');" onchange="searchParameterEvent(event, 'CAESAR');" />
+							</apex:pageblockSectionItem>
+							<apex:pageblockSectionItem >
+								<apex:outputLabel value="Ordre nr." />
+								<apex:inputText value="{!order_number}" onclick="searchParameterEvent(event, 'OM');" onkeypress="searchParameterEvent(event, 'OM');" onchange="searchParameterEvent(event, 'OM');" styleClass="searchParam_OM" />
+							</apex:pageblockSectionItem>
+							<apex:pageblockSectionItem >
+								<apex:outputLabel value="Kundenr." />
+								<apex:inputText value="{!account_number}" onclick="searchParameterEvent(event, 'CAESAR');" onkeypress="searchParameterEvent(event, 'CAESAR');" onchange="searchParameterEvent(event, 'CAESAR');" />
+							</apex:pageblockSectionItem>
+							<apex:pageblockSectionItem >
+								<apex:outputLabel value="Ref.adr.endring" />
+								<apex:inputText value="{!forwardingnumber}" onclick="searchParameterEvent(event, 'FW');" onkeypress="searchParameterEvent(event, 'FW');" onchange="searchParameterEvent(event, 'FW');" styleClass="searchParam_FW" />
+							</apex:pageblockSectionItem>
+							<apex:pageblockSectionItem >
+								<apex:outputLabel value="Fakturanr." />
+								<apex:inputText value="{!receivable_number}" onclick="searchParameterEvent(event, 'AR');" onkeypress="searchParameterEvent(event, 'AR');" onchange="searchParameterEvent(event, 'AR');"/>
+							</apex:pageblockSectionItem>
+						</apex:pageblocksection>
+					</apex:pageBlock>
+					</apex:actionRegion>
+					 </div>
+				</td>
+				<td valign="top">
+					<apex:outputpanel id="searchPanel">
+					<apex:pageBlock mode="edit" title="Kundesøk {! IF(theCase != null, 'sak ' + theCase.caseNumber, '')}">
+						<!-- ACCOUNT SEARCH RESULT START -->
+						<apex:pageBlockTable value="{!accountSearchResultList}" var="accountSearchResult" >
+							<apex:column headerValue="Aktørnavn">
+                				<apex:commandLink action="{!goDo}" status="search_status" rerender="searchPanel">
+                					<apex:outputText value="{!accountSearchResult.name}"/>
+                					<apex:param value="{!accountSearchResult.partyNumber}" assignTo="{!selectedAccountPartyNumber}" name="selectedAccountPartyNumber" />
+                					<apex:param value="{!accountSearchResult.salesforceId}" assignTo="{!selectedAccountId}" name="selectedAccountId" />
+                					<apex:param value="true" assignTo="{!resetSelectedAccount}" name="resetAccount" />
+                				</apex:commandLink>
+                			</apex:column>
+                			<apex:column headerValue="Aktørnummer">
+                				<apex:outputText value="{!accountSearchResult.partyNumber}"/>
+                			</apex:column>
+                			<apex:column headerValue="Status">
+                				<apex:outputText value="{!accountSearchResult.status}"/>
+                			</apex:column>
+                			<apex:column headerValue="Adresse">
+                				<apex:outputText value="{!accountSearchResult.address}"/>
+                			</apex:column>
+                			<apex:column headerValue="Forr. omr.">
+                				<apex:outputText value="{!accountSearchResult.divisionShort}"/>
+                			</apex:column>
+                			<apex:column headerValue="Oms. i år*">
+                				<apex:outputText value="{!accountSearchResult.revenueCurrentYear}"/>
+                			</apex:column>
+                			<apex:column headerValue="Oms. i fjor*">
+                				<apex:outputText value="{!accountSearchResult.revenuePreviousYear}"/>
+                			</apex:column>
+                			<apex:column headerValue="Opprett ny sak" rendered="{!(!isExistingCase)}">
+                				<apex:selectList value="{!caseRecordType}" onDblClick="createNewCase('{!accountSearchResult.partyNumber}','{!accountSearchResult.salesforceId}'); return true;" onChange="createNewCase('{!accountSearchResult.partyNumber}','{!accountSearchResult.salesforceId}'); return true;" size="1">
+									<apex:selectOptions value="{!RecordTypeList}"/>
+								</apex:selectList>
+                			</apex:column>
+						</apex:pageBlockTable>
+						<apex:outputpanel >
+							* Oms. i år/fjor i kNOK representerer omsetning for valgt omsetningsområde. Sorteringen utføres først for gjeldende år, så på forrige år
+						</apex:outputpanel>
+					</apex:pageBlock>
+					<!-- ACCOUNT SEARCH RESULT STOP -->
+					<!-- CONTACT SEARCH RESULT START -->
+					<apex:pageBlock mode="edit" id="contact_search_results" title="{! IF(isCreateNewCase, 'Oppretter ny sak ' + caseRecordTypeName + '. ', '')} Velg kontakt for {!theAccount.Name}" rendered="{!isAccountSelected}" >
+						<apex:commandButton value="Ingen kontakt" action="{!goDo}" rerender="searchPanel">
+							<apex:param value="true" assignTo="{!override_required_contact}" name="override_required_contact" />
+						</apex:commandButton>
+						<apex:pageBlockTable title="Velg eksisterende kontakt" value="{!contactSearchResultList}" var="contactSearchResult">
+							<apex:column headerValue="Etternavn">
+								<apex:commandLink value="{!contactSearchResult.lastName}" action="{!goDo}" status="search_status" rerender="searchPanel">
+									<apex:param value="{!contactSearchResult.caesarContactId}" assignTo="{!selectedContactCaesarId}" name="selectedContactCaesarId" />
+                					<apex:param value="{!contactSearchResult.salesforceId}" assignTo="{!selectedContactId}" name="selectedContactId" />
+									<apex:outputLabel rendered="{!NOT(ISBLANK(contactSearchResult.salesforceId))}" value="*" />
+								</apex:commandLink>
+							</apex:column>
+							<apex:column headerValue="Fornavn">
+								<apex:outputText value="{!contactSearchResult.firstName}"/>
+							</apex:column>
+							<apex:column headerValue="E-post">
+								<apex:outputText value="{!contactSearchResult.email}"/>
+							</apex:column>
+							<apex:column headerValue="Telefon">
+								<apex:outputText value="{!contactSearchResult.phone}"/>
+							</apex:column>
+						</apex:pageBlockTable>
+						<apex:outputpanel title="Opprett ny kontakt">
+							<table>
+								<tr>
+									<!-- <td><apex:outputLabel value="Fornavn" /></td> -->
+									<th>Fornavn</th>
+									<th>Etternavn</th>
+									<th>Epost</th>
+									<th>Telefon</th>
+									<th></th>
+								</tr>
+								<tr>
+									<td><apex:inputText value="{!newContact_FirstName}" /></td>
+									<td><apex:inputText value="{!newContact_LastName}" /></td>
+									<td><apex:inputText value="{!newContact_Email}" /></td>
+									<td><apex:inputText value="{!newContact_Phone}" /></td>
+									<td><apex:commandButton value="Opprett kontakt" action="{!createNewContact}" rerender="searchPanel"/></td>
+								</tr>
+							</table>
+						</apex:outputpanel>
+					</apex:pageBlock>
+						<!-- CONTACT SEARCH RESULT STOP -->
+					<!-- MESSAGES -->
+					<apex:outputpanel id="messages">
+						<apex:pagemessages />   
+					</apex:outputpanel>
+					</apex:outputpanel>
+				</td>
+			</tr>
+		</table>
+		<apex:actionFunction status="search_status" name="proceedWithoutContact" action="{!goDo}" rerender="searchPanel">
+			<apex:param value="true" assignTo="{!override_required_contact}" name="currentSearchModus" />
+		</apex:actionFunction>
+		
+		<apex:actionFunction status="search_status" name="searchAccount" action="{!searchBusinessAccount}" rerender="searchPanel">
+			<apex:param value="" assignTo="{!currentSearchModus}" name="currentSearchModus" />
+		</apex:actionFunction>
+		
+		<apex:actionFunction name="createNewCase" status="search_status" action="{!goDo}" rerender="searchPanel">
+			<apex:param value="" assignTo="{!selectedAccountPartyNumber}" name="selectedAccountPartyNumber" />
+			<apex:param value="" assignTo="{!selectedAccountId}" name="selectedAccountId" />
+			<apex:param value="true" assignTo="{!isCreateNewCase}" name="createCase" />
+		</apex:actionFunction>
+	</apex:form>
+	
+	<!-- JavaScript is moved to the bottom of the page as this will result in the page loading faster. -->
+    <apex:includeScript value="{!$Resource.CustomerSearch_business}"/>
+</apex:page>

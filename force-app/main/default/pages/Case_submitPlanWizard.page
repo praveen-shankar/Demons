@@ -1,0 +1,13 @@
+<apex:page >
+
+    <apex:PageBlock >
+        <apex:PageBlockSection >
+            <apex:pageBlockSectionItem >
+                <apex:outputText value="CSV {!$Label.cs_file}:"/>
+                <!--<apex:outputText value="CSV fil:"/>-->
+<!--                <apex:inputFile value=""/>-->
+            </apex:pageBlockSectionItem>
+        </apex:PageBlockSection>
+    </apex:PageBlock>
+    
+</apex:page>

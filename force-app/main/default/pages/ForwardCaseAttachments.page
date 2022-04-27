@@ -1,0 +1,98 @@
+<!-- Author - Rajeev S -->
+
+<apex:page StandardController="Case" extensions="SendCaseAttachmentsController" id="casepage" sidebar="false">
+
+      <style>
+         .textarea{ height:20px; width: 700px; }
+    
+         .header
+         {
+            font-weight:bold;
+            font-size:12px;
+         }
+      </style>
+   
+      <apex:actionstatus id="counterStatus">
+        <apex:facet name="start">
+          <div class="waitingSearchDiv" id="el_loading" style="background-color: #fbfbfb; height:100%;opacity:0.65;width:100%;">
+            <div class="waitingHolder" style="center: 100px; width: 91px;">
+              <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />
+             <span class="waitingDescription">{!$Label.cs_Processing}</span>
+            </div>
+          </div>
+       </apex:facet>
+      </apex:actionstatus> 
+   
+      <apex:sectionHeader id="casesection" title="{!$Label.cs_ForwardAttachments}" subtitle="{!$Label.cs_Case}:{!Case.CaseNumber}"/>
+         <apex:form id="theform">
+           <apex:pageMessage id="msg" summary="{!$Label.cs_PleaseValidEmail}" severity="error" strength="3" rendered="{!errormsg}"/>
+           <apex:pageMessages />
+  
+      <apex:actionFunction name="calculateAttachmentSize" action="{!calculateAttachmentSize}" reRender="block1,section1">
+           <apex:param name="checkValue" value=""/>
+           <apex:param name="AttId" value="" />
+      </apex:actionFunction>
+  
+ 
+      <apex:pageBlock mode="maindetail">
+        <apex:pageBlockButtons id="buttons" location="top">
+         <apex:commandButton value="{!$Label.cs_SendEmail}" action="{!sendEmailsToAddresses}" disabled="{!isdisabled}" reRender="theform" />
+            <apex:commandButton value="{!$Label.cs_BackToCase}" action="{!goBackToCaseRecord}"/>
+         </apex:pageBlockButtons>
+      </apex:pageBlock>
+   
+   
+      <apex:pageBlock title="{!$Label.Case_attachment_related}" id="block1" mode="edit">
+         <apex:commandButton value="{!$Label.cs_AddAttach}" action="{!addAttachmentsToThisCase}" style="float:right;"/>
+         <apex:actionRegion >
+          <apex:pageBlockSection title="{!$Label.Case_select_attachment} - ({!AttachmentSize} Attachment Found)" collapsible="true" columns="1" id="section1">
+            <b>{!$Label.cs_SelecteFileSize}  <font color="red">{!totalFileSizeToDisplay}</font></b>
+              <apex:pageBlockTable value="{!caseAttachments}" var="attached" id="table1" rendered="{!renderPageBlockAttachmentsTable}">
+               <apex:column headerValue="Select" id="column1"> <apex:inputCheckbox value="{!attached.check}" id="check" onclick="calculateAttachmentSize(this.checked,'{!attached.att.Id}')">
+              </apex:inputCheckbox>
+            </apex:column>
+          <apex:column headerValue="{!$Label.cs_Name}" value="{!attached.att.Name}"/>
+            <apex:column headerValue="{!$Label.cs_Size}" value="{!attached.eachRecordSizeToDisplay}"/>
+             <apex:column headerValue="{!$Label.cs_FileType}" value="{!attached.att.ContentType}"/>
+               <apex:column headerValue="{!$Label.cs_ViewFile}"> <apex:outputLink value="/servlet/servlet.FileDownload?file={!attached.att.Id}" target="_blank">View File</apex:outputLink>
+             </apex:column> 
+          </apex:pageBlockTable>
+       </apex:pageBlockSection>
+      </apex:actionRegion>
+
+      <apex:pageBlockSection title="{!$Label.Case_add_email}" collapsible="true" id="section2">
+             <apex:pageblocksectionitem id="sectionitem" helpText="{!$Label.Case_helptext_enter_email}"> 
+               <apex:outputlabel value="{!$Label.cs_EnterEmail}"/>
+                 <apex:outputPanel styleClass="requiredInput" layout="block">
+                   <apex:outputPanel styleClass="requiredBlock" layout="block"/>                        
+                   <apex:inputText value="{!emails}" styleClass="textarea" id="emails" html-placeholder="someone@posten.com,someone@gmail.com" style="font-weight: bold"/>
+                    <apex:outputPanel styleClass="errorMsg" layout="block" rendered="{!noEmailAddress}">
+                   <strong>{!$Label.cs_Error}:</strong>{!$Label.cs_EnterValue}. 
+                 </apex:outputPanel>
+                </apex:outputPanel>
+             </apex:pageblocksectionitem>
+    
+              <apex:commandButton value="{!$Label.cs_AddEmail}" action="{!addEmails}" reRender="section2,msg,theform,msg1,sectionitem,emails" status="counterStatus" disabled="{!isdisabled}"/>
+                <apex:pageBlockTable value="{!wrapEmailsToShowList}" var="e" id="addedemails" rendered="{!renderPageBlockTable}">
+                 <apex:column headerValue="{!$Label.cs_Case}Delete"><apex:commandLink action="{!removeEmails}" reRender="section2,msg,theform,msg1,sectionitem" value="{!$Label.cs_Delete}" status="counterStatus">
+                  <apex:param name="rowToBeDeleted" value="{!e.rowcounter}"></apex:param></apex:commandLink>
+                 </apex:column>
+               <apex:column headerValue="{!$Label.cs_EmailsAdded}" value="{!e.emailrow}"/>
+              </apex:pageBlockTable>
+            </apex:pageBlockSection>
+     
+      <apex:pageblockSection title="{!$Label.cs_CreateEmail}">
+        <apex:inputText value="{!subjectline}" title="Email Subject" required="true" styleClass="header" label="{!$Label.cs_Subject}" style="width: 350px; height: 15px"/>
+          <apex:inputTextarea value="{!message}" rows="20" id="descrption" cols="80" title="{!$Label.Case_email_label}" required="true" label="{!$Label.cs_Description}" style="font-weight: bold"/>
+            </apex:pageblockSection>
+      
+      </apex:pageBlock>
+      
+      <apex:pageBlock mode="maindetail">
+           <apex:pageBlockButtons id="buttonsBottom" location="bottom">
+               <apex:commandButton value="{!$Label.cs_SendEmail}" action="{!sendEmailsToAddresses}" disabled="{!isdisabled}" reRender="theform"/>
+               <apex:commandButton value="{!$Label.cs_BackToCase}" action="{!goBackToCaseRecord}"/> 
+           </apex:pageBlockButtons>
+       </apex:pageBlock>
+     </apex:form>   
+</apex:page>

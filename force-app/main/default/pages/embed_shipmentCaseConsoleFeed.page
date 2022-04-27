@@ -1,0 +1,46 @@
+<apex:page standardController="case" extensions="Case_shipmentInfoConsoleFeed" showHeader="false" showChat="false" sidebar="false" action="{!requestData}"> 
+    
+    <apex:stylesheet value="{!URLFOR($Resource.kats_css)}" />
+    <apex:OutputPanel layout="block" style="overflow:auto;width:620px;height:350px">
+    <apex:form id="viewShipmentInfo"><br></br>
+        <apex:outputLabel value="{!$Label.parcelnumber}" for="shipmentidsearch" style="font-weight: bold;"/>
+        <apex:inputText value="{!shipmentidsearch}" id="shipmentidsearch"/><br></br>
+        <apex:outputLabel value="{!$Label.waybill_number}" for="shipmentnumbersearch" style="font-weight: bold;"/>
+        <apex:inputText value="{!shipmentnumbersearch}" id="shipmentnumbersearch"/><br></br>
+        <apex:commandButton action="{!requestData}" value="{!$Label.Search_Shipments}" style="padding:5px;"  rerender="viewShipmentInfo" status="update_status"/>
+        <c:ShipmentDetails EConnectWrapper_GetShipmentData="{!wrapper}" />
+        
+        <c:ShipmentOverview shipmentList="{!shipmentList}" isSearchView="false" rendered="{!showShipmentOverview}"/>
+        
+        <div>
+        <apex:pageBlock mode="maindetail">
+            <apex:pageBlockButtons location="bottom" style="padding:0px;" rendered="{!hasEconnectData}">
+                <apex:commandButton action="{!persistShipment}" value="{!$Label.cs_ShipmentSave}" status="update_status" rerender="viewShipmentInfo" style="padding:5px;" oncomplete="refreshActiveTab();"/>
+                <apex:actionStatus id="update_status">
+                    <apex:facet name="start"><apex:image value="{!$Resource.spinner_icon}" /></apex:facet>
+                    <apex:facet name="stop"></apex:facet>
+                </apex:actionStatus>
+            </apex:pageBlockButtons>
+            
+            
+        </apex:pageBlock>
+        </div>
+        
+        <apex:messages layout="list"/>
+    
+    </apex:form>
+    </apex:OutputPanel>
+    <apex:includeScript value="{!$Resource.mainSearch_js}"/>
+    <apex:includeScript value="/support/console/40.0/integration.js"/>
+    <script type="text/javascript">
+    function refreshActiveTab() {
+          if (sforce.console.isInConsole()) {
+            sforce.console.getFocusedPrimaryTabId(function(result) {
+                var tabid = result.id;
+                    sforce.console.refreshPrimaryTabById(tabid, true, function(res) {}, true);
+                
+            });
+          }
+    }
+    </script>
+</apex:page>

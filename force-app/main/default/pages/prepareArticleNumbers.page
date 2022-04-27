@@ -1,0 +1,6 @@
+<apex:page controller="MonetaryTransactionsController">
+<!--<apex:page controller="MonetaryTransactionsController" action="{!prepareArticleNumbers}">-->
+
+   {!$Label.cs_prepareArticleNumbers} case.product {!$Label.cs_And} transaction__c.type__c) {!$Label.cs_prepareArticleNumbers2}
+  
+</apex:page>
